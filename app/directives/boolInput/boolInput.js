@@ -9,7 +9,7 @@ app.filter('rawHtml', ['$sce', function($sce){
 }]);
 
 var _boolInputCounter = 0;
-app.directive('boolInput', function(){
+app.directive('boolInput', function($parse, $sce){
     return {
         restrict: 'E',
         replace:true,
@@ -60,6 +60,7 @@ app.directive('boolInput', function(){
                 e.preventDefault();
             });
 
+            var groupIndex = 1;
             /* Gruppen Nummer hochzählen */
             var getGroupKey = function(text){
                 for (var i = 0; i < $scope.groups.length; i++) {
@@ -68,8 +69,7 @@ app.directive('boolInput', function(){
                         return {key: group.key, exists: true};
                     }
                 }
-
-                return {key: 'G' + groupMax++, exists: false};
+                return {key: 'G' + groupIndex++, exists: false};
             };
 
             var updateFormula = function(text) {
@@ -104,11 +104,30 @@ app.directive('boolInput', function(){
             });
 
             $scope.removeGroup = function(group) {
-                $scope.groups.slice(group);
+                var index = -1;
+                for (var i = 0; i < $scope.groups.length; i++) {
+                    var g = $scope.groups[i];
+                    if (g == group) {
+                        index = i;
+                    } else if (g.text.indexOf(group.key) > -1) {
+                        g.text = g.text.replace(group.key, group.text);
+                        g.formula.parse(g.text);
+                        g.html = $sce.getTrustedHtml(g.formula.getHtml());
+                    }
+                }
+
+                var text = $input.text();
+                if (text.indexOf(group.key) > -1) {
+                    text = text.replace(group.key, group.text);
+                    updateFormula(text);
+                }
+
+                if (index > -1) {
+                    $scope.groups.splice(index, 1);
+                }
             };
 
             $scope.addChar = function(char, _$input){
-                console.log(char);
                 if (document.activeElement.id != input.id || document.activeElement.className != input.className) return false;
                 DomUtils.pasteHtmlAtCaret(char);
                 updateFormula($input.text());
@@ -125,7 +144,7 @@ app.directive('boolInput', function(){
                 }
                 var groupKey = getGroupKey(selText);
                 if (!groupKey.exists) {
-                    $scope.groups.push({key: groupKey.key, formula: g, html: g.getHtml(), text: selText});
+                    $scope.groups.push({key: groupKey.key, formula: g, html: $sce.trustAsHtml(g.getHtml()), text: selText});
                 }
                 var newText = text.replace(selText, groupKey.key);
                 updateFormula(newText);

@@ -3,7 +3,8 @@
  */
 var boolAlg = angular.module('boolean-algebra', [
     'ngRoute',
-    'pascalprecht.translate'
+    'pascalprecht.translate',
+    'ngSanitize'
 ]).config(function ($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
         templateUrl: '/view/boolalg.html',
