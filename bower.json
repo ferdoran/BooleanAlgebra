@@ -15,6 +15,7 @@
     "bootstrap-sass": "~3.3.5",
     "lodash": "~3.10.1",
     "filesaver": "*",
+    "font-awesome": "*",
     "angular-bootstrap": "~1.1.0",
     "angular-translate": "~2.11.0",
     "angular-translate-loader-static-files": "^2.11.0",

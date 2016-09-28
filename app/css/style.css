@@ -18,9 +18,11 @@ input {
 .box {
   position:relative;
   background-color:#F5F5F5;
+  border: 1px solid #ccc;
   display:inline-block;
   float:left;
   margin:1em;
+  margin-bottom:0;
   width:100%;
 }
 .box .boxTitle {
@@ -45,4 +47,26 @@ h1.diagram-title {
   text-align:left;
   font-size:28px;
   padding: 0.5em 0.2em;
+}
+.createInfo {
+  font-size:12px;
+  text-align:center;
+  margin:1em;
+}
+.createInfo p {
+  margin: 1em;
+  padding: 1em;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+.createInfo button {
+  display:inline-block;
+  color: #333;
+  border:1px solid transparent;
+  font-weight:bold;
+  background:transparent;
+  padding: 1em 0.6em;
+}
+.createInfo button:hover {
+  border-color: #e0e0e0;
 }

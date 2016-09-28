@@ -4,5 +4,14 @@
 var app = angular.module('boolean-algebra');
 
 app.controller('BACtrl', function($scope) {
-    console.log("!!!!!");
+
+    $scope.createBTable = function(){
+        alert('Nicht implementiert!');
+    };
+}).filter('renderHTMLCorrectly', function($scope)
+{
+    return function(stringToParse)
+    {
+        return $scope.trustAsHtml(stringToParse);
+    }
 });

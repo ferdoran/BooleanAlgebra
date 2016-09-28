@@ -87,6 +87,8 @@ app.directive('boolInput', function(){
 
                 updateFormula($input.text());
             }).keydown(function(e){
+
+
                 if (!(e.keyCode == KEY_BACKSPACE || e.keyCode == KEY_LEFT
                     || e.keyCode == KEY_RIGHT || e.keyCode == KEY_UP || e.keyCode == KEY_DOWN
                     || e.keyCode >= KEY_A && e.keyCode <= KEY_Z
@@ -101,7 +103,12 @@ app.directive('boolInput', function(){
                 return true;
             });
 
-            $scope.addChar = function(char){
+            $scope.removeGroup = function(group) {
+                $scope.groups.slice(group);
+            };
+
+            $scope.addChar = function(char, _$input){
+                console.log(char);
                 if (document.activeElement.id != input.id || document.activeElement.className != input.className) return false;
                 DomUtils.pasteHtmlAtCaret(char);
                 updateFormula($input.text());
@@ -118,7 +125,7 @@ app.directive('boolInput', function(){
                 }
                 var groupKey = getGroupKey(selText);
                 if (!groupKey.exists) {
-                    $scope.groups.push({key: groupKey.key, formula: g, formulaHtml: g.getHtml(), text: selText});
+                    $scope.groups.push({key: groupKey.key, formula: g, html: g.getHtml(), text: selText});
                 }
                 var newText = text.replace(selText, groupKey.key);
                 updateFormula(newText);

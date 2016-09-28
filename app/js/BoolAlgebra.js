@@ -22,9 +22,6 @@ var BANode = function(params){
 
     this.getHtml = function(){
         var value = this.value;
-        if (value.length > 1) {
-            
-        }
 
         if (this.isLeaf()) {
             return '<span class="expr">' + value + '</span>';

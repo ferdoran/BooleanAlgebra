@@ -1,18 +1,30 @@
 <div class="boolInput">
     <div class="boolInputOptions">
+        <button class="negButton" ng-click="addChar('¬')" focusable="false">¬</button>
         <button class="andButton" ng-click="addChar('∧')" focusable="false">∧</button>
         <button class="orButton" ng-click="addChar('∨')" focusable="false">∨</button>
         <button class="implButton" ng-click="addChar('⇒')" focusable="false">⇒</button>
-        <button class="negButton" ng-click="addChar('¬')" focusable="false">¬</button>
         <button class="groupButton" ng-click="groupButton()"  focusable="false">G<sub>x</sub></button>
     </div>
     <div ng-class="{ 'boolInputBody' : true, 'isValid': formula.isValid()}">
         <label class="f">{{symbol}}:= </label><div id="{{id}}" class="input" placeholder="Boolsche Formel" contentEditable>{{value}}</div>
     </div>
     <div class="boolInputGroups">
-        <div ng-repeat="group in groups">
-            <bool-input id="test" bool-table="#boolTable" bool-symbol="F" bool-value="{{group.formula.getText()}}"></bool-input>
-            <label class="f">{{group.key}}:= {{group.formula.getText()}}</label>
+        <h3 class="diagram-title">Gruppen</h3>
+        <div ng-repeat="group in groups" class="group">
+            <div class="boolInputGroup">
+                <div class="boolInputOptions">
+                    <button class="negButton" ng-click="addChar('¬')" focusable="false">¬</button>
+                    <button class="andButton" ng-click="addChar('∧')" focusable="false">∧</button>
+                    <button class="orButton" ng-click="addChar('∨')" focusable="false">∨</button>
+                    <button class="implButton" ng-click="addChar('⇒')" focusable="false">⇒</button>
+                    <button class="groupButton" ng-click="groupButton()"  focusable="false">G<sub>x</sub></button>
+                </div>
+                <div ng-class="{ 'boolInputBody' : true, 'isValid': true}">
+                    <label class="f">{{group.key}}:=</label><div class="input" placeholder="Boolsche Formel" contentEditable>{{group.html}}</div><button class="removeGroupButton" ng-click="removeGroup(group)"><span class="fa fa-close"></span></span></button>
+                </div>
+            </div>
         </div>
+        <div class="noGroupsMsg">Es wurden keine Gruppen angelegt. <br>Markieren Sie einen gültigen Bereich im Ausdruck und klicken Sie <strong>[G<sub>x</sub>]</strong>, um Gruppen anzulegen.</div>
     </div>
 </div>
