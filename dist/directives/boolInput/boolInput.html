@@ -1,0 +1,16 @@
+<div class="boolInput">
+    <div class="boolInputOptions">
+        <button class="andButton" ng-click="addChar('∧')" focusable="false">∧</button>
+        <button class="orButton" ng-click="addChar('∨')" focusable="false">∨</button>
+        <button class="negButton" ng-click="addChar('¬')" focusable="false">¬</button>
+        <button class="groupButton" ng-click="groupButton()"  focusable="false">G<sub>x</sub></button>
+    </div>
+    <div class="boolInputBody">
+        <label class="f">F:= </label><div id="{{id}}" class="input" placeholder="Boolsche Formel" contentEditable></div>
+    </div>
+    <div class="boolInputGroups">
+        <div ng-repeat="group in groups">
+            <label class="f">{{group.key}}:= {{group.formula.getText()}}</label>
+        </div>
+    </div>
+</div>

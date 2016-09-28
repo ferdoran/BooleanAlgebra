@@ -1,0 +1,78 @@
+.boolInput {
+    position:relative;
+    display:inline-block;
+    padding:0.25em;
+    border-radius:5px;
+}
+.boolInput .input {
+    display:inline-block;
+    background-color:white;
+    width:239px;
+    height:25px;
+    white-space:nowrap;
+    overflow:hidden;
+    float:right;
+    border:0;
+
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+
+    text-transform: uppercase;
+}
+.boolInput .input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    text-transform: none;
+}
+.boolInput .input::-moz-placeholder { /* Firefox 19+ */
+    text-transform: none;
+}
+.boolInput .input:-ms-input-placeholder { /* IE 10+ */
+    text-transform: none;
+}
+.boolInput .input:-moz-placeholder { /* Firefox 18- */
+    text-transform: none;
+}
+.boolInput button {
+    border: 1px solid whitesmoke;
+    display:inline-block;
+    width:32px;
+    height:32px;
+    float:left;
+    color:#333333;
+    background:transparent;
+    margin: 0;
+    margin-right:5px;
+}
+.boolInput button:hover {
+    border-color: #e0e0e0;
+}
+.boolInput button.groupButton {
+    float:right;
+}
+.boolInput .boolInputOptions {
+    display:inline-block;
+    width:100%;
+}
+.boolInput .f {
+    padding-right:5px;
+}
+.boolInput .op {
+    color:#969696;
+}
+.boolInput .expr {
+    color:#2699ff;
+}
+.boolInput .boolInputBody {
+    border: 1px solid #CCCCCC;
+    display:inline-block;
+    float:left;
+}
+.boolInput .boolInputBody label {
+    margin:0;
+    padding: 0 5px;
+    float:left;
+    border-right: 1px solid #ccc;
+}
+.boolInput .boolInputBody:not(.isValid) {
+    color:red;
+}

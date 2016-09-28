@@ -1,0 +1,48 @@
+body {
+  font-size: 18px; }
+
+#thLogo {
+  width: 80px;
+  position:absolute;
+  top:5px;
+  right:5px;
+}
+
+header {
+  display: inline-block;
+  width: 100%; }
+
+input {
+  border: 1px solid #ccc; }
+
+.box {
+  position:relative;
+  background-color:#F5F5F5;
+  display:inline-block;
+  float:left;
+  margin:1em;
+  width:100%;
+}
+.box .boxTitle {
+  background-color:#CEDDE9;
+}
+.box .boxBody {}
+
+.diagram-title {
+  height: 30px;
+  padding-top: 8px;
+  background-color: #cedde9;
+  margin: 0px 0px 0px 0px;
+  font-size: 14px;
+  color: #505050;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+}
+
+h1.diagram-title {
+  height:auto;
+  text-align:left;
+  font-size:28px;
+  padding: 0.5em 0.2em;
+}
