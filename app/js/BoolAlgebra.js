@@ -11,18 +11,25 @@ var BADomain = function(name){
     };
 };
 
-var BATable = function(rootNode){
+var BATable = function(rootNode, baGroups){
     var groups = [];
     var letters = [];
     var specials = [];
     var clips = [];
 
-    console.log(rootNode);
-
     var addToQueue = function(node){
         if (!node) return false;
+
         if (node.isRoot) {
-        } else if (node.value != SYMBOL_AND && node.value != SYMBOL_OR && node.value != SYMBOL_IMPL) {
+        }
+        else if (node.isGroup) {
+            var groupNode = node.subTree.getRoot();
+            addToQueue(groupNode);
+            if (groups.indexOf(node.value) < 0) {
+                groups.push(node.value);
+            }
+        }
+        else if (node.value != SYMBOL_AND && node.value != SYMBOL_OR && node.value != SYMBOL_IMPL) {
 
             if (letters.indexOf(node.value) < 0) {
                 if (node.isNegative) {
@@ -53,20 +60,15 @@ var BANode = function(params){
     this.child2 = params ? params.child2 : null;
     this.parent = params ? params.parent : null;
     this.isRoot = false;
+    this.isClips = params ? params.isClips : false;
+    this.isGroup = params ? params.isGroup : false;
+    this.subTree = params ? params.subTree : null;
 
     this.isNegative = false;
     if (this.value.charAt(0) == SYMBOL_NEG) {
         this.value = this.value.substr(1);
         this.isNegative = true;
     }
-
-    this.isGroup = function() {
-        return params ? params.isGroup : false;
-    };
-
-    this.isClip = function(){
-        return params ? params.isClip : false;
-    };
 
     this.isValid = function(){
         return (this.child1 && this.child2);
@@ -87,19 +89,15 @@ var BANode = function(params){
     this.getHtml = function(){
         var value = this.getValue();
 
-        if (this.isClip()) {
-            value = '(' + value + ')';
-        }
-
         if (this.isLeaf()) {
-            return '<span class="expr">' + value + '</span>';
+            value = '<span class="expr">' + value + '</span>';
+        } else {
+            var childA = this.child1.getHtml();
+            var childB = this.child2.getHtml();
+            value = childA + '<span class="op">'+value+'</span>' + childB;
         }
 
-        var childA = this.child1.getHtml();
-        var childB = this.child2.getHtml();
-
-        return childA + '<span class="op">'+value+'</span>' + childB;
-        //return '<span class="expr">'+childA + '<span class="op">'+this.value+'</span>' + childB+'</span>';
+        return this.isClips ? '(' + value + ')' : value;
     };
 
     this.isLeaf = function(){
@@ -123,6 +121,8 @@ var Formula = function(text) {
         SYMBOL_OR,
         SYMBOL_AND
     ];
+
+    this.groups = [];
 
     var getClips = function(text) {
         var startIndex = 0,
@@ -169,7 +169,7 @@ var Formula = function(text) {
         return {input: text, output: output, clips: clips};
     };
 
-    this.buildTree = function(text,clipStack) {
+    this.buildTree = function(text,clipStack,isClip) {
 
         var getClip = function(key) {
             for (var i = 0; i < clipStack.length; i++) {
@@ -181,14 +181,16 @@ var Formula = function(text) {
             return null;
         };
 
-        if (text.length == 2) {
+        /* Klammern auflösen */
+        if (text.length >= 2) {
             var clip = getClip(text);
             if (clip != null) {
-                return this.buildTree(clip.text, clipStack);
+                return this.buildTree(clip.text, clipStack,true);
             }
         }
 
-        for (var i = 0; i < priorSplit.length; i++) {
+        var i;
+        for (i = 0; i < priorSplit.length; i++) {
             var pS = priorSplit[i];
 
             var index = text.indexOf(pS);
@@ -198,6 +200,7 @@ var Formula = function(text) {
 
                 var node = new BANode({
                     value: pS,
+                    isClips: isClip,
                     child1: this.buildTree(sideA,clipStack),
                     child2: this.buildTree(sideB,clipStack)
                 });
@@ -206,7 +209,25 @@ var Formula = function(text) {
                 return node;
             }
         }
-        return new BANode({value: text});
+
+        var isGroup = false;
+        var subTree = null;
+        if (text.length >= 2) {
+            var vKey = text.replace(SYMBOL_NEG, '');
+            if (vKey.length >= 2) {
+                for (i = 0; i < this.groups.length; i++) {
+                    var group = this.groups[i];
+                    if (text == group.key) {
+                        isGroup = true;
+                        subTree = group.formula;
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        return new BANode({value: text, isGroup: isGroup, subTree: subTree});
     };
 
     this.parse = function(text) {
@@ -214,7 +235,6 @@ var Formula = function(text) {
         this.text = text;
 
         var clips = getClips(text);
-        console.log(clips);
 
         rootNode = this.buildTree(clips.output,clips.clips);
         rootNode.isRoot = true;
@@ -255,13 +275,7 @@ var BAGroup = function(text){
     this.isValid = function(){
         return this.formula.isValid();
     };
-
     this.getHtml = function(){
         return this.formula.getHtml();
     };
-
 };
-
-function REX(text) {
-    console.log( (new Formula(text)).isValid());
-}

@@ -35,15 +35,13 @@ app.directive('boolTable', function($parse, $sce){
                 alert('Es wurde keine Domain gefunden!');
             }
 
-
-
             $scope.formula = domain.formula;
-            $scope.table = new BATable(domain.formula.getRoot());
+            $scope.table = new BATable(domain.formula.getRoot(), domain.groups);
 
             $scope.table.ths = [];
             $scope.table.bits = [];
 
-            var ths = $scope.table.getTheadData($scope.table.ths);
+            var ths = $scope.table.getTheadData();
             var i;
             for (i = ths.letters.length - 1; i >= 0; i--) {
                 $scope.table.ths.push({name: ths.letters[i], class: 'letters'});

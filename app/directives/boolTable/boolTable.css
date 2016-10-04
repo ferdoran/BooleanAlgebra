@@ -11,6 +11,12 @@
     border-left: 1px solid black;
     border-right: 1px solid black;
 }
+.boolTable table td input {
+    width:20px;
+    text-align:center;
+    border:0;
+    background:transparent;
+}
 .boolTable table th {
     border:1px solid black;
     min-width:30px;

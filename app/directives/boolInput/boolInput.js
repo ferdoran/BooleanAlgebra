@@ -34,13 +34,10 @@ app.directive('boolInput', function($parse, $sce){
             $scope.allowGroups = $attr.boolGroups;
 
             $scope.formula = new Formula();
-            $scope.groups = [];
-
 
             var domain = app.domains[$attr.boolDomain];
             if (domain) {
                 domain.formula = $scope.formula;
-                domain.groups = $scope.groups;
             }
 
             $element.find('[focusable="false"]').on('mousedown', function(e){
@@ -50,8 +47,8 @@ app.directive('boolInput', function($parse, $sce){
             var groupIndex = 1;
             /* Gruppen Nummer hochzählen */
             var getGroupKey = function(text){
-                for (var i = 0; i < $scope.groups.length; i++) {
-                    var group = $scope.groups[i];
+                for (var i = 0; i < $scope.formula.groups.length; i++) {
+                    var group = $scope.formula.groups[i];
                     if (group.text == text) {
                         return {key: group.key, exists: true};
                     }
@@ -67,7 +64,7 @@ app.directive('boolInput', function($parse, $sce){
                 DomUtils.setCaretPosition($input.get(0),position);
             };
 
-            updateFormula('¬A∧¬B∨C∧¬D');
+            updateFormula('¬A∧(¬B∨C)∧¬D');
 
             $input.keyup(function(e){
                 if (e.keyCode == KEY_CONTROL) {
@@ -94,8 +91,8 @@ app.directive('boolInput', function($parse, $sce){
 
             $scope.removeGroup = function(group) {
                 var index = -1;
-                for (var i = 0; i < $scope.groups.length; i++) {
-                    var g = $scope.groups[i];
+                for (var i = 0; i < $scope.formula.groups.length; i++) {
+                    var g = $scope.formula.groups[i];
                     if (g == group) {
                         index = i;
                     } else if (g.text.indexOf(group.key) > -1) {
@@ -112,7 +109,7 @@ app.directive('boolInput', function($parse, $sce){
                 }
 
                 if (index > -1) {
-                    $scope.groups.splice(index, 1);
+                    $scope.formula.groups.splice(index, 1);
                 }
             };
 
@@ -173,18 +170,20 @@ app.directive('boolInput', function($parse, $sce){
                 var newGroup = createGroup(selText);
 
                 var newText = $input.text().replace(selText, newGroup.key);
-                updateFormula(newText);
 
-                for (var i = 0; i < $scope.groups.length; i++) {
-                    var g = $scope.groups[i];
+
+                for (var i = 0; i < $scope.formula.groups.length; i++) {
+                    var g = $scope.formula.groups[i];
                     g.text = g.text.replace(selText, newGroup.key);
                     g.formula.parse(g.text);
                     g.html = $sce.getTrustedHtml(g.formula.getHtml());
                 }
 
                 if (!newGroup.groupKey.exists) {
-                    $scope.groups.push(newGroup);
+                    $scope.formula.groups.push(newGroup);
                 }
+
+                updateFormula(newText);
 
                 $inp.focus();
             };
