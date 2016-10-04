@@ -1,11 +1,62 @@
 /**
  * Created by Sergej Görzen on 05.09.2016.
  */
+var BADomain = function(name){
+    this.table = null;
+    this.formula = null;
+    this.groups = null;
+
+    this.getTree = function(){
+        return this.formula.getRoot();
+    };
+};
+
+var BATable = function(rootNode){
+    var groups = [];
+    var letters = [];
+    var specials = [];
+    var clips = [];
+
+    console.log(rootNode);
+
+    var addToQueue = function(node){
+        if (!node) return false;
+        if (node.isRoot) {
+        } else if (node.value != SYMBOL_AND && node.value != SYMBOL_OR && node.value != SYMBOL_IMPL) {
+
+            if (letters.indexOf(node.value) < 0) {
+                if (node.isNegative) {
+                    specials.push(node.getValue());
+                }
+
+                letters.push(node.value);
+            }
+
+
+        }
+        addToQueue(node.child2);
+        addToQueue(node.child1);
+    };
+
+    addToQueue(rootNode);
+
+    this.getTheadData = function(){
+        return {groups: groups, letters: letters, specials: specials, clips: clips};
+    };
+};
+
 var BANode = function(params){
     this.value = params ? params.value : null;
     this.child1 = params ? params.child1 : null;
     this.child2 = params ? params.child2 : null;
+    this.parent = params ? params.parent : null;
     this.isRoot = false;
+
+    this.isNegative = false;
+    if (this.value.charAt(0) == SYMBOL_NEG) {
+        this.value = this.value.substr(1);
+        this.isNegative = true;
+    }
 
     this.isGroup = function() {
         return params ? params.isGroup : false;
@@ -19,9 +70,24 @@ var BANode = function(params){
         return (this.child1 && this.child2);
     };
 
+    this.inverse = function(){
+        var negNode = new BANode(params);
+        negNode.child1 = null;
+        negNode.child2 = null;
+        negNode.isNegative = !this.isNegative;
+        return negNode;
+    };
+
+    this.getValue = function(){
+        return this.isNegative ? SYMBOL_NEG + this.value : this.value;
+    };
 
     this.getHtml = function(){
-        var value = this.value;
+        var value = this.getValue();
+
+        if (this.isClip()) {
+            value = '(' + value + ')';
+        }
 
         if (this.isLeaf()) {
             return '<span class="expr">' + value + '</span>';
@@ -45,7 +111,7 @@ var Formula = function(text) {
         validation: "(¬*([((A-Za-z)(1-9)*)|1|0])(∧|∨)?)*"
     };
 
-    var tree;
+    var rootNode;
     this.text = '';
 
     var kNumber = 1;
@@ -128,11 +194,14 @@ var Formula = function(text) {
                 var sideA = text.substring(0,index);
                 var sideB = text.substring(index+1,text.length);
 
-                return new BANode({
+                var node = new BANode({
                     value: pS,
                     child1: this.buildTree(sideA,clipStack),
                     child2: this.buildTree(sideB,clipStack)
                 });
+                node.child1.parent = node;
+                node.child2.parent = node;
+                return node;
             }
         }
         return new BANode({value: text});
@@ -145,13 +214,17 @@ var Formula = function(text) {
         var clips = getClips(text);
         console.log(clips);
 
-        tree = this.buildTree(clips.output,clips.clips);
-        tree.isRoot = true;
+        rootNode = this.buildTree(clips.output,clips.clips);
+        rootNode.isRoot = true;
     };
     if (text) {
         this.parse(text);
     }
 
+
+    this.getRoot = function(){
+        return rootNode;
+    };
 
     this.isValid = function(){
         return true;
@@ -168,29 +241,23 @@ var Formula = function(text) {
     };
 
     this.getHtml = function(){
-        return tree.getHtml();
-
-        var rtn = "";
-        // Dummy - Später wird das aus dem Baum generiert
-        var lastChar = '';
-        for (var i = 0; i < this.text.length; i++) {
-            var char = this.text.charAt(i);
-            if (char == SYMBOL_AND || char == SYMBOL_NEG || char == SYMBOL_OR || char == SYMBOL_IMPL) {
-                char = '<span class="op">'+char+'</span>';
-            } else {
-                if ((i+1) < this.text.length && char == 'G') {
-                    var number = this.text.charAt(i+1);
-                    var code = number.charCodeAt(0);
-                    if (code >= KEY_0 && code <= KEY_9) {
-                        number = '<sub>' + number + '</sub>';
-                    }
-                }
-                char = '<span class="expr">' + char + '</span>';
-            }
-            rtn += char;
-        }
-        return rtn;
+        return rootNode.getHtml();
     };
+};
+
+var BAGroup = function(text){
+    this.formula = new Formula(text);
+    this.key = '';
+    this.text = text;
+
+    this.isValid = function(){
+        return this.formula.isValid();
+    };
+
+    this.getHtml = function(){
+        return this.formula.getHtml();
+    };
+
 };
 
 function REX(text) {

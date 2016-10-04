@@ -1,0 +1,32 @@
+.boolTable {
+    position:relative;
+    padding:1em;
+}
+.boolTable table {
+    width:100%;
+    border: 4px double black;
+}
+.boolTable table td {
+    text-align:center;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+.boolTable table th {
+    border:1px solid black;
+    min-width:30px;
+    text-align:center;
+    border-bottom: 2px solid black;
+}
+.boolTable table .result,
+.boolTable table .specials,
+.boolTable table .groups,
+.boolTable table .clips {
+    border-left: 4px double black;
+
+}
+.boolTable table .specials ~ .specials,
+.boolTable table .groups ~ .groups,
+.boolTable table .clips ~ .clips {
+    border-left: 1px solid black;
+}
+

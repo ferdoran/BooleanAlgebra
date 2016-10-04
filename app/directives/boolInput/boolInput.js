@@ -2,11 +2,6 @@
  * Created by Sergej Görzen on 04.09.2016.
  */
 var app = angular.module('boolean-algebra');
-app.filter('rawHtml', ['$sce', function($sce){
-    return function(val) {
-        return $sce.trustAsHtml(val);
-    };
-}]);
 
 var _boolInputCounter = 0;
 app.directive('boolInput', function($parse, $sce){
@@ -36,25 +31,17 @@ app.directive('boolInput', function($parse, $sce){
 
             $scope.value = $attr.boolValue;
 
-            var $boolTable = angular.element($attr.boolTable);
             $scope.allowGroups = $attr.boolGroups;
-
-            /* das Ziel muss vom Typ TABLE sein */
-            if ($boolTable[0].nodeName != "TABLE") {
-                alert("boolInput.js: target is not <table>");
-                return;
-            }
-
-            var selection = {
-                start: -1,
-                end: -1,
-                text: ''
-            };
 
             $scope.formula = new Formula();
             $scope.groups = [];
-            var groupMax = 1;
-            var formula = null;
+
+
+            var domain = app.domains[$attr.boolDomain];
+            if (domain) {
+                domain.formula = $scope.formula;
+                domain.groups = $scope.groups;
+            }
 
             $element.find('[focusable="false"]').on('mousedown', function(e){
                 e.preventDefault();
@@ -79,6 +66,8 @@ app.directive('boolInput', function($parse, $sce){
                 $input.html($scope.formula.getHtml());
                 DomUtils.setCaretPosition($input.get(0),position);
             };
+
+            updateFormula('¬A∧¬B∨C∧¬D');
 
             $input.keyup(function(e){
                 if (e.keyCode == KEY_CONTROL) {
@@ -127,28 +116,77 @@ app.directive('boolInput', function($parse, $sce){
                 }
             };
 
-            $scope.addChar = function(char, _$input){
+            var updateGroup = function(group) {
+                var $group = angular.element('.group[group-key="'+group.key+'"]');
+                var $gInput = $group.find('.input');
+                var text = $gInput.text();
+                group.formula.parse(text);
+                group.text = text;
+                group.html = $sce.getTrustedHtml(group.formula.getHtml());
+            };
+
+            $scope.addChar = function(char, group){
+                if (group) {
+                    DomUtils.pasteHtmlAtCaret(char);
+                    updateGroup(group);
+                    return false;
+                }
                 if (document.activeElement.id != input.id || document.activeElement.className != input.className) return false;
                 DomUtils.pasteHtmlAtCaret(char);
                 updateFormula($input.text());
             };
 
-            $scope.groupButton = function(){
-                var text = $input.text();
-                var selText = DomUtils.getSelectedText();
-                if (text.length == 0 || selText.length == 0) return true;
-                var g = new Formula(selText);
-                if (!g.isValid()) {
-                    alert("'" + selection.text + "' is not a valid group.");
+            $scope.groupChange = function(group){
+                updateGroup(group);
+            };
+
+            $scope.clearText = function(){
+                $input.html('');
+            };
+
+            var createGroup = function(text){
+                var group = new BAGroup(text);
+
+                if (!group.isValid()) {
+                    alert("'" + text + "' is not a valid group.");
                     return true;
                 }
-                var groupKey = getGroupKey(selText);
-                if (!groupKey.exists) {
-                    $scope.groups.push({key: groupKey.key, formula: g, html: $sce.trustAsHtml(g.getHtml()), text: selText});
+                var groupKey = getGroupKey(text);
+
+                group.key = groupKey.key;
+                group.groupKey = groupKey;
+                group.html = $sce.trustAsHtml(group.getHtml());
+                return group;
+            };
+
+            $scope.groupButton = function(group){
+                var $inp = $input;
+                if (group) {
+                    var $group = angular.element('.group[group-key="'+ group.key+'"]');
+                    $inp = $group.find('.input');
                 }
-                var newText = text.replace(selText, groupKey.key);
+
+                var text = $inp.text();
+                var selText = DomUtils.getSelectedText();
+                if (text.length == 0 || selText.length == 0) return true;
+
+                var newGroup = createGroup(selText);
+
+                var newText = $input.text().replace(selText, newGroup.key);
                 updateFormula(newText);
-                $input.focus();
+
+                for (var i = 0; i < $scope.groups.length; i++) {
+                    var g = $scope.groups[i];
+                    g.text = g.text.replace(selText, newGroup.key);
+                    g.formula.parse(g.text);
+                    g.html = $sce.getTrustedHtml(g.formula.getHtml());
+                }
+
+                if (!newGroup.groupKey.exists) {
+                    $scope.groups.push(newGroup);
+                }
+
+                $inp.focus();
             };
         }
     };

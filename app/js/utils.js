@@ -163,10 +163,15 @@ DomUtils = {
             if (currentNode.length < offset) {
                 offset--;
             }
-            range.setStart(currentNode, offset);
-            range.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(range);
+            try {
+                range.setStart(currentNode, offset);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
     },
     getSelectedText: function(withHtml) {

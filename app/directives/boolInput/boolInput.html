@@ -7,21 +7,21 @@
         <button class="groupButton" ng-click="groupButton()"  focusable="false">G<sub>x</sub></button>
     </div>
     <div ng-class="{ 'boolInputBody' : true, 'isValid': formula.isValid()}">
-        <label class="f">{{symbol}}:= </label><div id="{{id}}" class="input" placeholder="Boolsche Formel" contentEditable>{{value}}</div>
+        <label class="f">{{symbol}}:= </label><div id="{{id}}" class="input" placeholder="Boolsche Formel" contentEditable>{{value}}</div><button class="clearText" ng-click="clearText()"><span class="fa fa-close"></span></button>
     </div>
     <div class="boolInputGroups">
         <h3 class="diagram-title">Gruppen</h3>
-        <div ng-repeat="group in groups" class="group">
+        <div ng-repeat="group in groups" class="group" group-key="{{group.key}}">
             <div class="boolInputGroup">
                 <div class="boolInputOptions">
-                    <button class="negButton" ng-click="addChar('¬')" focusable="false">¬</button>
-                    <button class="andButton" ng-click="addChar('∧')" focusable="false">∧</button>
-                    <button class="orButton" ng-click="addChar('∨')" focusable="false">∨</button>
-                    <button class="implButton" ng-click="addChar('⇒')" focusable="false">⇒</button>
-                    <button class="groupButton" ng-click="groupButton()"  focusable="false">G<sub>x</sub></button>
+                    <button class="negButton" ng-click="addChar('¬',group)" focusable="false">¬</button>
+                    <button class="andButton" ng-click="addChar('∧',group)" focusable="false">∧</button>
+                    <button class="orButton" ng-click="addChar('∨',group)" focusable="false">∨</button>
+                    <button class="implButton" ng-click="addChar('⇒',group)" focusable="false">⇒</button>
+                    <button class="groupButton" ng-click="groupButton(group)"  focusable="false">G<sub>x</sub></button>
                 </div>
                 <div ng-class="{ 'boolInputBody' : true, 'isValid': true}">
-                    <label class="f">{{group.key}}:=</label><div class="input" placeholder="Boolsche Formel" contentEditable ng-bind-html="group.html"></div><button class="removeGroupButton" ng-click="removeGroup(group)"><span class="fa fa-close"></span></span></button>
+                    <label class="f">{{group.key}}:=</label><div class="input" placeholder="Boolsche Formel" ng-keyup="groupChange(group)" contentEditable ng-bind-html="group.html"></div><button class="removeGroupButton" ng-click="removeGroup(group)"><span class="fa fa-close"></span></span></button>
                 </div>
             </div>
         </div>
