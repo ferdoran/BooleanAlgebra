@@ -45,6 +45,8 @@ var BATable = function(rootNode){
     };
 };
 
+/*@TODO Bug: Klammern funktionieren nicht mehr!*/
+
 var BANode = function(params){
     this.value = params ? params.value : null;
     this.child1 = params ? params.child1 : null;

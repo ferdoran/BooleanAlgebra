@@ -1,6 +1,8 @@
 /**
  * Created by Sergej on 06.09.2016.
  */
+
+/*@TODO Bug: Caret Position bei Groups funktioniert nicht super */
 DomUtils = {
     getCaretPosition: function (editableDiv) {
         var caretPos = 0,
