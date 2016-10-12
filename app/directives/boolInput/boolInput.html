@@ -6,12 +6,12 @@
         <button class="implButton" ng-click="addChar('⇒')" focusable="false">⇒</button>
         <button class="groupButton" ng-click="groupButton()"  focusable="false">G<sub>x</sub></button>
     </div>
-    <div ng-class="{ 'boolInputBody' : true, 'isValid': formula.isValid()}">
+    <div ng-class="{ 'boolInputBody' : true, 'isValid': expression.isValid()}">
         <label class="f">{{symbol}}:= </label><div id="{{id}}" class="input" placeholder="Boolsche Formel" contentEditable>{{value}}</div><button class="clearText" ng-click="clearText()"><span class="fa fa-close"></span></button>
     </div>
     <div class="boolInputGroups">
         <h3 class="diagram-title">Gruppen</h3>
-        <div ng-repeat="group in formula.groups" class="group" group-key="{{group.key}}">
+        <div ng-repeat="group in expression.groups" class="group" group-key="{{group.key}}">
             <div class="boolInputGroup">
                 <div class="boolInputOptions">
                     <button class="negButton" ng-click="addChar('¬',group)" focusable="false">¬</button>

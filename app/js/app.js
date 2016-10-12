@@ -1,7 +1,7 @@
 /**
  * Created by Sergej on 03.09.2016.
  */
-var boolAlg = angular.module('boolean-algebra', [
+angular.module('boolean-algebra', [
     'ngRoute',
     'pascalprecht.translate',
     'ngSanitize'

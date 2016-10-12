@@ -35,8 +35,9 @@ app.directive('boolTable', function($parse, $sce){
                 alert('Es wurde keine Domain gefunden!');
             }
 
-            $scope.formula = domain.formula;
-            $scope.table = new BATable(domain.formula.getRoot(), domain.groups);
+            $scope.expression = domain.expression;
+
+            $scope.table = new BATable(domain.expression.getRoot(), domain.groups);
 
             $scope.table.ths = [];
             $scope.table.bits = [];
@@ -46,14 +47,8 @@ app.directive('boolTable', function($parse, $sce){
             for (i = ths.letters.length - 1; i >= 0; i--) {
                 $scope.table.ths.push({name: ths.letters[i], class: 'letters'});
             }
-            for (i = ths.specials.length - 1; i >= 0; i--) {
-                $scope.table.ths.push({name: ths.specials[i], class: 'specials'});
-            }
             for (i = ths.groups.length - 1; i >= 0; i--) {
                 $scope.table.ths.push({name: ths.groups[i], class: 'groups'});
-            }
-            for (i = ths.clips.length - 1; i >= 0; i--) {
-                $scope.table.ths.push({name: ths.clips[i], class: 'clips'});
             }
             $scope.table.ths.push({name: 'F', class:'result'});
             domain.table = $scope.table;
@@ -63,7 +58,7 @@ app.directive('boolTable', function($parse, $sce){
             var max = Math.pow(2, lettersCount);
 
             for (var l = 0; l < max; l++) {
-                var bitLine = { letters: [], specials: [], groups: [], clips: [] };
+                var bitLine = { letters: [], groups: [], clips: [] };
 
                 var lTemp = l;
                 for (i = lettersCount - 1; i >= 0; i--) {
@@ -79,16 +74,8 @@ app.directive('boolTable', function($parse, $sce){
 
                 }
 
-                for (i = 0; i < ths.specials.length; i++) {
-                    bitLine.specials.push({value: 0});
-                }
-
                 for (i = 0; i < ths.groups.length; i++) {
                     bitLine.groups.push({value: 0});
-                }
-
-                for (i = 0; i < ths.clips.length; i++) {
-                    bitLine.clips.push({value: 0});
                 }
 
                 bitLine.result = {value: 0};

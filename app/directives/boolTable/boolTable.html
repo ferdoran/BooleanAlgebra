@@ -8,10 +8,8 @@
         <tbody>
             <tr ng-repeat="bitLine in table.bits" class="bitLine">
                 <td ng-repeat="bit in bitLine.letters" class="bit letters" title="{{bit.bitCounter}} >= {{bit.vTemp}}">{{bit.value}}</td>
-                <td ng-repeat="bit in bitLine.specials" class="bit specials"><input maxlength="1" type="text" value="" bit-value="{{bit.value}}" /></td>
-                <td ng-repeat="bit in bitLine.groups" class="bit groups"><input maxlength="1" type="text" value="" bit-value="{{bit.value}}" /></td>
-                <td ng-repeat="bit in bitLine.clips" class="bit clips"><input maxlength="1" type="text" value="" bit-value="{{bit.value}}" /></td>
-                <td class="bit result"><input maxlength="1" type="text" value="" bit-value="{{bitLine.result.value}}" /></td>
+                <td ng-repeat="bit in bitLine.groups" class="bit groups"><select bit-value="{{bit.value}}" size="1"><option></option><option value="0">0</option><option value="1">1</option></option></select></td>
+                <td class="bit result"><select bit-value="{{bitLine.result.value}}" size="1"><option></option><option value="0">0</option><option value="1">1</option></option></select></td>
             </tr>
 
         </tbody>
