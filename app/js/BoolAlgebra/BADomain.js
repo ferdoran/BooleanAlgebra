@@ -7,6 +7,6 @@ var BADomain = function(name){
     this.groups = null;
 
     this.getTree = function(){
-        return this.expression.getRoot();
+        return this.expression.rootNode;
     };
 };

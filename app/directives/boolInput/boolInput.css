@@ -64,6 +64,9 @@
 .boolInput .expr {
     color:#2699ff;
 }
+.boolInput .expr.group {
+    color:#0377dd;
+}
 .boolInput .clearText {
     position:absolute;
     right:-10px;

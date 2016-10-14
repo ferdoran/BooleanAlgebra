@@ -8,8 +8,9 @@ var BAExpression = function(text) {
         validation: "(¬*([((A-Za-z)(1-9)*)|1|0])(∧|∨)?)*"
     };
 
-    var rootNode;
+    this.rootNode = null;
     this.text = '';
+    this.html = '';
 
     var kNumber = 1;
 
@@ -18,8 +19,6 @@ var BAExpression = function(text) {
         SYMBOL_OR,
         SYMBOL_AND
     ];
-
-    this.groups = [];
 
     var getClips = function(text) {
         var startIndex = 0,
@@ -93,11 +92,12 @@ var BAExpression = function(text) {
         }
         return null;
     };
+
     var getGroup = function(key) {
         var vKey = key.replace(SYMBOL_NEG, '');
         if (vKey.length < 2) return null;
-        for (var i = 0; i < $this.groups.length; i++) {
-            var group = $this.groups[i];
+        for (var i = 0; i < BAExpression.groups.length; i++) {
+            var group = BAExpression.groups[i];
             if (vKey == group.key) {
                 return group;
             }
@@ -115,6 +115,12 @@ var BAExpression = function(text) {
 
         var group = getGroup(text);
 
+        if (text == "G1") {
+            console.log(group);
+        }
+        /**@todo: Gruppen überall einsetzen */
+        /**@todo: prüfen, ob isGroup überall dann korrekt ist mit FindChild */
+
         var splitInfo = splitByOperator(text);
 
         var node = new BANode({
@@ -122,11 +128,8 @@ var BAExpression = function(text) {
             isClips: clip ? true : false,
             child1: this.buildTree(splitInfo.a),
             child2: this.buildTree(splitInfo.b),
-            subTree: group ? group.expression : null
+            group: group
         });
-        /**@TODO Fix G2 Gruppe wird nicht als Gruppe erkannt **/
-        /**@TODO UNIT Tests anlegen **/
-        if (group) {console.log(node);}
         if (node.child1) {
             node.child1.parent = node;
         }
@@ -137,21 +140,28 @@ var BAExpression = function(text) {
         return node;
     };
 
+    this.findChild = function(value) {
+        return this.rootNode.findChild(value);
+    };
+
+
     this.parse = function(text) {
         text = text.toUpperCase();
         this.text = text;
 
         var clips = getClips(text);
         clipStack = clips.clips;
-        rootNode = this.buildTree(clips.output);
+        this.rootNode = this.buildTree(clips.output);
+        /*console.log("Übergabe: " + text);
+        console.log("Knoten: ");
+        console.log(this.rootNode);
+        console.log("isLeaf: " + this.rootNode.isLeaf());
+        console.log("isGroup: " + this.rootNode.isGroup());
+        console.log(this.getHtml());*/
     };
     if (text) {
         this.parse(text);
     }
-
-    this.getRoot = function(){
-        return rootNode;
-    };
 
     this.isValid = function(){
         return true;
@@ -168,13 +178,17 @@ var BAExpression = function(text) {
     };
 
     this.getHtml = function(){
-        return rootNode.getHtml();
+        return this.rootNode.getHtml();
+    };
+
+    this.groupFilter = function(group) {
+        return this.text.replace(group.text, group.key);
     };
 
     var groupIndex = 1;
     this.getGroupKey = function(text){
-        for (var i = 0; i < $this.groups.length; i++) {
-            var group = $this.groups[i];
+        for (var i = 0; i < BAExpression.groups.length; i++) {
+            var group = BAExpression.groups[i];
             if (group.text == text) {
                 return {key: group.key, exists: true};
             }
@@ -193,6 +207,9 @@ var BAExpression = function(text) {
 
         group.key = groupKey.key;
         group.groupKey = groupKey;
+
         return group;
     };
 };
+
+BAExpression.groups = [];

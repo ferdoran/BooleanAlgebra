@@ -22,6 +22,7 @@ app.directive('boolInput', function($parse, $sce){
             $scope.allowGroups = $attr.boolGroups;
 
             $scope.expression = new BAExpression();
+            $scope.groups = BAExpression.groups;
 
             var domain = app.domains[$attr.boolDomain];
             if (domain) {
@@ -33,21 +34,40 @@ app.directive('boolInput', function($parse, $sce){
             });
 
             var updateExpression = function(text) {
+                var expression = $scope.expression;
+                if (!text) {
+                    text = $input.text();
+                }
                 if (text.length < 1) return false;
-                $scope.expression.parse(text);
+                expression.parse(text);
+                var html = expression.getHtml();
                 var position = DomUtils.getCaretCharacterOffsetWithin($input.get(0));
-                $input.html($scope.expression.getHtml());
-                DomUtils.setCaretPosition($input.get(0),position);
+                $input.html(html);
+                DomUtils.setCaretPosition($input.get(0), position);
+            };
+            var updateGroupExpression = function(group, text) {
+                var $group = angular.element('.group[group-key="'+ group.key+'"]');
+                var $inp = $group.find('.input');
+                var expression = group.expression;
+                if (!text) {
+                    text = $inp.text();
+                }
+                if (text.length < 1) return false;
+                expression.parse(text);
+                var html = expression.getHtml();
+                //var position = DomUtils.getCaretCharacterOffsetWithin($inp.get(0));
+                expression.html = $sce.trustAsHtml(html);
+                //DomUtils.setCaretPosition($inp.get(0), position);
             };
 
-            updateExpression('¬A∧((¬B∨C)∧¬D⇒E)');
+            //updateExpression('¬A∧((¬B∨C)∧¬D⇒E)');
 
             $input.keyup(function(e){
                 if (e.keyCode == KEY_CONTROL) {
                     return false;
                 }
 
-                updateExpression($input.text());
+                updateExpression();
             }).keydown(function(e){
                 if (!(e.keyCode == KEY_BACKSPACE || e.keyCode == KEY_LEFT
                     || e.keyCode == KEY_RIGHT || e.keyCode == KEY_UP || e.keyCode == KEY_DOWN
@@ -65,8 +85,8 @@ app.directive('boolInput', function($parse, $sce){
 
             $scope.removeGroup = function(group) {
                 var index = -1;
-                for (var i = 0; i < $scope.expression.groups.length; i++) {
-                    var g = $scope.expression.groups[i];
+                for (var i = 0; i < BAExpression.groups.length; i++) {
+                    var g = BAExpression.groups[i];
                     if (g == group) {
                         index = i;
                     } else if (g.text.indexOf(group.key) > -1) {
@@ -83,7 +103,7 @@ app.directive('boolInput', function($parse, $sce){
                 }
 
                 if (index > -1) {
-                    $scope.expression.groups.splice(index, 1);
+                    BAExpression.groups.splice(index, 1);
                 }
             };
 
@@ -98,7 +118,13 @@ app.directive('boolInput', function($parse, $sce){
 
             var createGroup = function(text){
                 var group = $scope.expression.createGroup(text);
-                group.html = $sce.trustAsHtml(group.getHtml());
+                if (group.groupKey.key == "G2") {
+                    DEBUG_NODE(group.expression.rootNode);
+                }
+                group.html = $sce.getTrustedHtml(group.getHtml());// $sce.trustAsHtml(group.getHtml());
+                if (!group.groupKey.exists) {
+                    BAExpression.groups.push(group);
+                }
                 return group;
             };
 
@@ -128,27 +154,20 @@ app.directive('boolInput', function($parse, $sce){
                     $inp = $group.find('.input');
                 }
 
-                var text = $inp.text();
                 var selText = DomUtils.getSelectedText();
-                if (text.length == 0 || selText.length == 0) return true;
+                if (selText.length == 0) return true;
 
                 var newGroup = createGroup(selText);
 
-                var newText = $input.text().replace(selText, newGroup.key);
-
-
-                for (var i = 0; i < $scope.expression.groups.length; i++) {
-                    var g = $scope.expression.groups[i];
-                    g.text = g.text.replace(selText, newGroup.key);
-                    g.expression.parse(g.text);
-                    g.html = $sce.getTrustedHtml(g.expression.getHtml());
+                /** Gruppenkey überall einsetzen */
+                for (var i = 0; i < BAExpression.groups.length; i++) {
+                    var g = BAExpression.groups[i];
+                    updateGroupExpression(g, g.expression.groupFilter(newGroup));
                 }
 
-                if (!newGroup.groupKey.exists) {
-                    $scope.expression.groups.push(newGroup);
-                }
-
-                updateExpression(newText);
+                updateExpression($scope.expression.groupFilter(newGroup));
+                
+                DEBUG_NODE($scope.expression.findChild('G1'));
 
                 $inp.focus();
             };

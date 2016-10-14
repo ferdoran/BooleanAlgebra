@@ -3,6 +3,7 @@
  */
 var BAGroup = function(text){
     this.expression = new BAExpression(text);
+    this.expression.rootNode.group = this;
     this.key = '';
     this.text = text;
 

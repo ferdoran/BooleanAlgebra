@@ -3,7 +3,6 @@
  */
 var app = angular.module('boolean-algebra');
 
-var _boolTableCounter = 0;
 app.directive('boolTable', function($parse, $sce){
     return {
         restrict: 'E',
@@ -11,14 +10,6 @@ app.directive('boolTable', function($parse, $sce){
         scope:true,
         templateUrl: "directives/boolTable/boolTable.html",
         link: function($scope, $element, $attr) {
-            /* Id direkt in einer Var interpretierren */
-            var id;
-            if ($attr.id) {
-                $scope.id = $attr.id;
-                id = $attr.id;
-            } else {
-                id = $scope.id = "boolTable" + _boolTableCounter++;
-            }
             if ($attr.boolSymbol) {
                 $scope.symbol = $attr.boolSymbol;
             } else {
@@ -27,8 +18,6 @@ app.directive('boolTable', function($parse, $sce){
             var $table = $element.find('table');
             var table = $table[0];
             /* interpretierte id dem input zuweisen */
-            table.id = id;
-
             var domain = app.domains[$attr.boolDomain];
 
             if (!domain) {
@@ -36,8 +25,10 @@ app.directive('boolTable', function($parse, $sce){
             }
 
             $scope.expression = domain.expression;
+            //console.log($scope.expression.rootNode);
+            return false;
 
-            $scope.table = new BATable(domain.expression.getRoot(), domain.groups);
+            $scope.table = new BATable(domain.expression.rootNode, domain.groups);
 
             $scope.table.ths = [];
             $scope.table.bits = [];
@@ -82,8 +73,6 @@ app.directive('boolTable', function($parse, $sce){
 
                 $scope.table.bits.push(bitLine);
             }
-            console.log($scope.table.bits);
-
         }
     };
 });

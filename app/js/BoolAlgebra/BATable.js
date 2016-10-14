@@ -16,7 +16,7 @@ var BATable = function(rootNode){
         if (node.isRoot()) {
         }
         else if (node.isGroup()) {
-            var groupNode = node.subTree.getRoot();
+            var groupNode = node.subTree.rootNode;
 
             if (groups.indexOf(node.value) < 0) {
                 //groups.push(node.value);

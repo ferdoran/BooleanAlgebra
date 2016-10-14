@@ -7,8 +7,9 @@ var BANode = function(params){
     this.child2 = params ? params.child2 : null;
     this.parent = params ? params.parent : null;
     this.isClips = params ? params.isClips : false;
-    this.subTree = params ? params.subTree : null;
+    //this.subTree = params ? params.subTree : null;
     this.parent = null;
+    this.group = params ? params.group : null;
 
     this.isNegative = false;
     if (this.value.charAt(0) == SYMBOL_NEG) {
@@ -22,6 +23,19 @@ var BANode = function(params){
 
     this.isRoot = function(){
         return this.parent == null;
+    };
+
+    this.findChild = function(value){
+        if (this.value == value) { return this; }
+
+        var child = this.child1 ? this.child1.findChild(value) : null;
+        if (child != null) {
+            return child;
+        }
+
+        child = this.child2 ? this.child2.findChild(value) : null;
+
+        return child;
     };
 
     this.inverse = function(){
@@ -41,20 +55,40 @@ var BANode = function(params){
 
         if (this.isLeaf()) {
             value = '<span class="expr">' + value + '</span>';
+        } else if (!this.isRoot() && this.isGroup()) {
+            value = '<span class="expr group">' + value + '</span>';
         } else {
-            var childA = this.child1.getHtml();
-            var childB = this.child2.getHtml();
-            value = childA + '<span class="op">'+value+'</span>' + childB;
+            var childA = this.child1 ? this.child1.getHtml() : '';
+            var childB = this.child2 ? this.child2.getHtml() : '';
+
+            var Class = value == SYMBOL_AND || value == SYMBOL_IMPL || value == SYMBOL_OR ? 'op' : 'expr';
+
+            value = childA + '<span class="'+ Class +'">'+value+'</span>' + childB;
         }
 
         return this.isClips ? '(' + value + ')' : value;
     };
     
     this.isGroup = function(){
-        return this.subTree != null || (this.parent && this.parent.isGroup());
+        return this.group != null;
     };
 
     this.isLeaf = function(){
-        return !this.child1 || this.child1 == null || !this.child2 || this.child2 == null;
+        return !this.isGroup() && (!this.child1 || this.child1 == null || !this.child2 || this.child2 == null);
     };
+};
+
+function DEBUG_NODE(node) {
+    console.log("===DEBUG_NODE===");
+    if (node == null) {
+        console.log("NODE IS NULL");
+    } else {
+        console.log(node);
+        console.log("isLeaf: " + node.isLeaf());
+        console.log("isRoot: " + node.isRoot());
+        console.log("isGroup: " + node.isGroup());
+        console.log("value: " + node.value);
+        console.log("getHtml: " + node.getHtml());
+    }
+    console.log("==================");
 };
