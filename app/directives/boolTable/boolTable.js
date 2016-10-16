@@ -26,52 +26,52 @@ app.directive('boolTable', function($parse, $sce){
 
             $scope.expression = domain.expression;
 
-            $scope.table = new BATable(domain.expression.rootNode, domain.groups);
+            domain.tableRefresh = function(){
+                $scope.table = new BATable(domain.expression.rootNode, domain.groups);
 
-            $scope.table.ths = [];
-            $scope.table.bits = [];
+                $scope.table.ths = [];
+                $scope.table.bits = [];
 
-            var ths = $scope.table.getTheadData();
+                var ths = $scope.table.getTheadData();
 
-            var i;
-            for (i = 0; i < ths.letters.length; i++) {
-                $scope.table.ths.push({name: ths.letters[i], class: 'letters'});
-            }
-            for (i = 0; i < ths.groups.length; i++) {
-                $scope.table.ths.push({name: ths.groups[i], class: 'groups'});
-            }
-            $scope.table.ths.push({name: 'F', class:'result'});
-            domain.table = $scope.table;
+                var i;
+                for (i = 0; i < ths.letters.length; i++) {
+                    $scope.table.ths.push({name: ths.letters[i], class: 'letters'});
+                }
+                for (i = 0; i < ths.groups.length; i++) {
+                    $scope.table.ths.push({name: ths.groups[i], class: 'groups'});
+                }
+                $scope.table.ths.push({name: 'F', class:'result'});
+                domain.table = $scope.table;
 
 
-            var lettersCount = ths.letters.length;
-            var max = Math.pow(2, lettersCount);
+                var lettersCount = ths.letters.length;
+                var max = Math.pow(2, lettersCount);
 
-            for (var l = 0; l < max; l++) {
-                var bitLine = { letters: [], groups: [], clips: [] };
+                for (var l = 0; l < max; l++) {
+                    var bitLine = { letters: [], groups: [], clips: [] };
 
-                var lTemp = l;
-                for (i = lettersCount - 1; i >= 0; i--) {
-                    var v = 0;
-                    var vTemp = Math.pow(2,i);
+                    var lTemp = l;
+                    for (i = lettersCount - 1; i >= 0; i--) {
+                        var v = 0;
+                        var vTemp = Math.pow(2,i);
 
-                    if (lTemp >= vTemp) {
-                        lTemp -= vTemp;
-                        v = 1;
+                        if (lTemp >= vTemp) {
+                            lTemp -= vTemp;
+                            v = 1;
+                        }
+                        bitLine.letters.push({value: v});
                     }
 
-                    bitLine.letters.push({value: v});
+                    for (i = 0; i < ths.groups.length; i++) {
+                        bitLine.groups.push({value: 0});
+                    }
 
+                    bitLine.result = {value: 0};
+                    $scope.table.bits.push(bitLine);
                 }
-
-                for (i = 0; i < ths.groups.length; i++) {
-                    bitLine.groups.push({value: 0});
-                }
-
-                bitLine.result = {value: 0};
-
-                $scope.table.bits.push(bitLine);
-            }
+            };
+            domain.tableRefresh();
         }
     };
 });

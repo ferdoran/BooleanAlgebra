@@ -64,8 +64,9 @@ var BANode = function(params){
             var Class = value == SYMBOL_AND || value == SYMBOL_IMPL || value == SYMBOL_OR ? 'op' : 'expr';
 
             value = childA + '<span class="'+ Class +'">'+value+'</span>' + childB;
+            //value = childA + value + childB;
         }
-
+        //return this.isClips ? '(' + value + ')' : value;
         return this.isClips ? '<span class="expr"><span class="clips">(</span>' + value + '<span class="clips">)</span></span>' : value;
     };
     

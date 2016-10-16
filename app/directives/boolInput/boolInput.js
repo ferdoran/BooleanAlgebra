@@ -33,6 +33,16 @@ app.directive('boolInput', function($parse, $sce){
                 e.preventDefault();
             });
 
+            var tableInst = null;
+            var updateTable = function(){
+                return;
+                if (!domain.tableRefresh) return;
+                clearTimeout(tableInst);
+                tableInst = setTimeout(function(){
+                    domain.tableRefresh();
+                },500);
+            };
+
             var updateExpression = function(text) {
                 var expression = $scope.expression;
                 if (!text) {
@@ -53,22 +63,30 @@ app.directive('boolInput', function($parse, $sce){
                     text = $inp.text();
                 }
                 if (text.length < 1) return false;
-                //var position = DomUtils.getCaretCharacterOffsetWithin($inp.get(0));
-                //DomUtils.setCaretPosition($inp.get(0), position);
+                var position = DomUtils.getCaretCharacterOffsetWithin($inp.get(0));
 
                 group.expression.parse(text);
                 group.expression.html = $sce.trustAsHtml(expression.getHtml());
+
+                DomUtils.setCaretPosition($inp.get(0), position);
             };
 
 
             $scope.keyUp = function() {
                 var e = event;
+                var $input = angular.element(e.target);
+
+                //var position = DomUtils.getCaretCharacterOffsetWithin($input.get(0));
+
                 if (e.keyCode == KEY_CONTROL || e.keyCode == KEY_SPACE) {
                     e.preventDefault();
                     return false;
                 }
 
                 updateExpression();
+                updateTable();
+
+                //DomUtils.setCaretPosition($input.get(0), position);
             };
 
             $scope.keyDown = function() {
@@ -107,6 +125,7 @@ app.directive('boolInput', function($parse, $sce){
                 if (index > -1) {
                     BAExpression.groups.splice(index, 1);
                 }
+                updateTable();
             };
 
             var updateGroup = function(group, text) {
@@ -116,8 +135,10 @@ app.directive('boolInput', function($parse, $sce){
                     text = $gInput.text();
                 }
 
-                group.expression.parse(text);
-                group.expression.html = $sce.getTrustedHtml(group.expression.getHtml());
+                updateGroupExpression(group, text);
+
+                //group.expression.parse(text);
+                //group.expression.html = $sce.getTrustedHtml(group.expression.getHtml());
             };
 
             var createGroup = function(text){
@@ -184,10 +205,10 @@ app.directive('boolInput', function($parse, $sce){
             };
 
             updateExpression('¬A∧((¬B∨C)∧¬D⇒E)');
-            /*addGroup("((¬B∨C)∧¬D⇒E)");
+            addGroup("((¬B∨C)∧¬D⇒E)");
             addGroup("(¬B∨C)");
             addGroup("G2∧¬D");
-            addGroup("(G3⇒E)");*/
+            addGroup("(G3⇒E)");
         }
     };
 });
