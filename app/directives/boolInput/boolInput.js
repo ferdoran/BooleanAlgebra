@@ -53,22 +53,26 @@ app.directive('boolInput', function($parse, $sce){
                     text = $inp.text();
                 }
                 if (text.length < 1) return false;
-                expression.parse(text);
-                var html = expression.getHtml();
                 //var position = DomUtils.getCaretCharacterOffsetWithin($inp.get(0));
-                expression.html = $sce.trustAsHtml(html);
                 //DomUtils.setCaretPosition($inp.get(0), position);
+
+                group.expression.parse(text);
+                group.expression.html = $sce.trustAsHtml(expression.getHtml());
             };
 
-            //updateExpression('¬A∧((¬B∨C)∧¬D⇒E)');
 
-            $input.keyup(function(e){
-                if (e.keyCode == KEY_CONTROL) {
+            $scope.keyUp = function() {
+                var e = event;
+                if (e.keyCode == KEY_CONTROL || e.keyCode == KEY_SPACE) {
+                    e.preventDefault();
                     return false;
                 }
 
                 updateExpression();
-            }).keydown(function(e){
+            };
+
+            $scope.keyDown = function() {
+                var e = event;
                 if (!(e.keyCode == KEY_BACKSPACE || e.keyCode == KEY_LEFT
                     || e.keyCode == KEY_RIGHT || e.keyCode == KEY_UP || e.keyCode == KEY_DOWN
                     || e.keyCode >= KEY_A && e.keyCode <= KEY_Z
@@ -76,52 +80,51 @@ app.directive('boolInput', function($parse, $sce){
                     || e.keyCode == KEY_COMMA || e.keyCode == KEY_DOT
                     || e.key == '1' || e.key == '0' || e.key == '2' || e.key == '3' || e.key == '4' || e.key == '5'
                     || e.key == '6' || e.key == '7' || e.key == '8' || e.key == '9')
-                    || e.keyCode == KEY_K) {
+                    || e.keyCode == KEY_K || e.keyCode == KEY_SPACE) {
+                    e.preventDefault();
                     return false;
                 }
                 //DomUtils.pasteHtmlAtCaret(char);
                 return true;
-            });
+            };
 
             $scope.removeGroup = function(group) {
+                var newText = '';
                 var index = -1;
                 for (var i = 0; i < BAExpression.groups.length; i++) {
                     var g = BAExpression.groups[i];
-                    if (g == group) {
+                    if (g.key == group.key) {
                         index = i;
-                    } else if (g.text.indexOf(group.key) > -1) {
-                        g.text = g.text.replace(group.key, group.text);
-                        g.expression.parse(g.text);
-                        g.html = $sce.getTrustedHtml(g.expression.getHtml());
+                        continue;
                     }
+                    newText = g.expression.text.replace(group.key, group.getText());
+                    updateGroupExpression(g, newText);
                 }
-
-                var text = $input.text();
-                if (text.indexOf(group.key) > -1) {
-                    text = text.replace(group.key, group.text);
-                    updateExpression(text);
-                }
+                //newText = $scope.expression.text.replace(new RegExp(group.key, "g"), group.getText());
+                newText = $scope.expression.text.replaceAll(group.key, group.getText());
+                updateExpression(newText);
 
                 if (index > -1) {
                     BAExpression.groups.splice(index, 1);
                 }
             };
 
-            var updateGroup = function(group) {
-                var $group = angular.element('.group[group-key="'+group.key+'"]');
-                var $gInput = $group.find('.input');
-                var text = $gInput.text();
+            var updateGroup = function(group, text) {
+                if (!text) {
+                    var $group = angular.element('.group[group-key="'+group.key+'"]');
+                    var $gInput = $group.find('.input');
+                    text = $gInput.text();
+                }
+
                 group.expression.parse(text);
-                group.text = text;
-                group.html = $sce.getTrustedHtml(group.expression.getHtml());
+                group.expression.html = $sce.getTrustedHtml(group.expression.getHtml());
             };
 
             var createGroup = function(text){
                 var group = $scope.expression.createGroup(text);
-                if (group.groupKey.key == "G2") {
-                    DEBUG_NODE(group.expression.rootNode);
-                }
-                group.html = $sce.getTrustedHtml(group.getHtml());// $sce.trustAsHtml(group.getHtml());
+
+                group.expression.html = $sce.getTrustedHtml(group.getHtml());
+
                 if (!group.groupKey.exists) {
                     BAExpression.groups.push(group);
                 }
@@ -140,11 +143,29 @@ app.directive('boolInput', function($parse, $sce){
             };
 
             $scope.groupChange = function(group){
+                var e = event;
+                if (e.keyCode == KEY_CONTROL || e.keyCode == KEY_SPACE) {
+                    e.preventDefault();
+                    return false;
+                }
                 updateGroup(group);
             };
 
             $scope.clearText = function(){
                 $input.html('');
+            };
+
+            var addGroup = function(text) {
+                var newGroup = createGroup(text);
+
+                updateExpression($scope.expression.groupFilter(newGroup));
+
+                /** Gruppenkey überall einsetzen */
+                for (var i = 0; i < BAExpression.groups.length; i++) {
+                    var g = BAExpression.groups[i];
+                    if (g.key == newGroup.key) continue;
+                    updateGroupExpression(g, g.expression.groupFilter(newGroup));
+                }
             };
 
             $scope.groupButton = function(group){
@@ -157,20 +178,16 @@ app.directive('boolInput', function($parse, $sce){
                 var selText = DomUtils.getSelectedText();
                 if (selText.length == 0) return true;
 
-                var newGroup = createGroup(selText);
-
-                /** Gruppenkey überall einsetzen */
-                for (var i = 0; i < BAExpression.groups.length; i++) {
-                    var g = BAExpression.groups[i];
-                    updateGroupExpression(g, g.expression.groupFilter(newGroup));
-                }
-
-                updateExpression($scope.expression.groupFilter(newGroup));
-                
-                DEBUG_NODE($scope.expression.findChild('G1'));
+                addGroup(selText);
 
                 $inp.focus();
             };
+
+            updateExpression('¬A∧((¬B∨C)∧¬D⇒E)');
+            /*addGroup("((¬B∨C)∧¬D⇒E)");
+            addGroup("(¬B∨C)");
+            addGroup("G2∧¬D");
+            addGroup("(G3⇒E)");*/
         }
     };
 });

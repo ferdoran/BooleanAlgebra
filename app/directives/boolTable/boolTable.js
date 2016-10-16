@@ -25,8 +25,6 @@ app.directive('boolTable', function($parse, $sce){
             }
 
             $scope.expression = domain.expression;
-            //console.log($scope.expression.rootNode);
-            return false;
 
             $scope.table = new BATable(domain.expression.rootNode, domain.groups);
 
@@ -34,11 +32,12 @@ app.directive('boolTable', function($parse, $sce){
             $scope.table.bits = [];
 
             var ths = $scope.table.getTheadData();
+
             var i;
-            for (i = ths.letters.length - 1; i >= 0; i--) {
+            for (i = 0; i < ths.letters.length; i++) {
                 $scope.table.ths.push({name: ths.letters[i], class: 'letters'});
             }
-            for (i = ths.groups.length - 1; i >= 0; i--) {
+            for (i = 0; i < ths.groups.length; i++) {
                 $scope.table.ths.push({name: ths.groups[i], class: 'groups'});
             }
             $scope.table.ths.push({name: 'F', class:'result'});

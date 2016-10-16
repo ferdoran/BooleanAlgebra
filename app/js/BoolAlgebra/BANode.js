@@ -55,7 +55,7 @@ var BANode = function(params){
 
         if (this.isLeaf()) {
             value = '<span class="expr">' + value + '</span>';
-        } else if (!this.isRoot() && this.isGroup()) {
+        } else if (!this.isRoot() && this.isGroup() || this.isRoot() && this.isGroup() && !this.child1 && !this.child2) {
             value = '<span class="expr group">' + value + '</span>';
         } else {
             var childA = this.child1 ? this.child1.getHtml() : '';
@@ -66,7 +66,7 @@ var BANode = function(params){
             value = childA + '<span class="'+ Class +'">'+value+'</span>' + childB;
         }
 
-        return this.isClips ? '(' + value + ')' : value;
+        return this.isClips ? '<span class="expr"><span class="clips">(</span>' + value + '<span class="clips">)</span></span>' : value;
     };
     
     this.isGroup = function(){

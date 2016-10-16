@@ -2,42 +2,34 @@
  * Created by Sergej on 12.10.2016.
  */
 var BATable = function(rootNode){
-    var groups = [];
     var letters = [];
+    var groups = [];
 
-    var addToQueue = function(node){
+    var loadGroups = function(){
+        for (var i = 0; i < BAExpression.groups.length; i++) {
+            var g = BAExpression.groups[i];
+            groups.push(g.key);
+        }
+    };
+    var searchLetter = function(node){
         if (!node) return false;
 
-        if (node.value == "G2") {
-            console.log(node);
-            console.log("isGroup:" + node.isGroup());
-            console.log("isRoot:" + node.isRoot());
+        if (node.isGroup() && !(node.child1 || node.child2)){
+            searchLetter(node.group.expression.rootNode);
         }
-        if (node.isRoot()) {
-        }
-        else if (node.isGroup()) {
-            var groupNode = node.subTree.rootNode;
-
-            if (groups.indexOf(node.value) < 0) {
-                //groups.push(node.value);
-            }
-
-            addToQueue(groupNode);
-        }
-        else if (node.value != SYMBOL_AND && node.value != SYMBOL_OR && node.value != SYMBOL_IMPL) {
-
+        else if (!node.isLeaf()) {
+            searchLetter(node.child1);
+            searchLetter(node.child2);
+        } else {
             if (letters.indexOf(node.value) < 0) {
                 letters.push(node.value);
             }
 
-
         }
-        addToQueue(node.child2);
-        addToQueue(node.child1);
     };
 
-    addToQueue(rootNode);
-    console.log(rootNode);
+    loadGroups();
+    searchLetter(rootNode);
 
     this.getTheadData = function(){
         return {groups: groups, letters: letters};

@@ -204,3 +204,16 @@ DomUtils = {
         return html;
     }
 };
+
+function IS_OPERATOR(char) {
+    return char == SYMBOL_AND || char == SYMBOL_OR || char == SYMBOL_IMPL;
+}
+
+function IS_ALLOWEDCHAR_AROUND_CLIP(char) {
+    return IS_OPERATOR(char) || char == '(' || char == ')';
+}
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};

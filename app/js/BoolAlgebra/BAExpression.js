@@ -5,12 +5,15 @@ var BAExpression = function(text) {
     var $this = this;
     var regex = {
         clips: /(\([0|1|A-Z0-9|∨|∧|¬|⇒]*\))/g,
+        clipname: /K[1-9]*/g,
         validation: "(¬*([((A-Za-z)(1-9)*)|1|0])(∧|∨)?)*"
     };
 
     this.rootNode = null;
     this.text = '';
     this.html = '';
+
+    this.errors = [];
 
     var kNumber = 1;
 
@@ -19,6 +22,10 @@ var BAExpression = function(text) {
         SYMBOL_OR,
         SYMBOL_AND
     ];
+
+    var pushError = function(msg, detail){
+        $this.errors.push({text: msg, detail: detail});
+    };
 
     var getClips = function(text) {
         var startIndex = 0,
@@ -45,7 +52,9 @@ var BAExpression = function(text) {
                 end: re.lastIndex - 1
             };
             clip.text = clip.raw.substr(1, clip.raw.length - 2);
+
             clips.push(clip);
+
             startIndex += re.lastIndex;
         }
 
@@ -92,7 +101,13 @@ var BAExpression = function(text) {
         }
         return null;
     };
-
+    var searchClipKey = function(text) {
+        var re = regex.clipname;
+        if ((match = re.exec(text)) !== null) {
+            return match[0];
+        }
+        return null;
+    };
     var getGroup = function(key) {
         var vKey = key.replace(SYMBOL_NEG, '');
         if (vKey.length < 2) return null;
@@ -104,24 +119,21 @@ var BAExpression = function(text) {
         }
         return null;
     };
-
     this.buildTree = function(text) {
         if (text == null) return null;
         var clip = getClip(text);
 
         if (clip) {
             text = clip.text;
-        }
+        } 
 
         var group = getGroup(text);
 
-        if (text == "G1") {
-            console.log(group);
-        }
-        /**@todo: Gruppen überall einsetzen */
-        /**@todo: prüfen, ob isGroup überall dann korrekt ist mit FindChild */
-
         var splitInfo = splitByOperator(text);
+
+        if (splitInfo.length <= 1) {
+            console.log(text);
+        }
 
         var node = new BANode({
             value: splitInfo.value,
@@ -139,38 +151,31 @@ var BAExpression = function(text) {
 
         return node;
     };
-
     this.findChild = function(value) {
         return this.rootNode.findChild(value);
     };
-
-
     this.parse = function(text) {
         text = text.toUpperCase();
         this.text = text;
 
         var clips = getClips(text);
         clipStack = clips.clips;
+
+        if (this.errors.length > 0) {
+            console.log("=====ERROR====");
+            console.log(this.errors);
+            console.log("==============");
+        }
+
         this.rootNode = this.buildTree(clips.output);
-        /*console.log("Übergabe: " + text);
-        console.log("Knoten: ");
-        console.log(this.rootNode);
-        console.log("isLeaf: " + this.rootNode.isLeaf());
-        console.log("isGroup: " + this.rootNode.isGroup());
-        console.log(this.getHtml());*/
     };
     if (text) {
         this.parse(text);
     }
 
     this.isValid = function(){
-        return true;
         if (this.text.length == 0) return true;
-        var firstChar = this.text.charAt(0);
-        var lastChar = this.text.charAt(this.text.length - 1);
-        return lastChar != SYMBOL_AND && lastChar != SYMBOL_OR
-            && firstChar != SYMBOL_AND && firstChar != SYMBOL_OR
-            && match[0] != "" && match[0] == this.text;
+        return (this.errors.length == 0 && this.rootNode != null);
     };
 
     this.getText = function(){
@@ -182,7 +187,8 @@ var BAExpression = function(text) {
     };
 
     this.groupFilter = function(group) {
-        return this.text.replace(group.text, group.key);
+        return this.text.replaceAll(group.getText(), group.key);
+        //return this.text.replace(new RegExp(group.getText(), "g"), group.key);
     };
 
     var groupIndex = 1;
