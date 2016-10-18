@@ -4,12 +4,13 @@
 }
 .boolTable table {
     width:100%;
-    border: 4px double black;
+    border: 4px double #ddd;
+    font-size:16px;
 }
 .boolTable table td {
     text-align:center;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
 }
 .boolTable table td input {
     width:20px;
@@ -18,21 +19,37 @@
     background:transparent;
 }
 .boolTable table th {
-    border:1px solid black;
+    border:1px solid #ddd;
     min-width:30px;
     text-align:center;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid #ddd;
 }
 .boolTable table .result,
 .boolTable table .specials,
 .boolTable table .groups,
 .boolTable table .clips {
-    border-left: 4px double black;
+    border-left: 4px double #ddd;
 
 }
 .boolTable table .specials ~ .specials,
 .boolTable table .groups ~ .groups,
 .boolTable table .clips ~ .clips {
-    border-left: 1px solid black;
+    border-left: 1px solid #ddd;
 }
 
+.boolTable select {
+    border: 1px solid transparent;
+    background: whitesmoke;
+    outline:0;
+    cursor:pointer;
+}
+.boolTable select:hover {
+    border-color: #e0e0e0;
+}
+.boolTable select option {
+    background: whitesmoke;
+}
+.boolTable select option:hover,
+.boolTable select option:checked {
+    background-color:#f5f5f5;
+}

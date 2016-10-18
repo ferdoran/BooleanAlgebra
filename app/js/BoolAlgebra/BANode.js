@@ -7,7 +7,6 @@ var BANode = function(params){
     this.child2 = params ? params.child2 : null;
     this.parent = params ? params.parent : null;
     this.isClips = params ? params.isClips : false;
-    //this.subTree = params ? params.subTree : null;
     this.parent = null;
     this.group = params ? params.group : null;
 
@@ -38,13 +37,6 @@ var BANode = function(params){
         return child;
     };
 
-    this.inverse = function(){
-        var negNode = new BANode(params);
-        negNode.child1 = null;
-        negNode.child2 = null;
-        negNode.isNegative = !this.isNegative;
-        return negNode;
-    };
 
     this.getValue = function(){
         return this.isNegative ? SYMBOL_NEG + this.value : this.value;
@@ -56,10 +48,11 @@ var BANode = function(params){
         if (this.isLeaf()) {
             value = '<span class="expr">' + value + '</span>';
         } else if (!this.isRoot() && this.isGroup() || this.isRoot() && this.isGroup() && !this.child1 && !this.child2) {
-            value = '<span class="expr group">' + value + '</span>';
+            //var width = this.group.key.length;
+            value = '<span class="expr group"><span>G</span><sub>'+this.group.number+'</sub></span>';
         } else {
-            var childA = this.child1 ? this.child1.getHtml() : '';
-            var childB = this.child2 ? this.child2.getHtml() : '';
+            var childA = this.child1 && this.child1.value != "" ? this.child1.getHtml() : '';
+            var childB = this.child2 && this.child2.value != "" ? this.child2.getHtml() : '';
 
             var Class = value == SYMBOL_AND || value == SYMBOL_IMPL || value == SYMBOL_OR ? 'op' : 'expr';
 
@@ -76,6 +69,53 @@ var BANode = function(params){
 
     this.isLeaf = function(){
         return !this.isGroup() && (!this.child1 || this.child1 == null || !this.child2 || this.child2 == null);
+    };
+
+    this.negResult = function(param) {
+        var result = this.getResult(param);
+        return result ? 0 : 1;
+    };
+
+    this.getResult = function(param) {
+        var result = 0;
+
+        if (this.isGroup() && !this.child1 && !this.child2) {
+            result = this.group.expression.rootNode.getResult(param);
+        } else {
+            if (IS_OPERATOR(this.value)) {
+                var childA = this.child1.getResult(param);
+                var childB = this.child2.getResult(param);
+
+                switch (this.value) {
+                    case SYMBOL_AND:
+                        result = childA == 1 && childB == 1;
+                        break;
+                    case SYMBOL_OR:
+                        result = childA == 1 || childB == 1;
+                        break;
+                    case SYMBOL_IMPL:
+                        childA = childA ? 0 : 1;
+                        result = childA == 1 || childB == 1;
+                        break;
+                }
+            } else {
+                for (var key in param) {
+                    if (param.hasOwnProperty(key)) {
+                        if (key == this.value) {
+                            result = Number(param[key]);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this.isNegative) {
+            result = result ? 0 : 1;
+        }
+
+        result = result ? 1 : 0;
+
+        return result;
     };
 };
 

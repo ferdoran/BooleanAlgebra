@@ -59,14 +59,18 @@ h1.diagram-title {
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
 }
-.createInfo button {
+.box button.btn {
   display:inline-block;
   color: #333;
   border:1px solid transparent;
   font-weight:bold;
   background:transparent;
-  padding: 1em 0.6em;
+  padding: 0.6em;
+  outline:0;
+  margin:.25em;
+  margin-top:1em;
+
 }
-.createInfo button:hover {
+.box button.btn:hover {
   border-color: #e0e0e0;
 }

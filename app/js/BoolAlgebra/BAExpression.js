@@ -2,16 +2,13 @@
  * Created by Sergej on 12.10.2016.
  */
 var BAExpression = function(text) {
+    text = text.replaceAll(' ','');
+
     var $this = this;
-    var regex = {
-        clips: /(\([0|1|A-Z0-9|∨|∧|¬|⇒]*\))/g,
-        clipname: /K[1-9]*/g,
-        validation: "(¬*([((A-Za-z)(1-9)*)|1|0])(∧|∨)?)*"
-    };
+
 
     this.rootNode = null;
     this.text = '';
-    this.html = '';
 
     this.errors = [];
 
@@ -33,7 +30,7 @@ var BAExpression = function(text) {
             match,
             clip,
             clips = [],
-            re = regex.clips;
+            re = BAExpression.regex.clips;
         while ((match = re.exec(text)) !== null) {
             if (count++ >= 99999) {
                 /* Unerwartete Dauerschleife verhindern */
@@ -102,20 +99,9 @@ var BAExpression = function(text) {
         return null;
     };
     var searchClipKey = function(text) {
-        var re = regex.clipname;
+        var re = BAExpression.regex.clipname;
         if ((match = re.exec(text)) !== null) {
             return match[0];
-        }
-        return null;
-    };
-    var getGroup = function(key) {
-        var vKey = key.replace(SYMBOL_NEG, '');
-        if (vKey.length < 2) return null;
-        for (var i = 0; i < BAExpression.groups.length; i++) {
-            var group = BAExpression.groups[i];
-            if (vKey == group.key) {
-                return group;
-            }
         }
         return null;
     };
@@ -127,7 +113,7 @@ var BAExpression = function(text) {
             text = clip.text;
         } 
 
-        var group = getGroup(text);
+        var group = BAGroup.get(text);
 
         var splitInfo = splitByOperator(text);
 
@@ -172,50 +158,64 @@ var BAExpression = function(text) {
     if (text) {
         this.parse(text);
     }
-
     this.isValid = function(){
         if (this.text.length == 0) return true;
         return (this.errors.length == 0 && this.rootNode != null);
     };
-
     this.getText = function(){
         return this.text;
     };
-
     this.getHtml = function(){
-        return this.rootNode.getHtml();
+        return this.rootNode ? this.rootNode.getHtml() : '';
     };
-
     this.groupFilter = function(group) {
         return this.text.replaceAll(group.getText(), group.key);
-        //return this.text.replace(new RegExp(group.getText(), "g"), group.key);
     };
-
-    var groupIndex = 1;
-    this.getGroupKey = function(text){
-        for (var i = 0; i < BAExpression.groups.length; i++) {
-            var group = BAExpression.groups[i];
-            if (group.text == text) {
-                return {key: group.key, exists: true};
-            }
-        }
-        return {key: 'G' + groupIndex++, exists: false};
+    this.getResult = function(param){
+        return this.rootNode.getResult(param);
     };
-
-    this.createGroup = function(text) {
-        var group = new BAGroup(text);
-
-        if (!group.isValid()) {
-            alert("'" + text + "' is not a valid group.");
+    this.useGroup = function(group) {
+        var text = this.groupFilter(group);
+        if (text != this.text) {
+            this.parse(text);
+            this.updateInput();
             return true;
         }
-        var groupKey = $this.getGroupKey(text);
+        return false;
+    };
+    this.unuseGroup = function(group) {
+        var text = this.text.replaceAll(group.key, group.getText());
+        if (text != this.text) {
+            this.parse(text);
+            this.updateInput();
+            return true;
+        }
+        return false;
+    };
+    this.updateInput = function(){
+        if (this.$input) {
+            this.$input.html(this.getHtml());
+        }
+    };
 
-        group.key = groupKey.key;
-        group.groupKey = groupKey;
-
-        return group;
+    this.useAllGroups = function(){
+        if (this.rootNode.isGroup()) return false;
+        for (var i = 0; i < BAGroup.groups.length; i++) {
+            var g = BAGroup.groups[i];
+            BAGroup.useGroup(this,g);
+        }
     };
 };
 
-BAExpression.groups = [];
+BAExpression.regex = {
+    clips: /(\([0|1|A-Z0-9|∨|∧|¬|⇒]*\))/g,
+    clipname: /K[1-9]*/g,
+    syntax: /(¬*([((A-Za-z)(1-9)*)|1|0])(∧|∨)?)*/g
+};
+
+BAExpression.validSyntax = function(text) {
+    var forbChar = function(char){
+        return char == SYMBOL_AND || char == SYMBOL_OR || char == SYMBOL_IMPL || char >= '1' && char <= '9';
+    };
+    return !(forbChar(text.charAt(0)) || forbChar(text.charAt(text.length - 1)));
+};

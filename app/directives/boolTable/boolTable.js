@@ -26,6 +26,10 @@ app.directive('boolTable', function($parse, $sce){
 
             $scope.expression = domain.expression;
 
+            $scope.checkResult = function(){
+                console.log("CHECK RESULT");
+            };
+
             domain.tableRefresh = function(){
                 $scope.table = new BATable(domain.expression.rootNode, domain.groups);
 

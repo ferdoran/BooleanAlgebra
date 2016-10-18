@@ -44,6 +44,7 @@
     margin: 0;
     margin-right:5px;
     font-weight:bold;
+    outline:0;
 }
 .boolInput button:hover {
     border-color: #e0e0e0;
@@ -70,7 +71,11 @@
 .boolInput .clips {
     color: #969696;
 }
-.boolInput .clearText {
+.boolInput span {
+    position:relative;
+    display:inline-block;
+}
+.boolInput button.clearText {
     position:absolute;
     right:-10px;
     background:transparent;
@@ -80,8 +85,9 @@
     color:#ccc;
     opacity:0.5;
     visibility: hidden;
+    outline:0;
 }
-.boolInput:hover .clearText {
+.boolInput:hover button.clearText {
     visibility: visible;
 }
 .boolInput .boolInputBody {
@@ -101,10 +107,10 @@
 .boolInput .boolInputBody:not(.isValid) {
     color:red;
 }
-.group:not(:first-child) {
+.group.boolExpr:not(:first-child) {
     border-top: 1px solid #ccc;
 }
-.group ~ .noGroupsMsg {
+.group.boolExpr ~ .noGroupsMsg {
     display:none;
 }
 .noGroupsMsg {
@@ -117,15 +123,38 @@ button.removeGroupButton {
     opacity:0;
     visibility: hidden;
     border:0;
+    outline:0;
     -o-transition: all .25s ease-in-out;
     -moz-transition: all .25s ease-in-out;
     -webkit-transition: all .25s ease-in-out;
     transition: all .25s ease-in-out;
+    margin:0;
 }
 .group:hover button.removeGroupButton {
     opacity:1;
     visibility: visible;
 }
 .group .input {
-    width:calc(100% - 107px);
+
 }
+.boolExpr:not(.group) button.removeGroupButton {
+    display:none;
+}
+.boolInput .inputRel {
+    position:relative;
+}
+
+.boolInput .group .inputRel {
+    width:calc(100% - 32px);
+}
+/*.boolInput .input sub {
+    position:absolute;
+    top:0;
+}
+.boolInput .input .expr.group {
+    position:relative;
+
+}
+.boolInput .input .group span {
+    float:left;
+}*/

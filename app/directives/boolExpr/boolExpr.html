@@ -1,0 +1,17 @@
+<div class="boolExpr">
+    <div class="boolInputOptions">
+        <button class="negButton" ng-click="addChar('¬')" focusable="false">¬</button>
+        <button class="andButton" ng-click="addChar('∧')" focusable="false">∧</button>
+        <button class="orButton" ng-click="addChar('∨')" focusable="false">∨</button>
+        <button class="implButton" ng-click="addChar('⇒')" focusable="false">⇒</button>
+        <button class="groupButton" ng-click="groupButton()"  focusable="false">G<sub>x</sub></button>
+    </div>
+    <div ng-class="{ 'boolInputBody' : true, 'isValid': expression.isValid()}">
+        <div class="inputRel">
+            <label class="f">{{symbol}}<sub>{{symbolSmall}}</sub> := </label>
+            <div class="input" placeholder="Boolescher Ausdruck" contentEditable spellcheck="false" autocomplete="off" bind-expression="expression"></div>
+            <button class="clearText" ng-click="clearText()"><span class="fa fa-close"></span></button>
+        </div>
+        <button class="removeGroupButton" ng-click="removeGroup(group)"><span class="fa fa-close"></span></button>
+    </div>
+</div>

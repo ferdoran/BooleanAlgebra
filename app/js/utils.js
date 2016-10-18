@@ -105,7 +105,6 @@ DomUtils = {
     },
     getSelectionStart: function() {
         var node = document.getSelection().getStartElement();
-        console.log(node.nodeType);
         return node;
     },
     getCaretCharacterOffsetWithin: function(element) {
@@ -131,7 +130,61 @@ DomUtils = {
         }
         return caretOffset;
     },
+    _setCaretPosition: function(element, offset) {
+        var range = document.createRange();
+        var sel = window.getSelection();
 
+        //select appropriate node
+        var currentNode = null;
+        var previousNode = null;
+
+        var visitNode = function(node) {
+            console.log(node);
+            for (var i = 0; i < node.childNodes.length; i++) {
+
+                //save previous node
+                //previousNode = currentNode;
+
+                //get current node
+                currentNode = element.childNodes[i];
+                //if we get span or something else then we should get child node
+                if (currentNode.childNodes.length > 0){
+                    //visitNode(currentNode);
+                }
+
+                console.log(currentNode.nodeValue);
+                //calc offset in current node
+                //if (previousNode != null) {
+                //    offset -= previousNode.length;
+                //}
+                //check whether current node has enough length
+                //if (offset <= currentNode.length) {
+                //    break;
+                //}
+            }
+        };
+
+        visitNode(element);
+
+
+        //move caret to specified offset
+        if (currentNode != null) {
+            if (currentNode.length < offset) {
+                offset--;
+            }
+            try {
+                range.setStart(currentNode, offset);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+                return true;
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        return false;
+    },
     setCaretPosition: function(element, offset) {
         var range = document.createRange();
         var sel = window.getSelection();
@@ -151,6 +204,8 @@ DomUtils = {
                 currentNode = currentNode.childNodes[0];
             }
 
+            if (currentNode)
+            console.log(currentNode.nodeValue);
             //calc offset in current node
             if (previousNode != null) {
                 offset -= previousNode.length;
@@ -165,16 +220,15 @@ DomUtils = {
             if (currentNode.length < offset) {
                 offset--;
             }
-            try {
+
                 range.setStart(currentNode, offset);
                 range.collapse(true);
                 sel.removeAllRanges();
                 sel.addRange(range);
-            }
-            catch (e) {
-                console.log(e);
-            }
+                return true;
+
         }
+        return false;
     },
     getSelectedText: function(withHtml) {
         var html = "";

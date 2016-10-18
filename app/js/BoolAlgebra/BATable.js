@@ -6,8 +6,8 @@ var BATable = function(rootNode){
     var groups = [];
 
     var loadGroups = function(){
-        for (var i = 0; i < BAExpression.groups.length; i++) {
-            var g = BAExpression.groups[i];
+        for (var i = 0; i < BAGroup.groups.length; i++) {
+            var g = BAGroup.groups[i];
             groups.push(g.key);
         }
     };
