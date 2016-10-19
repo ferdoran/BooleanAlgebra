@@ -88,3 +88,21 @@
         transform:rotate(360deg);
     }
 }
+
+.boolTable .boolTableSelect {
+    position:relative;
+}
+.boolTable .boolTableSelect .resultInfo {
+    position:absolute;
+    top:2px;
+    right:4px;
+}
+.boolTable .boolTableSelect .resultInfo.fa-close {
+    color:#CF2A28;
+}
+.boolTable .boolTableSelect .resultInfo.fa-check {
+    color:#30C12E;
+}
+.boolTable .boolTableSelect .resultInfo.no-info {
+    visibility: hidden;
+}

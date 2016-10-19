@@ -9,11 +9,51 @@ app.directive('boolTableSelect', function($parse, $sce) {
         replace: true,
         templateUrl: "directives/boolTable/boolTableSelect.html",
         scope: {
-            group: '=',
+            param: '=bindParam',
             expression: '=bindExpression'
         },
         link: function ($scope, $element, $attr) {
+            $scope.isCorrect = null;
+            $scope.faClass = '';
+            $scope.value = '';
 
+            $scope.isDirty = false;
+
+            var locateClass = function(){
+                if ($scope.isCorrect == null) {
+                    $scope.faClass = 'no-info';
+                } else if ($scope.isCorrect == true) {
+                    $scope.faClass = 'fa-check';
+                } else {
+                    $scope.faClass = 'fa-close';
+                }
+            };
+            locateClass();
+
+            var checkResult = function(){
+                if (!$scope.isDirty) return false;
+                if ($scope.value == '') {
+                    $scope.isCorrect = null;
+                } else {
+                    var value = Number($scope.value);
+                    console.log("=====EXPRESSION====");
+                    console.log($scope.expression);
+                    var result = $scope.expression.getResult($scope.param);
+                    console.log($scope.param);
+                    console.log("Result: " + result + ", Value: " + value);
+                    $scope.isCorrect = value == result;
+                }
+            };
+
+            $scope.$on('check-result', function(){
+                checkResult();
+                locateClass();
+            });
+
+            $element.on('change', function(){
+                $scope.isDirty = true;
+                //locateClass();
+            });
         }
     };
 });

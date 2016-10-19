@@ -22,7 +22,7 @@ app.directive('boolTable', function($parse, $sce){
             $scope.expression = domain.expression;
 
             $scope.checkResult = function(){
-                console.log("CHECK RESULT");
+                $scope.$broadcast('check-result');
             };
 
             domain.tableRefresh = function(){
