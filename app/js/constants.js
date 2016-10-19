@@ -5,6 +5,7 @@ const SYMBOL_OR = '∨';
 const SYMBOL_AND = '∧';
 const SYMBOL_NEG = '¬';
 const SYMBOL_IMPL = '⇒';
+const SYMBOL_EQUAL = '⇔';
 
 const DN_NR = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
 const UP_NR = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹'];

@@ -54,7 +54,7 @@ var BANode = function(params){
             var childA = this.child1 && this.child1.value != "" ? this.child1.getHtml() : '';
             var childB = this.child2 && this.child2.value != "" ? this.child2.getHtml() : '';
 
-            var Class = value == SYMBOL_AND || value == SYMBOL_IMPL || value == SYMBOL_OR ? 'op' : 'expr';
+            var Class = IS_OPERATOR(value) ? 'op' : 'expr';
 
             value = childA + '<span class="'+ Class +'">'+value+'</span>' + childB;
             //value = childA + value + childB;
@@ -96,6 +96,9 @@ var BANode = function(params){
                     case SYMBOL_IMPL:
                         childA = childA ? 0 : 1;
                         result = childA == 1 || childB == 1;
+                        break;
+                    case SYMBOL_EQUAL:
+                        result = childA == childB;
                         break;
                 }
             } else {

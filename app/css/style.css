@@ -65,11 +65,7 @@ h1.diagram-title {
   border:1px solid transparent;
   font-weight:bold;
   background:transparent;
-  padding: 0.6em;
-  outline:0;
-  margin:.25em;
-  margin-top:1em;
-
+  padding: 1em 0.6em;
 }
 .box button.btn:hover {
   border-color: #e0e0e0;

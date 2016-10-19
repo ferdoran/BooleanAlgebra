@@ -15,6 +15,7 @@ var BAExpression = function(text) {
     var kNumber = 1;
 
     var priorSplit = [
+        SYMBOL_EQUAL,
         SYMBOL_IMPL,
         SYMBOL_OR,
         SYMBOL_AND

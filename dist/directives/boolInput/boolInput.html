@@ -1,16 +1,8 @@
 <div class="boolInput">
-    <div class="boolInputOptions">
-        <button class="andButton" ng-click="addChar('∧')" focusable="false">∧</button>
-        <button class="orButton" ng-click="addChar('∨')" focusable="false">∨</button>
-        <button class="negButton" ng-click="addChar('¬')" focusable="false">¬</button>
-        <button class="groupButton" ng-click="groupButton()"  focusable="false">G<sub>x</sub></button>
-    </div>
-    <div class="boolInputBody">
-        <label class="f">F:= </label><div id="{{id}}" class="input" placeholder="Boolsche Formel" contentEditable></div>
-    </div>
+    <bool-expr bool-domain="{{boolDomain}}" bool-symbol="F" bool-symbol-small="A" bool-value="{{expression.text}}" bind-expression="expression"></bool-expr>
     <div class="boolInputGroups">
-        <div ng-repeat="group in groups">
-            <label class="f">{{group.key}}:= {{group.formula.getText()}}</label>
-        </div>
+        <h3 class="diagram-title">Gruppen</h3>
+        <bool-expr ng-repeat="group in groups" class="group" group="group" group-key="{{group.key}}" bool-domain="{{boolDomain}}" bool-symbol="G" bool-symbol-small="{{group.number}}" bind-expression="group.expression"></bool-expr>
+        <div class="noGroupsMsg">Es wurden keine Gruppen angelegt. <br>Markieren Sie einen gültigen Bereich im Ausdruck und klicken Sie <strong>[G<sub>x</sub>]</strong>, um Gruppen anzulegen.</div>
     </div>
 </div>

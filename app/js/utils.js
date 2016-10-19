@@ -260,7 +260,7 @@ DomUtils = {
 };
 
 function IS_OPERATOR(char) {
-    return char == SYMBOL_AND || char == SYMBOL_OR || char == SYMBOL_IMPL;
+    return char == SYMBOL_AND || char == SYMBOL_OR || char == SYMBOL_IMPL || char == SYMBOL_EQUAL;
 }
 
 function IS_ALLOWEDCHAR_AROUND_CLIP(char) {

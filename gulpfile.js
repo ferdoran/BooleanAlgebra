@@ -52,22 +52,12 @@ gulp.task('sass', ['styles'], function(){
     gulp.src('app/css/style.min.css')
         .pipe(gulp.dest('dist/css'));
 });
-gulp.task('styles', function(){
-    gulp.src('app/scss/style.scss')
-        .pipe(sass())
-        .pipe(gulp.dest('app/css'))
-        .pipe(cssmin())
-        .pipe(rename({
-            suffix: '.min'
-        }))
-        .pipe(gulp.dest('app/css'))
-});
 
 gulp.task('useref', function(){
     return gulp.src('app/*.html')
         .pipe(useref())
-        //.pipe(gulpif('*.js', uglify()))
-        .pipe(gulpif('*.css', cssnano()))
+        .pipe(gulpif('*.js', uglify({mangle: false})))
+        .pipe(gulpif('*.css', cssmin()))
         .pipe(gulp.dest('dist'));
 });
 
@@ -79,6 +69,11 @@ gulp.task('directives', function(){
 gulp.task('images', function(){
     gulp.src('app/images/**/*.+(png|jpg|jpeg|gif|svg)')
         .pipe(gulp.dest('dist/images'));
+});
+
+gulp.task('font-awesome', function(){
+    gulp.src('app/bower_components/font-awesome/fonts/**/*')
+        .pipe(gulp.dest('dist/fonts'));
 });
 
 gulp.task('views', function(){
@@ -95,8 +90,8 @@ gulp.task('translations', function(){
     gulp.src('app/translations/*.json')
         .pipe(gulp.dest('dist/translations'));
 });
-gulp.task('build', ['clean', 'styles', 'directives', 'images', 'translations', 'views', 'useref'], function(){
+gulp.task('build', ['clean', 'directives', 'font-awesome', 'images', 'translations', 'views', 'useref'], function(){
     console.log("Building files");
 });
 
-gulp.task('default', ['build', 'webserver-dist']);
+gulp.task('default', ['build','webserver-dist']);

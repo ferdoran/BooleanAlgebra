@@ -1,36 +1,7 @@
 <div class="boolInput">
     <bool-expr bool-domain="{{boolDomain}}" bool-symbol="F" bool-symbol-small="A" bool-value="{{expression.text}}" bind-expression="expression"></bool-expr>
-
-    <!--<bool-expr group="demoGroup" bool-domain="{{boolDomain}}" bool-symbol="G" bool-symbol-small="{{demoGroup.number}}"></bool-expr>-->
-
-    <!--<div class="boolInputOptions">
-        <button class="negButton" ng-click="addChar('¬')" focusable="false">¬</button>
-        <button class="andButton" ng-click="addChar('∧')" focusable="false">∧</button>
-        <button class="orButton" ng-click="addChar('∨')" focusable="false">∨</button>
-        <button class="implButton" ng-click="addChar('⇒')" focusable="false">⇒</button>
-        <button class="groupButton" ng-click="groupButton()"  focusable="false">G<sub>x</sub></button>
-    </div>
-    <div ng-class="{ 'boolInputBody' : true, 'isValid': expression.isValid()}">
-        <label class="f">{{symbol}}:= </label><div id="{{id}}" class="input" placeholder="Boolescher Ausdruck" ng-keydown="keyDown()" ng-keyup="keyUp()" contentEditable></div><button class="clearText" ng-click="clearText()"><span class="fa fa-close"></span></button>
-    </div>-->
     <div class="boolInputGroups">
         <h3 class="diagram-title">Gruppen</h3>
-        <!--
-        <div ng-repeat="group in groups" class="group" group-key="{{group.key}}">
-            <div class="boolInputGroup">
-                <div class="boolInputOptions">
-                    <button class="negButton" ng-click="addChar('¬',group)" focusable="false">¬</button>
-                    <button class="andButton" ng-click="addChar('∧',group)" focusable="false">∧</button>
-                    <button class="orButton" ng-click="addChar('∨',group)" focusable="false">∨</button>
-                    <button class="implButton" ng-click="addChar('⇒',group)" focusable="false">⇒</button>
-                    <button class="groupButton" ng-click="groupButton(group)"  focusable="false">G<sub>x</sub></button>
-                </div>
-                <div ng-class="{ 'boolInputBody' : true, 'isValid': true}">
-                    <label class="f">{{group.key}}:=</label><div class="input groupInput" placeholder="Boolescher Ausdruck"  ng-keydown="keyDown()" ng-keyup="groupChange(group)" caret contentEditable ng-bind-html="group.expression.html"></div><button class="removeGroupButton" ng-click="removeGroup(group)"><span class="fa fa-close"></span></span></button>
-                </div>
-            </div>
-        </div>-->
-
         <bool-expr ng-repeat="group in groups" class="group" group="group" group-key="{{group.key}}" bool-domain="{{boolDomain}}" bool-symbol="G" bool-symbol-small="{{group.number}}" bind-expression="group.expression"></bool-expr>
         <div class="noGroupsMsg">Es wurden keine Gruppen angelegt. <br>Markieren Sie einen gültigen Bereich im Ausdruck und klicken Sie <strong>[G<sub>x</sub>]</strong>, um Gruppen anzulegen.</div>
     </div>
