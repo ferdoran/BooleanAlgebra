@@ -1,8 +1,8 @@
 <div class="boolInput">
-    <bool-expr bool-domain="{{boolDomain}}" bool-symbol="F" bool-symbol-small="A" bool-value="{{expression.text}}" bind-expression="expression"></bool-expr>
+    <bool-expr bool-domain="{{boolDomain}}" bool-symbol="F" bool-value="{{expression.text}}" bind-expression="expression"></bool-expr>
     <div class="boolInputGroups">
         <h3 class="diagram-title">Gruppen</h3>
-        <bool-expr ng-repeat="group in groups" class="group" group="group" group-key="{{group.key}}" bool-domain="{{boolDomain}}" bool-symbol="G" bool-symbol-small="{{group.number}}" bind-expression="group.expression"></bool-expr>
+        <bool-expr ng-repeat="group in groups" class="group" group="group" group-key="{{group.key}}" bool-domain="{{boolDomain}}" bool-symbol="{{group.key}}" bind-expression="group.expression"></bool-expr>
         <div class="noGroupsMsg">Es wurden keine Gruppen angelegt. <br>Markieren Sie einen gültigen Bereich im Ausdruck und klicken Sie <strong>[G<sub>x</sub>]</strong>, um Gruppen anzulegen.</div>
     </div>
 </div>

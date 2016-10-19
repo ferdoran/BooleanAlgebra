@@ -205,7 +205,7 @@ DomUtils = {
             }
 
             if (currentNode)
-            console.log(currentNode.nodeValue);
+            //console.log(currentNode.nodeValue);
             //calc offset in current node
             if (previousNode != null) {
                 offset -= previousNode.length;
@@ -270,4 +270,8 @@ function IS_ALLOWEDCHAR_AROUND_CLIP(char) {
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.split(search).join(replacement);
+};
+Array.prototype.clear = function() {
+    if (this.length == 0) return;
+    this.splice(0, this.length);
 };

@@ -48,8 +48,8 @@ var BANode = function(params){
         if (this.isLeaf()) {
             value = '<span class="expr">' + value + '</span>';
         } else if (!this.isRoot() && this.isGroup() || this.isRoot() && this.isGroup() && !this.child1 && !this.child2) {
-            //var width = this.group.key.length;
-            value = '<span class="expr group"><span>G</span><sub>'+this.group.number+'</sub></span>';
+            //value = '<span class="expr group"><span>G</span><sub>'+this.group.number+'</sub></span>';
+            value = '<span class="expr group">' + value + '</span>';
         } else {
             var childA = this.child1 && this.child1.value != "" ? this.child1.getHtml() : '';
             var childB = this.child2 && this.child2.value != "" ? this.child2.getHtml() : '';

@@ -10,11 +10,14 @@ app.directive('boolInput', function($parse, $sce){
         scope:true,
         templateUrl: "directives/boolInput/boolInput.html",
         link: function($scope, $element, $attr) {
-            $scope.expression = new BAExpression("¬A∧B∨C∧B∧B");
+            var testExpr = "¬A∧B∨C∧B∧B";
+            //testExpr = 'A⇔B∨C';
+
+            $scope.expression = new BAExpression(testExpr);
 
             $scope.groups = BAGroup.groups;
 
-            BAGroup.add(new BAGroup("A" + SYMBOL_OR + "B"));
+            BAGroup.add(new BAGroup("B" + SYMBOL_AND + "B"));
             BAGroup.add(new BAGroup("B" + SYMBOL_OR + "C"));
 
             $scope.expression.useAllGroups();
@@ -45,8 +48,6 @@ app.directive('boolInput', function($parse, $sce){
             };
 
             testExpr($scope.expression, ['A','B','C']);
-
-
 
             var domain = app.domains[$attr.boolDomain];
             if (domain) {

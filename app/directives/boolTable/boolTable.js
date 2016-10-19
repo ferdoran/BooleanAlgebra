@@ -10,11 +10,6 @@ app.directive('boolTable', function($parse, $sce){
         scope:true,
         templateUrl: "directives/boolTable/boolTable.html",
         link: function($scope, $element, $attr) {
-            if ($attr.boolSymbol) {
-                $scope.symbol = $attr.boolSymbol;
-            } else {
-                $scope.symbol = 'F';
-            }
             var $table = $element.find('table');
             var table = $table[0];
             /* interpretierte id dem input zuweisen */
@@ -31,49 +26,13 @@ app.directive('boolTable', function($parse, $sce){
             };
 
             domain.tableRefresh = function(){
-                $scope.table = new BATable(domain.expression.rootNode, domain.groups);
-
-                $scope.table.ths = [];
-                $scope.table.bits = [];
-
-                var ths = $scope.table.getTheadData();
-
-                var i;
-                for (i = 0; i < ths.letters.length; i++) {
-                    $scope.table.ths.push({name: ths.letters[i], class: 'letters'});
+                if (!$scope.table) {
+                    $scope.table = new BATable(domain.expression.rootNode);
+                    domain.table = $scope.table;
+                } else {
+                    $scope.table.build(domain.expression.rootNode);
                 }
-                for (i = 0; i < ths.groups.length; i++) {
-                    $scope.table.ths.push({name: ths.groups[i], class: 'groups'});
-                }
-                $scope.table.ths.push({name: 'F', class:'result'});
-                domain.table = $scope.table;
-
-
-                var lettersCount = ths.letters.length;
-                var max = Math.pow(2, lettersCount);
-
-                for (var l = 0; l < max; l++) {
-                    var bitLine = { letters: [], groups: [], clips: [] };
-
-                    var lTemp = l;
-                    for (i = lettersCount - 1; i >= 0; i--) {
-                        var v = 0;
-                        var vTemp = Math.pow(2,i);
-
-                        if (lTemp >= vTemp) {
-                            lTemp -= vTemp;
-                            v = 1;
-                        }
-                        bitLine.letters.push({value: v});
-                    }
-
-                    for (i = 0; i < ths.groups.length; i++) {
-                        bitLine.groups.push({value: 0});
-                    }
-
-                    bitLine.result = {value: 0};
-                    $scope.table.bits.push(bitLine);
-                }
+                $scope.table.updateView();
             };
             domain.tableRefresh();
         }

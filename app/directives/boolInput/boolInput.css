@@ -66,7 +66,7 @@
     color:#2699ff;
 }
 .boolInput .expr.group {
-    color:#0377dd;
+    color:#015BB5;
 }
 .boolInput .clips {
     color: #969696;
@@ -147,14 +147,3 @@ button.removeGroupButton {
 .boolInput .group .inputRel {
     width:calc(100% - 32px);
 }
-/*.boolInput .input sub {
-    position:absolute;
-    top:0;
-}
-.boolInput .input .expr.group {
-    position:relative;
-
-}
-.boolInput .input .group span {
-    float:left;
-}*/

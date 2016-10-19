@@ -3,7 +3,7 @@
  */
 var app = angular.module('boolean-algebra');
 
-app.directive('contenteditable', function() {
+app.directive('contenteditable', function($timeout) {
     return {
         restrict: 'A',
         scope: {
@@ -15,16 +15,21 @@ app.directive('contenteditable', function() {
             var isForbiddenKey = function(e) {
                 return e.keyCode == KEY_SPACE || e.keyCode == KEY_COMMA || e.keyCode == KEY_DOT;
             };
+            var refreshTable = function(){
+                if (!expression.domain || !expression.domain.tableRefresh) return false;
 
-            var tmpCaretPosition = 0;
+                var domain = expression.domain;
+                $timeout.cancel(domain.table.buildTO);
+                domain.table.buildTO = $timeout(function() {
+                    domain.tableRefresh();
+                },500);
+            };
 
             $element.on('keydown', function(e){
                 if (isForbiddenKey(e)) {
                     e.preventDefault();
                     return false;
                 }
-                tmpCaretPosition = DomUtils.getCaretCharacterOffsetWithin($element.get(0));
-                console.log(tmpCaretPosition);
             }).on('keyup change', function(e){
                 if (e.type == "keyup") {
                     if (e.keyCode == KEY_CONTROL || e.keyCode == KEY_SPACE) {
@@ -36,24 +41,15 @@ app.directive('contenteditable', function() {
                     }
                 }
 
-                var text = $element.text().toUpperCase();
+                var text = $element.text();
 
                 expression.parse(text);
 
                 var position = DomUtils.getCaretCharacterOffsetWithin($element.get(0));
-                var textLength = expression.text.length;
                 $element.html(expression.getHtml());
-                var newTextLength = expression.text.length;
+                DomUtils.setCaretPosition($element.get(0), position);
 
-                if (textLength != newTextLength) {
-                    console.log("textLength: " + textLength);
-                    console.log("newTextLength: " + newTextLength);
-                }
-
-                if (!DomUtils.setCaretPosition($element.get(0), position)) {
-
-                    console.log(tmpCaretPosition);
-                }
+                refreshTable();
             });
         }
     }
@@ -92,6 +88,8 @@ app.directive('boolExpr', function($parse, $sce) {
             if (domain && !$scope.group) {
                 domain.expression = $scope.expression;
             }
+
+            $scope.expression.domain = domain;
 
             if ($scope.group) {
                 updateExpressions($scope.group);

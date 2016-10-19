@@ -1,4 +1,4 @@
-<div class="boolTable">
+<div ng-class="{boolTable: true, isLoading: table.isLoading}">
     <table>
         <thead>
             <tr>
@@ -7,9 +7,13 @@
         </thead>
         <tbody>
             <tr ng-repeat="bitLine in table.bits" class="bitLine">
-                <td ng-repeat="bit in bitLine.letters" class="bit letters" title="{{bit.bitCounter}} >= {{bit.vTemp}}">{{bit.value}}</td>
-                <td ng-repeat="bit in bitLine.groups" class="bit groups"><select bit-value="{{bit.value}}" size="1"><option></option><option value="0">0</option><option value="1">1</option></select></td>
-                <td class="bit result"><select bit-value="{{bitLine.result.value}}" size="1"><option></option><option value="0">0</option><option value="1">1</option></select></td>
+                <td ng-repeat="bit in bitLine.letters" class="bit letters">{{bit.value}}</td>
+                <td ng-repeat="bit in bitLine.groups" class="bit groups">
+                    <bool-table-select></bool-table-select>
+                </td>
+                <td class="bit result">
+                    <bool-table-select></bool-table-select>
+                </td>
             </tr>
         </tbody>
     </table>
