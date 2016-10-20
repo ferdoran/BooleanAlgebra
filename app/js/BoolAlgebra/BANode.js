@@ -22,11 +22,9 @@ var BANode = function(params){
     this.isValid = function(){
         return (this.child1 && this.child2);
     };
-
     this.isRoot = function(){
         return this.parent == null;
     };
-
     this.findChild = function(value){
         if (this.value == value) { return this; }
 
@@ -39,14 +37,11 @@ var BANode = function(params){
 
         return child;
     };
-
     this.getHtml = function(){
         var value = this.value;
-
         if (this.isLeaf()) {
             value = '<span class="expr">' + value + '</span>';
         } else if (!this.isRoot() && this.isGroup() || this.isRoot() && this.isGroup() && !this.child1 && !this.child2) {
-            //value = '<span class="expr group"><span>G</span><sub>'+this.group.number+'</sub></span>';
             value = '<span class="expr group">' + value + '</span>';
         } else {
             var childA = this.child1 && this.child1.value != "" ? this.child1.getHtml() : '';
@@ -55,22 +50,17 @@ var BANode = function(params){
             var Class = IS_OPERATOR(value) ? 'op' : 'expr';
 
             value = childA + '<span class="'+ Class +'">'+value+'</span>' + childB;
-            //value = childA + value + childB;
         }
-        //return this.isClips ? '(' + value + ')' : value;
 
         var prefix = this.isNegative ? SYMBOL_NEG : '';
         return prefix + (this.isClips ? '<span class="clips">(</span>' + value + '<span class="clips">)</span>' : value);
     };
-    
     this.isGroup = function(){
         return this.group != null;
     };
-
     this.isLeaf = function(){
         return !this.isGroup() && (!this.child1 || this.child1 == null || !this.child2 || this.child2 == null);
     };
-
     this.negResult = function(param) {
         var result = this.getResult(param);
         return result ? 0 : 1;
