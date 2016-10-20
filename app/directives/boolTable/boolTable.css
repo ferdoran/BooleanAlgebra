@@ -35,6 +35,9 @@
     border: 4px double #ddd;
     font-size:16px;
 }
+.boolTable table tr:hover {
+    background-color: #eee;
+}
 .boolTable table td {
     text-align:center;
     border-left: 1px solid #ddd;

@@ -220,13 +220,15 @@ DomUtils = {
             if (currentNode.length < offset) {
                 offset--;
             }
-
+            try {
                 range.setStart(currentNode, offset);
                 range.collapse(true);
                 sel.removeAllRanges();
                 sel.addRange(range);
                 return true;
-
+            } catch (e) {
+                console.log(e);
+            }
         }
         return false;
     },
@@ -267,6 +269,14 @@ function IS_ALLOWEDCHAR_AROUND_CLIP(char) {
     return IS_OPERATOR(char) || char == '(' || char == ')';
 }
 
+function HAS_OPERATOR(text) {
+    for (var i = 0; i < text.length; i++) {
+        var char = text.charAt(i);
+        if (IS_OPERATOR(char)) return true;
+    }
+    return false;
+}
+
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.split(search).join(replacement);
@@ -275,3 +285,18 @@ Array.prototype.clear = function() {
     if (this.length == 0) return;
     this.splice(0, this.length);
 };
+
+function GET_DN_SYMBOL(number) {
+    var s = '' + number;
+    var rs = '';
+
+    for (var i = 0; i < s.length; i++) {
+        var idx = s.charAt(i);
+        rs += DNR[idx]
+    }
+    return rs;
+}
+
+console.log(GET_DN_SYMBOL(1));
+console.log(GET_DN_SYMBOL(12));
+console.log(GET_DN_SYMBOL(2123));

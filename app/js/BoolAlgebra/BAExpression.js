@@ -43,12 +43,14 @@ var BAExpression = function(text) {
                 return false;
             }
             var m = match[0];
+
             clip = {
                 key: "K" + kNumber++,
                 raw: m,
                 start: match.index,
                 end: re.lastIndex - 1
             };
+
             clip.text = clip.raw.substr(1, clip.raw.length - 2);
 
             clips.push(clip);
@@ -57,6 +59,7 @@ var BAExpression = function(text) {
         }
 
         var output = text;
+
         if (clips.length > 0) {
             var i;
             for (i = 0; i < clips.length; i++) {
@@ -71,7 +74,6 @@ var BAExpression = function(text) {
         }
         return {input: text, output: output, clips: clips};
     };
-
     var splitByOperator = function(text){
         for (var i = 0; i < priorSplit.length; i++) {
             var pS = priorSplit[i];
@@ -88,13 +90,29 @@ var BAExpression = function(text) {
     };
 
     var clipStack;
-    var getClip = function(key) {
+    var _getClip = function(key) {
         var vKey = key.replace(SYMBOL_NEG, '');
         if (vKey.length < 2) return null;
         for (var i = 0; i < clipStack.length; i++) {
             var clip = clipStack[i];
             if (clip.key == vKey) {
                 return clip;
+            }
+        }
+        return null;
+    };
+    var getClipInfo = function(text) {
+        var re = BAExpression.regex.clipname;
+        var match = re.exec(text);
+
+        if (match === null || HAS_OPERATOR(text)) return null;
+        var isNegative = text.charAt(0) == SYMBOL_NEG;
+        var vKey = match[0];
+        if (vKey.length < 2) return null;
+        for (var i = 0; i < clipStack.length; i++) {
+            var clip = clipStack[i];
+            if (clip.key == vKey) {
+                return {clip: clip, isNegative: isNegative};
             }
         }
         return null;
@@ -108,10 +126,10 @@ var BAExpression = function(text) {
     };
     this.buildTree = function(text) {
         if (text == null) return null;
-        var clip = getClip(text);
+        var clipInfo = getClipInfo(text);
 
-        if (clip) {
-            text = clip.text;
+        if (clipInfo) {
+            text = clipInfo.clip.text;
         } 
 
         var group = BAGroup.get(text);
@@ -124,10 +142,11 @@ var BAExpression = function(text) {
 
         var node = new BANode({
             value: splitInfo.value,
-            isClips: clip ? true : false,
+            isClips: clipInfo ? true : false,
             child1: this.buildTree(splitInfo.a),
             child2: this.buildTree(splitInfo.b),
-            group: group
+            group: group,
+            isNegative: clipInfo ? clipInfo.isNegative : false
         });
         if (node.child1) {
             node.child1.parent = node;
@@ -145,8 +164,10 @@ var BAExpression = function(text) {
         text = text.toUpperCase();
         this.text = text;
 
+        kNumber = 1;
         var clips = getClips(text);
         clipStack = clips.clips;
+        console.log(clips);
 
         if (this.errors.length > 0) {
             console.log("=====ERROR====");
@@ -216,7 +237,7 @@ BAExpression.regex = {
 
 BAExpression.validSyntax = function(text) {
     var forbChar = function(char){
-        return char == SYMBOL_AND || char == SYMBOL_OR || char == SYMBOL_IMPL || char >= '1' && char <= '9';
+        return char == SYMBOL_AND || char == SYMBOL_OR || char == SYMBOL_IMPL;
     };
     return !(forbChar(text.charAt(0)) || forbChar(text.charAt(text.length - 1)));
 };

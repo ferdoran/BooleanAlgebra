@@ -13,12 +13,15 @@ app.directive('boolInput', function($parse, $sce){
             var testExpr = "¬A∧B∨C∧A∧B";
             //testExpr = 'A⇔B∨C';
 
+            //testExpr = '(B∧A)⇒(¬A∧B∨(B∧(J⇒K)∧C))';
+            testExpr = '¬A∧¬(B∨C)';
+
             $scope.expression = new BAExpression(testExpr);
 
             $scope.groups = BAGroup.groups;
 
-            BAGroup.add(new BAGroup("A" + SYMBOL_AND + "B"));
-            BAGroup.add(new BAGroup("B" + SYMBOL_OR + "C"));
+            //BAGroup.add(new BAGroup("A" + SYMBOL_AND + "B"));
+            //BAGroup.add(new BAGroup("B" + SYMBOL_OR + "C"));
 
             $scope.expression.useAllGroups();
 

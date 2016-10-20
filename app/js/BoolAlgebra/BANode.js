@@ -10,11 +10,12 @@ var BANode = function(params){
     this.parent = null;
     this.group = params ? params.group : null;
 
-    this.isNegative = false;
+    this.isNegative = params ? params.isNegative : false;
     if (this.value.charAt(0) == SYMBOL_NEG) {
         this.value = this.value.substr(1);
         this.isNegative = true;
     }
+    /*@Todo: ¬¬A ist nicht möglich */
 
     this.isValid = function(){
         return (this.child1 && this.child2);
@@ -37,13 +38,8 @@ var BANode = function(params){
         return child;
     };
 
-
-    this.getValue = function(){
-        return this.isNegative ? SYMBOL_NEG + this.value : this.value;
-    };
-
     this.getHtml = function(){
-        var value = this.getValue();
+        var value = this.value;
 
         if (this.isLeaf()) {
             value = '<span class="expr">' + value + '</span>';
@@ -60,7 +56,9 @@ var BANode = function(params){
             //value = childA + value + childB;
         }
         //return this.isClips ? '(' + value + ')' : value;
-        return this.isClips ? '<span class="expr"><span class="clips">(</span>' + value + '<span class="clips">)</span></span>' : value;
+
+        var prefix = this.isNegative ? SYMBOL_NEG : '';
+        return prefix + (this.isClips ? '<span class="expr"><span class="clips">(</span>' + value + '<span class="clips">)</span></span>' : value);
     };
     
     this.isGroup = function(){
