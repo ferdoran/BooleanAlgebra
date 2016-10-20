@@ -16,6 +16,8 @@ var BANode = function(params){
         this.isNegative = true;
     }
     /*@Todo: ¬¬A ist nicht möglich */
+    /*@Todo: ¬A∧¬K(B∨C) wird zu ¬A∧¬KK1 */
+    /*@Todo: G1 zu G₁ */
 
     this.isValid = function(){
         return (this.child1 && this.child2);
@@ -58,7 +60,7 @@ var BANode = function(params){
         //return this.isClips ? '(' + value + ')' : value;
 
         var prefix = this.isNegative ? SYMBOL_NEG : '';
-        return prefix + (this.isClips ? '<span class="expr"><span class="clips">(</span>' + value + '<span class="clips">)</span></span>' : value);
+        return prefix + (this.isClips ? '<span class="clips">(</span>' + value + '<span class="clips">)</span>' : value);
     };
     
     this.isGroup = function(){

@@ -199,6 +199,7 @@ DomUtils = {
 
             //get current node
             currentNode = element.childNodes[i];
+            console.log(currentNode);
             //if we get span or something else then we should get child node
             while(currentNode.childNodes.length > 0){
                 currentNode = currentNode.childNodes[0];
@@ -228,6 +229,9 @@ DomUtils = {
                 return true;
             } catch (e) {
                 console.log(e);
+                console.log(range);
+                console.log(currentNode);
+                console.log(offset);
             }
         }
         return false;
