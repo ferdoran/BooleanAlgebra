@@ -2,77 +2,78 @@
  * Created by Sergej on 12.10.2016.
  */
 var BAExpression = function(text) {
-    text = text.replaceAll(' ','');
-
     var $this = this;
-
-
     this.rootNode = null;
     this.text = '';
 
     this.errors = [];
 
-    var kNumber = 1;
+    this.clips = [];
 
     var priorSplit = [
         SYMBOL_EQUAL,
         SYMBOL_IMPL,
         SYMBOL_OR,
-        SYMBOL_AND
+        SYMBOL_AND,
+        SYMBOL_NEG
     ];
 
-    var pushError = function(msg, detail){
-        $this.errors.push({text: msg, detail: detail});
+    var pushError = function(data){
+        $this.errors.push(data);
+    };
+    var clearErrors = function(){
+        $this.errors.length = 0;
     };
 
+    var getClipByRaw = function(raw) {
+        for (var i = 0; i < $this.clips.length; i++) {
+            var c = $this.clips[i];
+            if (raw == c.raw) {
+                return c;
+            }
+        }
+        return null;
+    };
     var getClips = function(text) {
-        var startIndex = 0,
-            count = 0,
-            match,
-            clip,
-            clips = [],
-            re = BAExpression.regex.clips;
-        while ((match = re.exec(text)) !== null) {
+        var re = BAExpression.regex.clips;
+
+        var found = 0, count = 0;
+        while ( (match = re.exec(text)) !== null) {
             if (count++ >= 99999) {
-                /* Unerwartete Dauerschleife verhindern */
-                console.log("MATCH ERROR");
+                console.log("Unerwartete Dauerschleife verhindert");
                 return false;
             }
-            if (kNumber >= 99999) {
-                console.log("KNUMBER ERROR");
-                return false;
-            }
+
             var m = match[0];
+            var clip = getClipByRaw(m);
+            found++;
+            if (clip == null) {
+                var mInside = m.substr(1, m.length - 2);
+                var key = '[' + $this.clips.length + ']';
 
-            clip = {
-                key: "K" + kNumber++,
-                raw: m,
-                start: match.index,
-                end: re.lastIndex - 1
-            };
-
-            clip.text = clip.raw.substr(1, clip.raw.length - 2);
-
-            clips.push(clip);
-
-            startIndex += re.lastIndex;
+                clip = {
+                    key: key,
+                    text: mInside,
+                    raw: m,
+                    start: match.index,
+                    end: re.lastIndex - 1
+                };
+                $this.clips.push(clip);
+            }
         }
 
         var output = text;
 
-        if (clips.length > 0) {
-            var i;
-            for (i = 0; i < clips.length; i++) {
-                clip = clips[i];
-                output = output.replace(clip.raw,clip.key);
+        if (found > 0) {
+            for (var i = 0; i < $this.clips.length; i++) {
+                clip = $this.clips[i];
+                output = output.replaceAll(clip.raw, clip.key);
             }
-            var subClips = getClips(output);
-            output = subClips.output;
-            for (i = 0; i < subClips.clips.length; i++) {
-                clips.push(subClips.clips[i]);
-            }
+            var clipInfo = getClips(output);
+            output = clipInfo.output;
         }
-        return {input: text, output: output, clips: clips};
+
+        return {input: text, output: output};
     };
     var splitByOperator = function(text){
         for (var i = 0; i < priorSplit.length; i++) {
@@ -88,107 +89,104 @@ var BAExpression = function(text) {
         }
         return {a: null, b: null, value: text};
     };
-
-    var clipStack;
-    var _getClip = function(key) {
-        var vKey = key.replace(SYMBOL_NEG, '');
-        if (vKey.length < 2) return null;
-        for (var i = 0; i < clipStack.length; i++) {
-            var clip = clipStack[i];
-            if (clip.key == vKey) {
+    var getClipInfo = function(key) {
+        if (key.length < 3) return null;
+        for (var i = 0; i < $this.clips.length; i++) {
+            var clip = $this.clips[i];
+            if (clip.key == key) {
                 return clip;
             }
         }
         return null;
     };
-    var getClipInfo = function(text) {
-        var re = BAExpression.regex.clipname;
-        var match = re.exec(text);
-
-        if (match === null || HAS_OPERATOR(text)) return null;
-        var isNegative = text.charAt(0) == SYMBOL_NEG;
-        var vKey = match[0];
-        if (vKey.length < 2) return null;
-        for (var i = 0; i < clipStack.length; i++) {
-            var clip = clipStack[i];
-            if (clip.key == vKey) {
-                return {clip: clip, isNegative: isNegative};
-            }
-        }
-        return null;
-    };
-    var searchClipKey = function(text) {
-        var re = BAExpression.regex.clipname;
-        if ((match = re.exec(text)) !== null) {
-            return match[0];
-        }
-        return null;
-    };
     this.buildTree = function(text) {
         if (text == null) return null;
-        var clipInfo = getClipInfo(text);
-
-        if (clipInfo) {
-            text = clipInfo.clip.text;
-        } 
-
-        var group = BAGroup.get(text);
-
         var splitInfo = splitByOperator(text);
-
-        if (splitInfo.length <= 1) {
-            console.log(text);
-        }
 
         var node = new BANode({
             value: splitInfo.value,
-            isClips: clipInfo ? true : false,
             child1: this.buildTree(splitInfo.a),
-            child2: this.buildTree(splitInfo.b),
-            group: group,
-            isNegative: clipInfo ? clipInfo.isNegative : false
+            child2: this.buildTree(splitInfo.b)
         });
+
+        if (node.isLeaf() && node.value != "") {
+            var group = BAGroup.get(text);
+            var clip = getClipInfo(text);
+            if (clip) {
+                clip.expression = this.buildTree(clip.text);
+            }
+            node.group = group;
+            node.clipInfo = clip;
+        }
+
         if (node.child1) {
             node.child1.parent = node;
         }
         if (node.child2) {
             node.child2.parent = node;
         }
-
         return node;
     };
     this.findChild = function(value) {
         return this.rootNode.findChild(value);
     };
+    var matchError = function(text) {
+        var tmpChar = text.charAt(0);
+        if (tmpChar != SYMBOL_NEG && IS_OPERATOR(tmpChar)) {
+            pushError({index: 0, value: tmpChar, text: "Syntaxerror: " + tmpChar + " at 0"});
+        }
+        var idX = text.length - 1;
+        tmpChar = text.charAt(idX);
+        if (IS_OPERATOR(tmpChar)) {
+            pushError({index: idX, value: tmpChar, text: "Syntaxerror: " + tmpChar + " at " + idX});
+        }
+        var re = BAExpression.regex.error, match;
+        while ((match = re.exec(text)) !== null) {
+            var val = match[0];
+            pushError({index: match.index, value: val, text: "Syntaxerror: " + val + " at " + match.index});
+        }
+    };
+    var hasErrors = function(text){
+        clearErrors();
+        matchError(text);
+        return $this.errors.length > 0;
+    };
     this.parse = function(text) {
-        text = text.toUpperCase();
+        text = text.replaceAll(' ','').toUpperCase();
         this.text = text;
 
-        kNumber = 1;
-        var clips = getClips(text);
-        clipStack = clips.clips;
-        console.log(clips);
+        if (hasErrors(text)) return;
 
-        if (this.errors.length > 0) {
-            console.log("=====ERROR====");
-            console.log(this.errors);
-            console.log("==============");
-        }
+        $this.clips.length = 0;
+        var clipInfo = getClips(text);
 
-        this.rootNode = this.buildTree(clips.output);
+        this.rootNode = this.buildTree(clipInfo.output);
+        console.log(this.rootNode);
     };
     if (text) {
         this.parse(text);
     }
     this.isValid = function(){
         if (this.text.length == 0) return true;
-        return (this.errors.length == 0 && this.rootNode != null);
+        return ($this.errors.length == 0);
     };
     this.getText = function(){
         return this.text;
     };
+    this.getHtmlWithError = function(){
+        var error = $this.errors[0];
+        var bText = this.text.substr(0, error.index);
+        var text = this.text.charAt(error.index);
+        if (text == ')') {
+            bText += text;
+            error.index++;
+            text = this.text.charAt(error.index);
+        }
+        var aText = this.text.substr(error.index + 1);
+        return '<span>'+bText+'</span>' + '<span class="error" title="'+error.text+'">'+text+'</span>' + '<span>'+aText+'</span>';
+    };
     this.getHtml = function(){
-        return this.rootNode ? this.rootNode.getHtml() : '';
+        return this.isValid() ? (this.rootNode ? this.rootNode.getHtml() : '') : this.getHtmlWithError();
     };
     this.groupFilter = function(group) {
         return this.text.replaceAll(group.getText(), group.key);
@@ -221,7 +219,7 @@ var BAExpression = function(text) {
     };
 
     this.useAllGroups = function(){
-        if (this.rootNode.isGroup()) return false;
+        if (this.rootNode == null || this.rootNode.isGroup()) return false;
         for (var i = 0; i < BAGroup.groups.length; i++) {
             var g = BAGroup.groups[i];
             BAGroup.useGroup(this,g);
@@ -230,8 +228,9 @@ var BAExpression = function(text) {
 };
 
 BAExpression.regex = {
-    clips: /(\([0|1|A-Z0-9|∨|∧|¬|⇒]*\))/g,
-    clipname: /K[1-9]*/g,
+    clips: /\([0|1|A-Z0-9|∨|∧|¬|⇒|⇔|\[\]]+\)/g,
+    clipname: /([?[1-9]+]?)+/g,
+    error: /[A-Za-z0-9]+\(+|\)([A-Za-z0-9]+|¬)|[0-9][A-Za-z]+|¬+(∨|∧|⇒|⇔)|(∨|∧|⇒|⇔)+(∨|∧|⇒|⇔)+|\(\)/g,
     syntax: /(¬*([((A-Za-z)(1-9)*)|1|0])(∧|∨)?)*/g
 };
 
@@ -240,4 +239,9 @@ BAExpression.validSyntax = function(text) {
         return char == SYMBOL_AND || char == SYMBOL_OR || char == SYMBOL_IMPL;
     };
     return !(forbChar(text.charAt(0)) || forbChar(text.charAt(text.length - 1)));
+};
+
+function REX(re, text) {
+    var match = re.exec(text);
+    console.log(match);
 };

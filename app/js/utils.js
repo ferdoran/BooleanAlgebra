@@ -2,7 +2,6 @@
  * Created by Sergej on 06.09.2016.
  */
 
-/*@TODO Bug: Caret Position bei Groups funktioniert nicht super */
 DomUtils = {
     getCaretPosition: function (editableDiv) {
         var caretPos = 0,
@@ -104,8 +103,7 @@ DomUtils = {
         }
     },
     getSelectionStart: function() {
-        var node = document.getSelection().getStartElement();
-        return node;
+        return document.getSelection().getStartElement();
     },
     getCaretCharacterOffsetWithin: function(element) {
         var caretOffset = 0;
@@ -130,61 +128,6 @@ DomUtils = {
         }
         return caretOffset;
     },
-    _setCaretPosition: function(element, offset) {
-        var range = document.createRange();
-        var sel = window.getSelection();
-
-        //select appropriate node
-        var currentNode = null;
-        var previousNode = null;
-
-        var visitNode = function(node) {
-            console.log(node);
-            for (var i = 0; i < node.childNodes.length; i++) {
-
-                //save previous node
-                //previousNode = currentNode;
-
-                //get current node
-                currentNode = element.childNodes[i];
-                //if we get span or something else then we should get child node
-                if (currentNode.childNodes.length > 0){
-                    //visitNode(currentNode);
-                }
-
-                console.log(currentNode.nodeValue);
-                //calc offset in current node
-                //if (previousNode != null) {
-                //    offset -= previousNode.length;
-                //}
-                //check whether current node has enough length
-                //if (offset <= currentNode.length) {
-                //    break;
-                //}
-            }
-        };
-
-        visitNode(element);
-
-
-        //move caret to specified offset
-        if (currentNode != null) {
-            if (currentNode.length < offset) {
-                offset--;
-            }
-            try {
-                range.setStart(currentNode, offset);
-                range.collapse(true);
-                sel.removeAllRanges();
-                sel.addRange(range);
-                return true;
-            }
-            catch (e) {
-                console.log(e);
-            }
-        }
-        return false;
-    },
     setCaretPosition: function(element, offset) {
         var range = document.createRange();
         var sel = window.getSelection();
@@ -199,7 +142,6 @@ DomUtils = {
 
             //get current node
             currentNode = element.childNodes[i];
-            console.log(currentNode);
             //if we get span or something else then we should get child node
             while(currentNode.childNodes.length > 0){
                 currentNode = currentNode.childNodes[0];
@@ -264,15 +206,9 @@ DomUtils = {
         return html;
     }
 };
-
 function IS_OPERATOR(char) {
-    return char == SYMBOL_AND || char == SYMBOL_OR || char == SYMBOL_IMPL || char == SYMBOL_EQUAL;
+    return char == SYMBOL_AND || char == SYMBOL_OR || char == SYMBOL_IMPL || char == SYMBOL_EQUAL || char == SYMBOL_NEG;
 }
-
-function IS_ALLOWEDCHAR_AROUND_CLIP(char) {
-    return IS_OPERATOR(char) || char == '(' || char == ')';
-}
-
 function HAS_OPERATOR(text) {
     for (var i = 0; i < text.length; i++) {
         var char = text.charAt(i);
@@ -280,7 +216,6 @@ function HAS_OPERATOR(text) {
     }
     return false;
 }
-
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.split(search).join(replacement);

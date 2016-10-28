@@ -65,6 +65,12 @@
 .boolInput .expr {
     color:#2699ff;
 }
+.boolInput .neg {
+    color:#333;
+}
+.boolInput .error {
+    color:red;
+}
 .boolInput .expr.group {
     color:#015BB5;
 }
@@ -104,8 +110,11 @@
     padding: 0 5px;
     border: 1px solid #ccc;
 }
-.boolInput .boolInputBody:not(.isValid) {
+.boolInput .boolInputBody:not(.isValid) label {
     color:red;
+}
+.boolInput .boolInputBody:not(.isValid) .input {
+    color: #999;
 }
 .group.boolExpr:not(:first-child) {
     border-top: 1px solid #ccc;

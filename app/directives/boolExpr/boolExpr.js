@@ -21,10 +21,12 @@ app.directive('contenteditable', function($timeout) {
                 var domain = expression.domain;
                 $timeout.cancel(domain.table.buildTO);
                 domain.table.buildTO = $timeout(function() {
-                    domain.tableRefresh();
+
                 },500);
+                domain.tableRefresh();
             };
 
+            var changeTimeout;
             $element.on('keydown', function(e){
                 if (isForbiddenKey(e)) {
                     e.preventDefault();
@@ -43,13 +45,17 @@ app.directive('contenteditable', function($timeout) {
 
                 var text = $element.text();
 
-                expression.parse(text);
+                $timeout.cancel(changeTimeout);
+                changeTimeout = $timeout(function(){
+                    expression.parse(text);
 
-                var position = DomUtils.getCaretCharacterOffsetWithin($element.get(0));
-                $element.html(expression.getHtml());
-                DomUtils.setCaretPosition($element.get(0), position);
+                    var position = DomUtils.getCaretCharacterOffsetWithin($element.get(0));
+                    $element.html(expression.getHtml());
+                    DomUtils.setCaretPosition($element.get(0), position);
 
-                refreshTable();
+                    refreshTable();
+                }, 200);
+
             });
         }
     }

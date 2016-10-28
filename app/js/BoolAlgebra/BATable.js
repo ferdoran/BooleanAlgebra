@@ -10,8 +10,10 @@ var BATable = function(rootNode){
 
     this.isLoading = false;
 
+    /**@TODO auf neusten Stand umbauen */
+
     var searchLetter = function(node){
-        if (!node) return false;
+        if (!node || node.value == "") return false;
         if (node.isGroup() && !(node.child1 || node.child2)){
             searchLetter(node.group.expression.rootNode);
         }
