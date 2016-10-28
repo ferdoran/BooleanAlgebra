@@ -224,6 +224,17 @@ Array.prototype.clear = function() {
     if (this.length == 0) return;
     this.splice(0, this.length);
 };
+String.prototype.countChar = function(char) {
+    if (this.length == 0) return 0;
+    var count = 0;
+    for (var i = 0; i < this.length; i++) {
+        var ch = this.charAt(i);
+        if (ch == char) {
+            count++;
+        }
+    }
+    return count;
+};
 
 function GET_DN_SYMBOL(number) {
     var s = '' + number;

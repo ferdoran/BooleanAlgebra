@@ -18,6 +18,8 @@ var BAExpression = function(text) {
         SYMBOL_NEG
     ];
 
+
+    /** TODO ¬A∧¬(B∨C)∧(B∨C)∧(A∨(B∨C∧(B∨C))) Klammer löschen verursacht Schaden */
     var pushError = function(data){
         $this.errors.push(data);
     };
@@ -131,15 +133,41 @@ var BAExpression = function(text) {
         return this.rootNode.findChild(value);
     };
     var matchError = function(text) {
+        /* Erstes Zeichen ein Operator? Ausgenommen von Neg. */
         var tmpChar = text.charAt(0);
         if (tmpChar != SYMBOL_NEG && IS_OPERATOR(tmpChar)) {
             pushError({index: 0, value: tmpChar, text: "Syntaxerror: " + tmpChar + " at 0"});
         }
+        /* letztes Zeichen ein Operator? */
         var idX = text.length - 1;
         tmpChar = text.charAt(idX);
         if (IS_OPERATOR(tmpChar)) {
             pushError({index: idX, value: tmpChar, text: "Syntaxerror: " + tmpChar + " at " + idX});
         }
+        /* Klammer auf/zu Prüfung */
+        var klammerBalance = 0;
+        var lastKlammerBalance = 0;
+        var indexes = [];
+        for (var i = 0; i < text.length; i++) {
+            var ch = text.charAt(i);
+            lastKlammerBalance = klammerBalance;
+            if (ch == '(') {
+                klammerBalance--;
+            } else if (ch == ')') {
+                klammerBalance++;
+            }
+/** TODO Syntaxprüfung von Klammern */
+            if (klammerBalance < 0 && klammerBalance < lastKlammerBalance || klammerBalance > 0 && klammerBalance > lastKlammerBalance) {
+                indexes.push(i);
+            } else if (klammerBalance < 0 && klammerBalance > lastKlammerBalance || klammerBalance > 0 && klammerBalance < lastKlammerBalance) {
+                indexes.pop();
+            }
+        }
+        if (klammerBalance != 0) {
+            pushError({index: text.length - 1, value: '', text: "Syntaxerror " });
+        }
+
+        /* Regex Syntax Prüfung */
         var re = BAExpression.regex.error, match;
         while ((match = re.exec(text)) !== null) {
             var val = match[0];
@@ -230,7 +258,7 @@ var BAExpression = function(text) {
 BAExpression.regex = {
     clips: /\([0|1|A-Z0-9|∨|∧|¬|⇒|⇔|\[\]]+\)/g,
     clipname: /([?[1-9]+]?)+/g,
-    error: /[A-Za-z0-9]+\(+|\)([A-Za-z0-9]+|¬)|[0-9][A-Za-z]+|¬+(∨|∧|⇒|⇔)|(∨|∧|⇒|⇔)+(∨|∧|⇒|⇔)+|\(\)/g,
+    error: /[A-Za-z0-9]+\(+|\)([A-Za-z0-9]+|¬)|[0-9][A-Za-z]+|¬+(∨|∧|⇒|⇔)|(∨|∧|⇒|⇔)+(∨|∧|⇒|⇔)+|\(\)|\)\(/g,
     syntax: /(¬*([((A-Za-z)(1-9)*)|1|0])(∧|∨)?)*/g
 };
 
