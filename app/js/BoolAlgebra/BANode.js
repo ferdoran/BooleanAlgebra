@@ -51,7 +51,7 @@ var BANode = function(params){
             value = childA + '<span class="'+ Class +'">'+value+'</span>' + childB;
         }
         if (this.isClips()) {
-            value = '<span class="clips">(</span>' + this.clipInfo.expression.getHtml() + '<span class="clips">)</span>';
+            value = '<span class="clips">(</span>' + this.clipInfo.rootNode.getHtml() + '<span class="clips">)</span>';
         }
         return value;
     };
@@ -66,7 +66,7 @@ var BANode = function(params){
         if (this.isGroup() && !this.child2 && !this.child1) {
             result = this.group.expression.rootNode.getResult(param);
         } else if (this.isClips()) {
-            result = this.clipInfo.expression.getResult();
+            result = this.clipInfo.rootNode.getResult();
         } else {
             if (IS_OPERATOR(this.value)) {
                 var childA = this.child1.getResult(param);
@@ -107,3 +107,12 @@ var BANode = function(params){
         return result ? 1 : 0;
     };
 };
+function DEBUG_NODE(node) {
+    if (node == null) return;
+    console.log("====DEBUG: " + node.value + "========");
+    console.log(node);
+    console.log("isLeaf: " + node.isLeaf());
+    console.log("isGroup: " + node.isGroup());
+    console.log("isClips: " + node.isClips());
+    console.log("====END DEBUG=============");
+}

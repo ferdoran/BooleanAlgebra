@@ -14,7 +14,10 @@ var BATable = function(rootNode){
 
     var searchLetter = function(node){
         if (!node || node.value == "") return false;
-        if (node.isGroup() && !(node.child1 || node.child2)){
+        if (node.isClips()) {
+            searchLetter(node.clipInfo.rootNode);
+        }
+        else if (node.isGroup() && !(node.child1 || node.child2)){
             searchLetter(node.group.expression.rootNode);
         }
         else if (!node.isLeaf()) {

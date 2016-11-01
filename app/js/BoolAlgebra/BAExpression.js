@@ -115,7 +115,7 @@ var BAExpression = function(text) {
             var group = BAGroup.get(text);
             var clip = getClipInfo(text);
             if (clip) {
-                clip.expression = this.buildTree(clip.text);
+                clip.rootNode = this.buildTree(clip.text);
             }
             node.group = group;
             node.clipInfo = clip;
@@ -144,34 +144,32 @@ var BAExpression = function(text) {
         if (IS_OPERATOR(tmpChar)) {
             pushError({index: idX, value: tmpChar, text: "Syntaxerror: " + tmpChar + " at " + idX});
         }
-        /* Klammer auf/zu Prüfung */
-        var klammerBalance = 0;
-        var lastKlammerBalance = 0;
-        var indexes = [];
-        for (var i = 0; i < text.length; i++) {
-            var ch = text.charAt(i);
-            lastKlammerBalance = klammerBalance;
-            if (ch == '(') {
-                klammerBalance--;
-            } else if (ch == ')') {
-                klammerBalance++;
-            }
-/** TODO Syntaxprüfung von Klammern */
-            if (klammerBalance < 0 && klammerBalance < lastKlammerBalance || klammerBalance > 0 && klammerBalance > lastKlammerBalance) {
-                indexes.push(i);
-            } else if (klammerBalance < 0 && klammerBalance > lastKlammerBalance || klammerBalance > 0 && klammerBalance < lastKlammerBalance) {
-                indexes.pop();
-            }
-        }
-        if (klammerBalance != 0) {
-            pushError({index: text.length - 1, value: '', text: "Syntaxerror " });
-        }
-
         /* Regex Syntax Prüfung */
         var re = BAExpression.regex.error, match;
         while ((match = re.exec(text)) !== null) {
             var val = match[0];
             pushError({index: match.index, value: val, text: "Syntaxerror: " + val + " at " + match.index});
+        }
+        /* Klammer auf/zu Prüfung */
+        var clipStack = [];
+        for (var i = 0; i < text.length; i++) {
+            var C = text.charAt(i);
+            if (C != '(' && C != ')') continue;
+            if (clipStack.length == 0) {
+                clipStack.push({char: C, index: i});
+                if (C == ')') break;
+            } else {
+                var L = clipStack[0];
+                if (C == L.char) {
+                    clipStack.push({char: C, index: i});
+                } else {
+                    clipStack.splice(0, 1);
+                }
+            }
+        }
+        if (clipStack.length > 0) {
+            var c = clipStack[0];
+            pushError({index: c.index, value: c.char, text: "Syntaxerror " });
         }
     };
     var hasErrors = function(text){
@@ -205,11 +203,6 @@ var BAExpression = function(text) {
         var error = $this.errors[0];
         var bText = this.text.substr(0, error.index);
         var text = this.text.charAt(error.index);
-        if (text == ')') {
-            bText += text;
-            error.index++;
-            text = this.text.charAt(error.index);
-        }
         var aText = this.text.substr(error.index + 1);
         return '<span>'+bText+'</span>' + '<span class="error" title="'+error.text+'">'+text+'</span>' + '<span>'+aText+'</span>';
     };
@@ -258,7 +251,7 @@ var BAExpression = function(text) {
 BAExpression.regex = {
     clips: /\([0|1|A-Z0-9|∨|∧|¬|⇒|⇔|\[\]]+\)/g,
     clipname: /([?[1-9]+]?)+/g,
-    error: /[A-Za-z0-9]+\(+|\)([A-Za-z0-9]+|¬)|[0-9][A-Za-z]+|¬+(∨|∧|⇒|⇔)|(∨|∧|⇒|⇔)+(∨|∧|⇒|⇔)+|\(\)|\)\(/g,
+    error: /[A-Za-z0-9]+\(+|\)([A-Za-z0-9]+|¬)|[0-9][A-Za-z]+|¬+(∨|∧|⇒|⇔)|(∨|∧|⇒|⇔)+(∨|∧|⇒|⇔)+|\(\)|\)\(|(∨|∧|⇒|⇔)+\)+/g,
     syntax: /(¬*([((A-Za-z)(1-9)*)|1|0])(∧|∨)?)*/g
 };
 

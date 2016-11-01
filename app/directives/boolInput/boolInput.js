@@ -11,10 +11,10 @@ app.directive('boolInput', function($parse, $sce){
         templateUrl: "directives/boolInput/boolInput.html",
         link: function($scope, $element, $attr) {
             var testExpr = "¬A∧B∨C∧A∧B";
-            //testExpr = 'A⇔B∨C';
+            testExpr = 'A⇔B∨C';
 
             //testExpr = '(B∧A)⇒(¬A∧B∨(B∧(J⇒K)∧C))';
-            testExpr = '¬A∧¬(B∨C)∧(B∨C)∧(A∨(B∨C∧(B∨C)))';
+            //testExpr = '¬A∧¬(B∨C)∧(B∨C)∧(A∨(B∨C∧(B∨C)))';
 
             $scope.expression = new BAExpression(testExpr);
 
