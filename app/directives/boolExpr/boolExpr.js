@@ -17,14 +17,11 @@ app.directive('contenteditable', function($timeout) {
             };
             var refreshTable = function(){
                 if (!expression.domain || !expression.domain.tableRefresh) return false;
-
                 var domain = expression.domain;
-                $timeout.cancel(domain.table.buildTO);
-                domain.table.buildTO = $timeout(function() {
-
-                },500);
                 domain.tableRefresh();
             };
+
+            var to;
 
             var changeTimeout;
             $element.on('keydown', function(e){
@@ -43,20 +40,18 @@ app.directive('contenteditable', function($timeout) {
                     }
                 }
 
-                var text = $element.text();
+                $timeout.cancel(to);
+                to = $timeout(function(){
+                    var text = $element.text();
+                    expression.parse(text);
 
-                $timeout.cancel(changeTimeout);
-                changeTimeout = $timeout(function(){
+                    var position = DomUtils.getCaretCharacterOffsetWithin($element.get(0));
+                    $element.html(expression.getHtml());
+                    DomUtils.setCaretPosition($element.get(0), position);
 
-                }, 200);
-
-                expression.parse(text);
-
-                var position = DomUtils.getCaretCharacterOffsetWithin($element.get(0));
-                $element.html(expression.getHtml());
-                DomUtils.setCaretPosition($element.get(0), position);
-
-                refreshTable();
+                    if (text.length == 0) return;
+                    refreshTable();
+                },50);
             });
         }
     }

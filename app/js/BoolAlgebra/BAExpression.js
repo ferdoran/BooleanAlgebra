@@ -17,16 +17,12 @@ var BAExpression = function(text) {
         SYMBOL_AND,
         SYMBOL_NEG
     ];
-
-
-    /** TODO ¬A∧¬(B∨C)∧(B∨C)∧(A∨(B∨C∧(B∨C))) Klammer löschen verursacht Schaden */
     var pushError = function(data){
         $this.errors.push(data);
     };
     var clearErrors = function(){
         $this.errors.length = 0;
     };
-
     var getClipByRaw = function(raw) {
         for (var i = 0; i < $this.clips.length; i++) {
             var c = $this.clips[i];
@@ -187,13 +183,11 @@ var BAExpression = function(text) {
         var clipInfo = getClips(text);
 
         this.rootNode = this.buildTree(clipInfo.output);
-        console.log(this.rootNode);
     };
     if (text) {
         this.parse(text);
     }
     this.isValid = function(){
-        if (this.text.length == 0) return true;
         return ($this.errors.length == 0);
     };
     this.getText = function(){
