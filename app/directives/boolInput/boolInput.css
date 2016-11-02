@@ -109,9 +109,7 @@
     float:left;
     padding: 0 5px;
     border: 1px solid #ccc;
-}
-.boolInput .boolInputBody:not(.isValid) label {
-    color:red;
+    position:relative;
 }
 .boolInput .boolInputBody:not(.isValid) .input {
     color: #999;
@@ -155,4 +153,24 @@ button.removeGroupButton {
 
 .boolInput .group .inputRel {
     width:calc(100% - 32px);
+}
+
+.fa-exclamation {
+    color:red;
+}
+
+.boolInput .fa-exclamation {
+    position:absolute;
+    top:4px;
+    right:5px;
+}
+.boolInput .boolInputBody.isValid .fa-exclamation {
+    display:none;
+}
+.boolInput .boolInputBody:not(.isValid) .input {
+    border: 1px solid red;
+    outline: 1px solid red;
+}
+.boolInput .boolInputBody:not(.isValid) label {
+    border-right:1px solid red;
 }
