@@ -66,7 +66,7 @@ var BANode = function(params){
         if (this.isGroup() && !this.child2 && !this.child1) {
             result = this.group.expression.rootNode.getResult(param);
         } else if (this.isClips()) {
-            result = this.clipInfo.rootNode.getResult();
+            result = this.clipInfo.rootNode.getResult(param);
         } else {
             if (IS_OPERATOR(this.value)) {
                 var childA = this.child1.getResult(param);

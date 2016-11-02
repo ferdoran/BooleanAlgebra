@@ -31,13 +31,13 @@ var BATable = function(rootNode){
         }
     };
 
-    this.build = function(){
+    this.build = function(node){
         this.isLoading = true;
         this.letters.clear();
-        searchLetter(rootNode);
+        searchLetter(node);
         this.isLoading = false;
     };
-    this.build();
+    this.build(rootNode);
 
     this.updateView = function(){
         this.isLoading = true;

@@ -204,7 +204,7 @@ var BAExpression = function(text) {
         var bText = this.text.substr(0, error.index);
         var text = this.text.charAt(error.index);
         var aText = this.text.substr(error.index + 1);
-        return '<span>'+bText+'</span>' + '<span class="error" title="'+error.text+'">'+text+'</span>' + '<span>'+aText+'</span>';
+        return (bText != '' ? '<span>'+bText+'</span>' : '') + (text != '' ? '<span class="error" title="'+error.text+'">'+text+'</span>' : '') + (aText != '' ? '<span>'+aText+'</span>' : '' );
     };
     this.getHtml = function(){
         return this.isValid() ? (this.rootNode ? this.rootNode.getHtml() : '') : this.getHtmlWithError();

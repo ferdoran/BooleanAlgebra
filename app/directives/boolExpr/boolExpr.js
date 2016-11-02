@@ -47,15 +47,16 @@ app.directive('contenteditable', function($timeout) {
 
                 $timeout.cancel(changeTimeout);
                 changeTimeout = $timeout(function(){
-                    expression.parse(text);
 
-                    var position = DomUtils.getCaretCharacterOffsetWithin($element.get(0));
-                    $element.html(expression.getHtml());
-                    DomUtils.setCaretPosition($element.get(0), position);
-
-                    refreshTable();
                 }, 200);
 
+                expression.parse(text);
+
+                var position = DomUtils.getCaretCharacterOffsetWithin($element.get(0));
+                $element.html(expression.getHtml());
+                DomUtils.setCaretPosition($element.get(0), position);
+
+                refreshTable();
             });
         }
     }
