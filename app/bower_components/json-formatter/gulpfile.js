@@ -39,7 +39,7 @@ gulp.task('connect', function() {
 });
 
 gulp.task('html', function () {
-  gulp.src(['./demo/*.html', '.app/*.html'])
+  gulp.src(['./demo/*.html', '.src/*.html'])
     .pipe(connect.reload());
 });
 
@@ -56,7 +56,7 @@ gulp.task('clean', function(cb) {
 gulp.task('scripts', function() {
 
   function buildTemplates() {
-    return gulp.src('app/**/*.html')
+    return gulp.src('src/**/*.html')
       .pipe(minifyHtml({
              empty: true,
              spare: true,
@@ -67,8 +67,8 @@ gulp.task('scripts', function() {
 
   function buildDistJS(){
     return gulp.src([
-      'app/json-formatter.js',
-      'app/recursion-helper.js'
+      'src/json-formatter.js',
+      'src/recursion-helper.js'
       ])
       .pipe(concat('json-formatter.js'))
       .pipe(plumber({
@@ -104,7 +104,7 @@ gulp.task('scripts', function() {
 
 gulp.task('styles', function() {
 
-  return gulp.src('app/json-formatter.less')
+  return gulp.src('src/json-formatter.less')
     .pipe(less())
     .pipe(header(config.banner, {
       timestamp: (new Date()).toISOString(), pkg: config.pkg
