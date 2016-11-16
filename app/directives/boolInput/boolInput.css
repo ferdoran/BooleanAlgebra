@@ -13,7 +13,9 @@
     overflow:hidden;
     width:calc(100% - 70px);
     vertical-align: middle;
-    border: 1px solid transparent;
+    border: 1px solid #ccc;
+
+    min-height:27px;
 
     -webkit-appearance: textfield;
     -moz-appearance: textfield;

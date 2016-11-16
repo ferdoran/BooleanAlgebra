@@ -99,7 +99,7 @@ app.directive('boolExpr', function($parse, $sce) {
 
             $scope.addChar = function(char){
                 DomUtils.pasteHtmlAtCaret(char);
-                $input.change();
+                $input.change().focus();
             };
 
             $scope.clearText = function(){

@@ -70,3 +70,7 @@ h1.diagram-title {
 .box button.btn:hover {
   border-color: #e0e0e0;
 }
+.box button.btn:active,
+.box button.btn:focus {
+  border-color:#0267FF;
+}

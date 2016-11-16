@@ -69,13 +69,13 @@
 }
 
 .boolTable select {
-    border: 1px solid transparent;
+    border: 1px solid #e0e0e0;
     background: whitesmoke;
-    outline:0;
     cursor:pointer;
 }
-.boolTable select:hover {
-    border-color: #e0e0e0;
+.boolTable select:active,
+.boolTable select:focus {
+    border-color:#0267FF;
 }
 .boolTable select option {
     background: whitesmoke;
@@ -108,4 +108,19 @@
 }
 .boolTable .boolTableSelect .resultInfo.no-info {
     visibility: hidden;
+}
+
+.fixed_headers {
+    table-layout:fixed;
+    position:relative;
+    display:block;
+}
+.fixed_headers thead {
+    width:100%;
+    background-color: #F5F5F5;
+    display:table;
+}
+.fixed_headers tbody {
+    width:100%;
+    display:block;
 }
