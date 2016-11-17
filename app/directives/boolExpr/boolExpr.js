@@ -56,7 +56,7 @@ app.directive('contenteditable', function($timeout) {
         }
     }
 });
-
+/* TODO: Klick char in Tabelle */
 app.directive('boolExpr', function($parse, $sce) {
     return {
         restrict: 'E',
@@ -71,6 +71,9 @@ app.directive('boolExpr', function($parse, $sce) {
 
             var updateExpressions = function(newGroup){
                 BAGroup.useGroup(domain.expression, newGroup);
+                if (domain.resizeTable) {
+                    domain.resizeTable();
+                }
             };
 
             if ($scope.group) {
@@ -98,6 +101,7 @@ app.directive('boolExpr', function($parse, $sce) {
             }
 
             $scope.addChar = function(char){
+                console.log(document.activeElement);
                 DomUtils.pasteHtmlAtCaret(char);
                 $input.change().focus();
             };

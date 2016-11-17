@@ -35,7 +35,7 @@ DomUtils = {
                 range = sel.getRangeAt(0);
                 range.deleteContents();
                 range.insertNode(document.createTextNode(text));
-                range.endOffset++;
+                /*range.endOffset++;*/
             }
         } else if (document.selection && document.selection.createRange) {
             document.selection.createRange().text = text;

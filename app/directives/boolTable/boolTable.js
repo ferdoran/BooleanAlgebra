@@ -26,8 +26,7 @@ app.directive('boolTable', function($parse, $sce, $timeout){
                 $scope.$broadcast('check-result');
             };
 
-            var resizeTable = function(){
-
+            domain.resizeTable = function(){
                 $timeout(function(){
                     $fixedTables.each(function(){
                         var $t = angular.element(this);
@@ -38,10 +37,13 @@ app.directive('boolTable', function($parse, $sce, $timeout){
                         var $tds = $tBody.find('td');
                         var $trs = $tBody.find('tr');
 
-                        var width = $ths.outerWidth();
-                        $tds.each(function(){
+                        var widths = [];
+                        $ths.each(function(index){
+                            widths[index] = angular.element(this).outerWidth();
+                        });
+                        $tds.each(function(index){
                             var $td = angular.element(this);
-                            $td[0].style.width = width + "px";
+                            $td.css({width: widths[index] + "px"});
                         });
 
                         var maxHeight = 0;
@@ -70,12 +72,12 @@ app.directive('boolTable', function($parse, $sce, $timeout){
                     $scope.table.build(domain.expression.rootNode);
                 }
                 $scope.table.updateView();
-                resizeTable();
+                domain.resizeTable();
             };
             domain.tableRefresh();
 
             angular.element(window).resize(function(){
-                resizeTable();
+                domain.resizeTable();
             });
         }
     };

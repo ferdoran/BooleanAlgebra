@@ -146,6 +146,7 @@ var BAExpression = function(text) {
             var val = match[0];
             pushError({index: match.index, value: val, text: "Syntaxerror: " + val + " at " + match.index});
         }
+
         /* Klammer auf/zu Prüfung */
         var clipStack = [];
         for (var i = 0; i < text.length; i++) {

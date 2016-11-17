@@ -58,12 +58,14 @@
 .boolTable table .result,
 .boolTable table .specials,
 .boolTable table .groups,
+.boolTable table .group,
 .boolTable table .clips {
     border-left: 4px double #ddd;
 
 }
 .boolTable table .specials ~ .specials,
 .boolTable table .groups ~ .groups,
+.boolTable table .group ~ .group,
 .boolTable table .clips ~ .clips {
     border-left: 1px solid #ddd;
 }
@@ -72,6 +74,8 @@
     border: 1px solid #e0e0e0;
     background: whitesmoke;
     cursor:pointer;
+    width:100%;
+    max-width:40px;
 }
 .boolTable select:active,
 .boolTable select:focus {
