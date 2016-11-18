@@ -8,7 +8,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="bitLine in table.bits" class="bitLine">
+            <tr ng-repeat="bitLine in table.bits" class="bitLine" on-finish-render="ngRepeatFinished">
                 <td ng-repeat="bit in bitLine.letters" class="bit letters">{{bit.value}}</td>
                 <td ng-repeat="group in table.groups" class="bit groups">
                     <bool-table-select bind-param="bitLine.param" bind-expression="group.expression"></bool-table-select>

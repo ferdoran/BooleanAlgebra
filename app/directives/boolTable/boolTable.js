@@ -26,8 +26,12 @@ app.directive('boolTable', function($parse, $sce, $timeout){
                 $scope.$broadcast('check-result');
             };
 
-            domain.resizeTable = function(){
-                $timeout(function(){
+            domain.resizeTableTO = null;
+            domain.resizeTable = function(delay){
+                if (!delay) delay = 10;
+                $timeout.cancel(domain.resizeTableTO);
+                domain.resizeTableTO = $timeout(function(){
+                    console.log("RESIZE TABLE");
                     $fixedTables.each(function(){
                         var $t = angular.element(this);
 
@@ -39,7 +43,7 @@ app.directive('boolTable', function($parse, $sce, $timeout){
 
                         var widths = [];
                         $ths.each(function(index){
-                            widths[index] = angular.element(this).outerWidth();
+                            widths[index] = angular.element(this).outerWidth(true);
                         });
                         $tds.each(function(index){
                             var $td = angular.element(this);
@@ -49,12 +53,16 @@ app.directive('boolTable', function($parse, $sce, $timeout){
                         var maxHeight = 0;
                         $trs.each(function(){
                             var $tr = angular.element(this);
-                            maxHeight += $tr.outerHeight();
+                            maxHeight += $tr.outerHeight(true);
                         });
                         $t.find('.slimScrollDiv').css({"max-height": maxHeight +"px"});
                     });
-                },10);
+                }, delay);
             };
+
+            $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+                domain.resizeTable();
+            });
 
             $fixedTables.each(function(){
                 var $fH = angular.element(this);
