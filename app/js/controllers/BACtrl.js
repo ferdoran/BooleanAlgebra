@@ -7,14 +7,21 @@ var app = angular.module('boolean-algebra');
 
 app.controller('BACtrl', function($scope, $compile) {
 
-    app.domains = {
-        boolMain: new BADomain("boolMain")
-    };
+    if (!app.domains) {
+        app.domains = {
+            boolMain: new BADomain("boolMain")
+        };
+    }
 
     $scope.createBTable = function(id){
         var $body = angular.element(id);
         var boolTableHtml = $compile('<bool-table bool-domain="boolMain"></bool-table>')($scope);
         $body.html(boolTableHtml);
+    };
+
+    $scope.closeFooter = function(){
+        angular.element('footer').hide();
+        console.log("!");
     };
 }).filter('renderHTMLCorrectly', function($scope)
 {

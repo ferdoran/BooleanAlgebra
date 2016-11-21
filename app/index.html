@@ -88,7 +88,8 @@
 
     <section class="container-fluid nopadding" ng-view></section>
 
-    <footer>
+    <footer ng-controller="BACtrl">
+        <button id="footerCloseButton" ng-click="closeFooter()"><span class="fa fa-close"></span></button>
         <div class="container-fluid">
             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                 <span>Author: Sergej Görzen</span>

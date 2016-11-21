@@ -87,6 +87,19 @@ footer {
     padding:1em;
     background-color: #cedde9;
 }
+footer button#footerCloseButton {
+    border:0;
+    background:none;
+    color:#505050;
+    position:absolute;
+    left: 15px;
+    top: calc(50% - 8px);
+    padding: 0;
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
+}
 @media (max-width:768px) {
     footer {
         font-size:0.5em;
