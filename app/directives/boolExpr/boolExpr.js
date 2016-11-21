@@ -121,7 +121,12 @@ app.directive('boolExpr', function($parse, $sce) {
                 var newGroup = new BAGroup(selText);
                 BAGroup.add(newGroup);
                 updateExpressions(newGroup);
+                if (domain.resizeTable) {
+                    domain.resizeTable();
+                }
             };
+
+            /** Todo: (Av(G1)) will nicht Ergebnis prüfen */
 
             $scope.removeGroup = function() {
                 var group = $scope.group;
@@ -139,6 +144,9 @@ app.directive('boolExpr', function($parse, $sce) {
 
                 if (index > -1) {
                     BAGroup.groups.splice(index, 1);
+                }
+                if (domain.resizeTable) {
+                    domain.resizeTable();
                 }
             };
         }

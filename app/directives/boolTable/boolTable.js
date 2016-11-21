@@ -67,7 +67,7 @@ app.directive('boolTable', function($parse, $sce, $timeout){
             $fixedTables.each(function(){
                 var $fH = angular.element(this);
                 $fH.find('tbody').slimScroll({
-                    height:"165px",
+                    height:"191px",
                     alwaysVisible: false
                 });
             });
