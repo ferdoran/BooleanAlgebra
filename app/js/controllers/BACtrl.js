@@ -21,7 +21,6 @@ app.controller('BACtrl', function($scope, $compile) {
 
     $scope.closeFooter = function(){
         angular.element('footer').hide();
-        console.log("!");
     };
 }).filter('renderHTMLCorrectly', function($scope)
 {
