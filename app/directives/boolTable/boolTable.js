@@ -31,7 +31,6 @@ app.directive('boolTable', function($parse, $sce, $timeout){
                 if (!delay) delay = 10;
                 $timeout.cancel(domain.resizeTableTO);
                 domain.resizeTableTO = $timeout(function(){
-                    console.log("RESIZE TABLE");
                     $fixedTables.each(function(){
                         var $t = angular.element(this);
 

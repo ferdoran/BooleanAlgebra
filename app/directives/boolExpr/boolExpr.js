@@ -101,7 +101,6 @@ app.directive('boolExpr', function($parse, $sce) {
             }
 
             $scope.addChar = function(char){
-                console.log(document.activeElement);
                 DomUtils.pasteHtmlAtCaret(char);
                 $input.change().focus();
             };

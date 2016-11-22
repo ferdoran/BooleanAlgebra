@@ -49,8 +49,6 @@ DomUtils = {
             if (sel.getRangeAt && sel.rangeCount) {
                 range = sel.getRangeAt(0);
                 if (node && (range.startContainer.id != node.id || range.endContainer.id != node.id || range.startContainer.className != node.className || range.endContainer.className != node.className)) {
-                    console.log(node);
-                    console.log(range);
                     return false;
                 }
                 range.deleteContents();
@@ -170,10 +168,6 @@ DomUtils = {
                 sel.addRange(range);
                 return true;
             } catch (e) {
-                console.log(e);
-                console.log(range);
-                console.log(currentNode);
-                console.log(offset);
             }
         }
         return false;
@@ -246,7 +240,3 @@ function GET_DN_SYMBOL(number) {
     }
     return rs;
 }
-
-console.log(GET_DN_SYMBOL(1));
-console.log(GET_DN_SYMBOL(12));
-console.log(GET_DN_SYMBOL(2123));

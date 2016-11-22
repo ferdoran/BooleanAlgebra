@@ -38,7 +38,6 @@ var BAExpression = function(text) {
         var found = 0, count = 0;
         while ( (match = re.exec(text)) !== null) {
             if (count++ >= 99999) {
-                console.log("Unerwartete Dauerschleife verhindert");
                 return false;
             }
 

@@ -36,11 +36,7 @@ app.directive('boolTableSelect', function($parse, $sce) {
                     $scope.isCorrect = null;
                 } else {
                     var value = Number($scope.value);
-                    console.log("=====EXPRESSION====");
-                    console.log($scope.expression);
                     var result = $scope.expression.getResult($scope.param);
-                    console.log($scope.param);
-                    console.log("Result: " + result + ", Value: " + value);
                     $scope.isCorrect = value == result;
                 }
             };
