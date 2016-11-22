@@ -37,7 +37,10 @@ const KEY_7 = 55;
 const KEY_8 = 56;
 const KEY_9 = 57;
 
-const KEY_DOT   = 190;
+const KEY_PLUS = 187;
 const KEY_COMMA = 188;
+const KEY_LINE = 189;
+const KEY_DOT   = 190;
+const KEY_SHARP = 191;
 
 const KEY_CONTROL = 17;
