@@ -4,7 +4,7 @@
 
 var BAGroup = function(text){
     this.expression = new BAExpression(text);
-    this.expression.rootNode.group = this;
+    //this.expression.rootNode.group = this;
     this.key = BAGroup.getNextGroupIndex(text);
     this.number = BAGroup.groupIndex - 1;
     this.expression.groupKey = this.key;

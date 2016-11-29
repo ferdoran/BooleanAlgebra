@@ -13,7 +13,6 @@ app.directive('contenteditable', function($timeout) {
             var expression = $scope.expression;
 
             var isForbiddenKey = function(e) {
-                console.log(e);
                 return e.keyCode == KEY_SPACE || e.keyCode == KEY_COMMA || e.keyCode == KEY_DOT || e.keyCode == KEY_LINE || e.keyCode == KEY_SHARP
                     || e.keyCode == KEY_PLUS || e.key == '-' || e.key == '*' || e.key == '+' || e.key == '/';
             };
