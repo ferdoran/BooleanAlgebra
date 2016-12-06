@@ -24,8 +24,8 @@ input {
   border: 1px solid #ccc;
   display:inline-block;
   float:left;
-  margin-top:1em;
-  margin-bottom:0;
+  margin-top:0.5em;
+  margin-bottom:0.5em;
   width:100%;
 }
 .box .boxTitle {
@@ -101,8 +101,34 @@ footer button#footerCloseButton {
     height: 16px;
     font-size: 12px;
 }
-@media (max-width:768px) {
-    footer {
-        font-size:0.5em;
-    }
+
+#languageBox {
+    margin-top:0.5em;
+}
+
+.lang-button {
+    padding:0;
+    display:inline-block;
+    border: 1px solid transparent;
+    background: white;
+    outline:0;
+}
+
+.lang-button.active {
+    border-color: #cedde9;
+}
+
+button[disabled] {
+    position:relative;
+}
+button[disabled]:after {
+    content:'';
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    opacity:0.5;
+    background:gray;
+    cursor: not-allowed;
 }

@@ -9,9 +9,11 @@ app.controller('BACtrl', function($scope, $compile) {
 
     if (!app.domains) {
         app.domains = {
-            boolMain: new BADomain("boolMain")
+            boolMain: new BADomain("boolMain"),
+            boolMin: new BADomain("boolMin")
         };
     }
+    $scope.minExpression = new BAExpression();
 
     $scope.createBTable = function(id){
         var $body = angular.element(id);

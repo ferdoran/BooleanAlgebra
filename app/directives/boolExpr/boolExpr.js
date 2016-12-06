@@ -83,6 +83,8 @@ app.directive('boolExpr', function($parse, $sce) {
                 $scope.expression = new BAExpression($attr.boolValue || '');
             }
 
+            console.log($scope.expression);
+
             $input.html($scope.expression.getHtml());
 
             $scope.symbol = $attr.boolSymbol;

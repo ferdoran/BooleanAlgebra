@@ -14,6 +14,9 @@ app.directive('boolInput', function($parse, $sce){
             testExpr = 'A⇔B∨C';
             testExpr = '';
 
+            $scope.symbol = $attr.boolSymbol;
+            $scope.symbolSmall = $attr.boolSymbolSmall;
+
             //testExpr = '(B∧A)⇒(¬A∧B∨(B∧(J⇒K)∧C))';
             //testExpr = '¬A∧¬(B∨C)∧(B∨C)∧(A∨(B∨C∧(B∨C)))';
 

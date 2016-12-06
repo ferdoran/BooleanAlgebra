@@ -18,6 +18,7 @@
     "angular-translate": "~2.11.0",
     "angular-translate-loader-static-files": "^2.11.0",
     "json-formatter": "^0.5.0",
-    "jquery-slimscroll": "*"
+    "jquery-slimscroll": "*",
+    "flag-icon-css": "*"
   }
 }

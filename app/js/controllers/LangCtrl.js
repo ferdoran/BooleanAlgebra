@@ -2,11 +2,13 @@
  * Created by Sergej on 04.09.2016.
  */
 app.controller("LangCtrl", function ($scope, $translate) {
+    var $m = angular.element('#languageBox');
     $scope.changeLang = function (key) {
         $translate.use(key).then(function (key) {
-            $scope.getCurrentLanguage();
+            /*$scope.getCurrentLanguage();*/
         }, function (key) {
         });
+
     };
     $scope.getCurrentLanguage = function () {
         var currentLanguage = $translate.proposedLanguage() || $translate.use();
