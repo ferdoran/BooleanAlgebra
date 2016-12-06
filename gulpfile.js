@@ -80,11 +80,16 @@ gulp.task('bower-files', function(){
         .pipe(gulp.dest('dist/bower_components'));
 });
 
+gulp.task('flags', function(){
+    gulp.src('app/bower_components/flag-icon-css/flags/**/*')
+        .pipe(gulp.dest('dist/flags'));
+});
+
 gulp.task('translations', function(){
     gulp.src('app/translations/*.json')
         .pipe(gulp.dest('dist/translations'));
 });
-gulp.task('build', ['clean', 'directives', 'font-awesome', 'images', 'translations', 'views', 'useref'], function(){
+gulp.task('build', ['clean', 'directives', 'font-awesome', 'images', 'translations', 'flags', 'views', 'useref'], function(){
     console.log("Building files");
 });
 

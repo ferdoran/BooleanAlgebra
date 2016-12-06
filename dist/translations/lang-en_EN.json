@@ -1,3 +1,23 @@
 {
-    "APP_TITLE": "Boolean Algebra",
+    "APP": {
+        "TITLE": "Boolean Algebra"
+    },
+    "MAIN": {
+        "TITLE": "Boolean Expression"
+    },
+    "GROUPS": {
+        "TITLE": "Groups",
+        "INFO": {
+            "S1": "There are currently no groups.",
+            "BEFORE": "Select a valid range inside the expression and press ",
+            "AFTER": " to create a new group."
+        }
+    },
+    "TABLE": {
+        "TITLE": "Truth table",
+        "INFO": {
+            "TEXT": "You need a valid expression to generate a truth table!",
+            "BUTTON": "Learn with truth table"
+        }
+    }
 }

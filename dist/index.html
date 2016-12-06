@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
-    <title translate="APP.TITLE"></title>
+    <title translate="APP.TITLE">Boolesche Algebra</title>
     <base href="/">
 
     <meta name="author" content="Sergej Görzen">
@@ -42,6 +42,30 @@
         <h1 class="diagram-title" translate="APP.TITLE"></h1>
         <img id="thLogo" src="images/th-koeln-logo.png" alt="TH Köln Logo" />
     </header>
+
+    <section id="languageBox" ng-controller="LangCtrl">
+        <div class="container-fluid">
+            <span>Sprache:</span>
+            <button class="button lang-button" ng-click="changeLang('de_DE')">
+                <span class="flag-icon flag-icon-de"></span>
+            </button>
+            <button class="button lang-button" ng-click="changeLang('en_EN')">
+                <span class="flag-icon flag-icon-gb"></span>
+            </button>
+            <button class="button lang-button" ng-click="changeLang('fr_FR')" disabled>
+                <span class="flag-icon flag-icon-fr"></span>
+            </button>
+            <button class="button lang-button" ng-click="changeLang('es_ES')" disabled>
+                <span class="flag-icon flag-icon-es"></span>
+            </button>
+            <button class="button lang-button" ng-click="changeLang('ru_RU')">
+                <span class="flag-icon flag-icon-ru"></span>
+            </button>
+            <button class="button lang-button" ng-click="changeLang('tr_TR')" disabled>
+                <span class="flag-icon flag-icon-tr"></span>
+            </button>
+        </div>
+    </section>
 
     <section class="container-fluid nopadding" ng-view></section>
 
