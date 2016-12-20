@@ -83,8 +83,6 @@ app.directive('boolExpr', function($parse, $sce) {
                 $scope.expression = new BAExpression($attr.boolValue || '');
             }
 
-            console.log($scope.expression);
-
             $input.html($scope.expression.getHtml());
 
             $scope.symbol = $attr.boolSymbol;
@@ -104,8 +102,9 @@ app.directive('boolExpr', function($parse, $sce) {
             }
 
             $scope.addChar = function(char){
+                $input.focus();
                 DomUtils.pasteHtmlAtCaret(char);
-                $input.change().focus();
+                $input.change();
             };
 
             $scope.clearText = function(){

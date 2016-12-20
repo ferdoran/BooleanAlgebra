@@ -21,6 +21,13 @@ app.controller('BACtrl', function($scope, $compile) {
         $body.html(boolTableHtml);
     };
 
+    $scope.createKV = function(id){
+        var $body = angular.element(id);
+        console.log($body);
+        var kvHtml = $compile('<bool-kv></bool-kv>')($scope);
+        $body.html(kvHtml);
+    };
+
     $scope.closeFooter = function(){
         angular.element('footer').hide();
     };

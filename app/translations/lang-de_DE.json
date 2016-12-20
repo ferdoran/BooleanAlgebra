@@ -19,5 +19,13 @@
             "TEXT": "Zum Generieren einer Wahrheitstabelle benötigen Sie einen gültigen Ausdruck!",
             "BUTTON": "Wahrheitstabelle üben"
         }
+    },
+    "LANG_DROP": {
+        "GERMAN": "Deutsch",
+        "ENGLISH": "Englisch",
+        "TURKISH": "Türkisch",
+        "RUSSIAN": "Russisch",
+        "SPANISH": "Spanisch",
+        "FRANCE": "Französisch"
     }
 }
