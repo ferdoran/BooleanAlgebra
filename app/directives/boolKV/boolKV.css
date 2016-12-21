@@ -44,3 +44,13 @@
     transform: rotate(-45deg);
     left: -4px;
 }
+
+.boolKV .debug {
+    font-size:9px;
+}
+.boolKV .debug td {
+    border: 1px solid black;
+}
+.boolKV canvas {
+    cursor:pointer;
+}

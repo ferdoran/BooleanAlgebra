@@ -31,6 +31,9 @@ app.directive('boolKv', function($parse, $timeout, $sce){
             kv.setCanvas('kvCanvasContainer');
 
             kv.generateKV(['A', 'B', 'C', 'D', 'E', 'F']);
+            kv.resizeCanvas();
+            kv.generateBlocks();
+            kv.refresh();
 
             $scope.kv = kv;
         }

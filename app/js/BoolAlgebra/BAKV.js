@@ -3,6 +3,20 @@
  */
 var KVDiagram = function(){
     this.field = [];
+
+    var width = 0, height = 0;
+
+    this.getWidth = function(){
+        return width;
+    };
+    this.getHeight = function() {
+        return height;
+    };
+
+    this.getRow = function(index){
+        return this.field[index];
+    };
+
     var reflectV = function (A) {
         var reflField = [];
         for (var r = A.length - 1; r >= 0; r--) {
@@ -35,7 +49,8 @@ var KVDiagram = function(){
             this.field = reflectH(this.field);
         }
 
-        var half = this.field[0].getLength() / 2;
+        width = this.field[0].getLength();
+        var half = width / 2;
         for (var i = 0; i < this.field.length; i++) {
             var row = this.field[i];
             for (var j = 0; j < half; j++) {
@@ -54,7 +69,8 @@ var KVDiagram = function(){
             this.field = reflectV(this.field);
         }
 
-        var half = this.field.length / 2;
+        height = this.field.length;
+        var half = height / 2;
         for (var i = 0; i < half; i++) {
             var rowA = this.field[i];
             var rowB = this.field[half + i];
@@ -107,9 +123,50 @@ var KVRow = function(){
         return row;
     };
 };
+var KVBlock = function(x, y, width, height, cell){
+    this.x = x || 0;
+    this.y = y || 0;
+    this.width = width || 0;
+    this.height = height || 0;
 
+    this.cell = cell;
+    var hasBorder = cell != undefined;
+
+    this.draw = function(ctx){
+        ctx.font = "32px Helvetica";
+        ctx.fillText(this.cell.value, this.x + this.width / 2 - 8, this.y + this.height - 4);
+        if (hasBorder) {
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.stroke(); ctx.stroke();
+        }
+// ----> http://fabricjs.com/intersection
+    };
+};
 var BAKV = function (expr) {
+    var $this = this;
+
     this.diagram = null;
+    this.expr = expr;
+    var scale = 1;
+    var size = 32;
+
+    var canvas = null;
+    var ctx = null;
+
+    var vars = [];
+
+    this.setScale = function(_scale){
+        scale = _scale;
+    };
+    this.getScale = function() {
+        return scale;
+    };
+    this.setBlockSize = function(_size){
+        size = _size;
+    };
+    this.getBlockSize = function() {
+        return size;
+    };
 
     this.setCanvas = function(target){
         canvas = document.getElementById(target);
@@ -120,77 +177,56 @@ var BAKV = function (expr) {
         }
 
         ctx = canvas.getContext("2d");
-        ctx.font = "16px Helvetica";
+
     };
 
+    this.resizeCanvas = function(){
+        var varSizeV = parseInt(vars.length / 2);
+        var varSizeH = vars.length - varSizeV;
 
+        var canvasWidth = varSizeV * size + this.diagram.getWidth() * size;
+        var canvasHeight = varSizeH * size + this.diagram.getHeight() * size;
+
+        canvas.width = canvasWidth + size * 2;
+        canvas.height = canvasHeight + size * 2;
+    };
+
+    var blocks = [];
+
+    this.generateBlocks = function(){
+        var gridOffset = {x: 96, y: 96};
+        blocks = [];
+        for (var r = 0; r < this.diagram.getHeight(); r++) {
+            var row = this.diagram.getRow(r);
+            for (var c = 0; c < this.diagram.getWidth(); c++) {
+                var col = row.getCol(c);
+                var block = new KVBlock(gridOffset.x + c * size, gridOffset.y + r * size, size, size, col);
+                blocks.push(block);
+            }
+        }
+    };
+    this.refresh = function(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (var i = 0; i < blocks.length; i++) {
+            var block = blocks[i];
+            console.log(block);
+            block.draw(ctx);
+        }
+    };
 
     this.generateKV = function(V) {
+        vars = V;
+        var A = new KVDiagram();
 
-        console.log("V = " + V);
-        var A = new KVDiagram(), char = '', negChar = '', firstRowCols= null, i, j;
-
-        for (i = 0; i < V.length; i++) {
+        for (var i = 0; i < V.length; i++) {
             if (i % 2 == 0) {
                 A.reflectHorizontal(V[i]);
             } else {
                 A.reflectVertical(V[i]);
             }
         }
-
-        console.log(A);
-
         this.diagram = A;
-        return false;
-
-        /*var A_Length = Math.pow(2, V.length);
-        console.log(A_Length + " Felder");
-        var A = [], i,
-            width = 0,
-            height = 0;
-
-        for (i = 0; i < V.length; i++) {
-            if (i % 2 == 0) {
-                width++;
-            } else {
-                height++;
-            }
-        }
-
-        console.log("Vars in Breite " + width);
-        console.log("Vars in Höhe " + height);
-
-        var fWidth = Math.pow(2, width);
-        var fHeight = Math.pow(2, height);
-
-        console.log("Feldbreite " + fWidth);
-        console.log("Feldhöhe " + fHeight);
-
-        var lastChar = '', negChar = '';
-        for (i = 0; i < V.length; i++) {
-            var char = V[i];
-            if (lastChar != char) {
-                lastChar = char;
-                negChar = SYMBOL_NEG + lastChar;
-                var zx = parseInt(i / 2) + 1;
-                console.log(zx + ":" + lastChar + " " + negChar);
-                var str = '';
-                for (var j = 0; j < zx; j++) {
-                    str += lastChar;
-                }
-                console.log(str);
-            }
-        }*/
     };
-
-    return;
-    var canvas = null;
-    var ctx = null;
-    this.expr = expr;
-    var $this = this;
-    this.scale = 1;
-
-
 
     this.write = function(text, x, y) {
         ctx.fillText(text, x, y);
