@@ -1,4 +1,15 @@
 <div class="boolKV noselect">
+    <div class="debug">
+        <table>
+            <tbody>
+            <tr ng-repeat="row in kv.diagram.field">
+                <td ng-repeat="col in row.cols">
+                    <span ng-repeat="Var in col.assignedVars">{{Var}}</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     <div class="boolKvBody" id="kvCanvasContainer"></div>
     <div class="boolKvOptions">
         <button class="kvColor kvColorReset active" data-color="reset"></button>

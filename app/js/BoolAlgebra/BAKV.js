@@ -3,19 +3,81 @@
  */
 var KVDiagram = function(){
     this.field = [];
+    var reflectV = function (A) {
+        var reflField = [];
+        for (var r = A.length - 1; r >= 0; r--) {
+            var row = A[r];
+            reflField.push(row.clone());
+        }
+        return A.concat(reflField);
+    };
+
+    var reflectH = function(A) {
+        for (var r = 0; r < A.length; r++) {
+            var mirror = [];
+            var row = A[r];
+            for (var c = row.getLength() - 1; c >= 0; c--) {
+                var col = row.getCol(c);
+                mirror.push(col.clone());
+            }
+            row.appendCols(mirror);
+        }
+        return A;
+    };
+
     this.reflectHorizontal = function (Var) {
-        console.log("REFLECT HORIZONTAL ON "+ Var);
+        if (this.field.length < 1) {
+            var newRow = new KVRow();
+            newRow.addCol(new KVCol(0));
+            newRow.addCol(new KVCol(0));
+            this.field.push(newRow);
+        } else {
+            this.field = reflectH(this.field);
+        }
+
+        var half = this.field[0].getLength() / 2;
+        for (var i = 0; i < this.field.length; i++) {
+            var row = this.field[i];
+            for (var j = 0; j < half; j++) {
+                var colA = row.getCol(j);
+                var colB = row.getCol(half + j);
+                colA.addVar(Var);
+                colB.addVar(SYMBOL_NEG + Var);
+            }
+        }
     };
     this.reflectVertical = function(Var) {
-        console.log("REFLECT VERTICAL ON " + Var);
+        if (this.field.length < 2) {
+            var row = this.field[0].clone();
+            this.field.push(row);
+        } else {
+            this.field = reflectV(this.field);
+        }
+
+        var half = this.field.length / 2;
+        for (var i = 0; i < half; i++) {
+            var rowA = this.field[i];
+            var rowB = this.field[half + i];
+            for (var j = 0; j < rowA.getLength(); j++) {
+                rowA.getCol(j).addVar(Var);
+                rowB.getCol(j).addVar(SYMBOL_NEG + Var);
+            }
+        }
     };
 };
 
 var KVCol = function(value,Var){
-    this.value = value;
-    this.assignedVars = Array.isArray(Var) ? Var : [Var];
+    this.value = value || 0;
+    this.assignedVars = Var ? (Array.isArray(Var) ? Var : [Var]) : [];
     this.addVar = function(char){
         this.assignedVars.push(char);
+    };
+    this.clone = function(){
+        var vars = [];
+        for (var i = 0; i < this.assignedVars.length; i++) {
+            vars.push(this.assignedVars[i]);
+        }
+        return new KVCol(this.value, vars);
     };
 };
 var KVRow = function(){
@@ -24,9 +86,31 @@ var KVRow = function(){
     this.addCol = function(col){
         this.cols.push(col);
     };
+
+    this.appendCols = function(A) {
+        this.cols = this.cols.concat(A);
+    };
+
+    this.getCol = function(index) {
+        return this.cols[index];
+    };
+
+    this.getLength = function(){
+        return this.cols.length;
+    };
+
+    this.clone = function(){
+        var row = new KVRow();
+        for (var i = 0; i < this.cols.length; i++) {
+            row.addCol(this.cols[i].clone());
+        }
+        return row;
+    };
 };
 
 var BAKV = function (expr) {
+    this.diagram = null;
+
     this.setCanvas = function(target){
         canvas = document.getElementById(target);
         if (canvas.tagName != "CANVAS") {
@@ -42,6 +126,7 @@ var BAKV = function (expr) {
 
 
     this.generateKV = function(V) {
+
         console.log("V = " + V);
         var A = new KVDiagram(), char = '', negChar = '', firstRowCols= null, i, j;
 
@@ -55,7 +140,7 @@ var BAKV = function (expr) {
 
         console.log(A);
 
-
+        this.diagram = A;
         return false;
 
         /*var A_Length = Math.pow(2, V.length);
@@ -97,13 +182,6 @@ var BAKV = function (expr) {
             }
         }*/
     };
-
-    this.generateKV(['A']);
-    this.generateKV(['A', 'B']);
-    this.generateKV(['A', 'B', 'C']);
-    this.generateKV(['A', 'B', 'C', 'D']);
-    this.generateKV(['A', 'B', 'C', 'D', 'E']);
-    this.generateKV(['A', 'B', 'C', 'D', 'E', 'F']);
 
     return;
     var canvas = null;

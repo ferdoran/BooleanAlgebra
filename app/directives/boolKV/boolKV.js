@@ -29,6 +29,10 @@ app.directive('boolKv', function($parse, $timeout, $sce){
 
             var kv = new BAKV(new BAExpression("A∨B"));
             kv.setCanvas('kvCanvasContainer');
+
+            kv.generateKV(['A', 'B', 'C', 'D', 'E', 'F']);
+
+            $scope.kv = kv;
         }
     };
 });
