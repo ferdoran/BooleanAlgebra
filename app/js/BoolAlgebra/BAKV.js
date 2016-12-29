@@ -4,13 +4,13 @@
 var KVDiagram = function(){
     this.field = [];
 
-    var width = 0, height = 0;
+    var width = 0;
 
     this.getWidth = function(){
         return width;
     };
     this.getHeight = function() {
-        return height;
+        return this.field.length;
     };
 
     this.getRow = function(index){
@@ -69,8 +69,7 @@ var KVDiagram = function(){
             this.field = reflectV(this.field);
         }
 
-        height = this.field.length;
-        var half = height / 2;
+        var half = this.getHeight() / 2;
         for (var i = 0; i < half; i++) {
             var rowA = this.field[i];
             var rowB = this.field[half + i];
@@ -123,42 +122,72 @@ var KVRow = function(){
         return row;
     };
 };
-var KVBlock = function(x, y, width, height, cell){
+var KVBlock = function(x, y, width, height, value){
     this.x = x || 0;
     this.y = y || 0;
     this.width = width || 0;
     this.height = height || 0;
+    this.value = value || 0;
 
-    this.cell = cell;
+    this.fill = 'white';
+
     this.getText = function(){
-        return this.cell.value || '0';
+        return this.value || '0';
+    };
+    this.isInside = function(p) {
+        return p.x >= this.x && p.x <= this.x + this.width &&
+                p.y >= this.y && p.y <= this.y + this.height;
+    };
+    this.draw = function(ctx){
+        ctx.fillStyle = this.cell ? this.fill : 'transparent';
+        ctx.fRect(x,y,width,height);
+        ctx.beginPath();
+        ctx.strokeStyle = this.cell ? 'black' : 'transparent';
+        ctx.sRect(x, y, width, height);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = this.cell ? '30px Verdana' : '18px Verdana';
+        ctx.fillText(value + "", x + width / 2, y + height / 2);
+    };
+    this.getBlock = function(caption){
+        var rect = new fabric.Rect({
+            width: width,
+            height: height,
+            fill: caption ? 'transparent' : 'white',
+            strokeWidth: caption ? 0 : 1,
+            stroke: 'black',
+            originX: 'center',
+            originY: 'center'
+        });
+        var text = new fabric.Text(value + "", {
+            fontSize: caption ? 18 : 32,
+            top: caption ? 0 : 2,
+            fill: caption ? '#111' : 'black',
+            fontFamily: 'Verdana',
+            originX: 'center',
+            originY: 'center'
+        });
+        var group = new fabric.Group([rect, text], {
+            left: x,
+            top: y,
+            selectable: false
+        });
+        group.klass = caption ? 'caption' : 'cell';
+
+        return group;
     };
 };
-var BAKV = function (expr) {
-    var $this = this;
-
+var BAKV = function (params) {
     this.diagram = null;
-    this.expr = expr;
-    var scale = 1;
+
+    this.expr = params.expr || null;
     var size = 32;
 
     var canvas = null;
     var ctx = null;
 
-    var vars = [];
-
-    this.setScale = function(_scale){
-        scale = _scale;
-    };
-    this.getScale = function() {
-        return scale;
-    };
-    this.setBlockSize = function(_size){
-        size = _size;
-    };
-    this.getBlockSize = function() {
-        return size;
-    };
+    var vars = [], blocks = [];
 
     this.setCanvas = function(target){
         canvas = document.getElementById(target);
@@ -167,57 +196,118 @@ var BAKV = function (expr) {
             var cName = target + "_canvas";
             c.setAttribute("id", cName);
             canvas.appendChild(c);
-            target = cName;
+            canvas = c;
+            //target = cName;
         }
-        canvas = new fabric.Canvas(target);
-        canvas.hoverCursor = 'pointer';
+        canvas.isDirty = false;
+        const hoverColor = 'red';
+        var lastBlock = null;
+        var isOver = function(block) {
+            if (block.cell) {
+                if (block != lastBlock) {
+                    loseHover(block);
+                }
+                if (block.fill != hoverColor) canvas.isDirty = true;
+                block.fill = hoverColor;
+                lastBlock = block;
+            }
+        };
+        var loseHover = function(block){
+            if (block.cell) {
+                if (block.fill != 'white') canvas.isDirty = true;
+                block.fill = 'white';
+            }
+        };
+        canvas.addEventListener('mousemove', function(e) {
+            var mouse = {x: e.offsetX, y: e.offsetY};
+            for (var i = 0; i < blocks.length; i++) {
+                var block = blocks[i];
+                loseHover(block);
+                if (block.isInside(mouse)) {
+                    isOver(block);
+                }
+            }
+            canvas.refresh();
+        });
+        canvas.clear = function(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        };
+        canvas.refresh = function(){
+            if (!canvas.isDirty) return;
+            canvas.clear();
+            for (var i = 0; i < blocks.length; i++) {
+                var block = blocks[i];
+                block.draw(ctx);
+            }
+        };
+        //canvas = new fabric.Canvas(target);
+        //canvas.hoverCursor = 'pointer';
+/*
+        canvas.on('mouse:over', function (e) {
+            if (e.target && e.target.klass && e.target.klass == 'cell') {
+                e.target.item(0).set('fill', 'red');
+                e.target.remove();
+                canvas.renderAll();
+            }
+        });
+        canvas.on('mouse:out', function (e) {
+            if (e.target && e.target.klass && e.target.klass == 'cell') {
+                var rect = e.target._objects[0];
+                rect.fill = 'white';
+                console.log(rect);
+                canvas.renderAll();
+            }
+        });*/
     };
+    this.setCanvas(params.target);
 
     this.resizeCanvas = function(){
-        var varSizeV = parseInt(vars.length / 2);
-        var varSizeH = vars.length - varSizeV;
+        var h = Math.ceil(vars.length / 2);
+        var w = vars.length - h;
 
-        var canvasWidth = varSizeV * size + this.diagram.getWidth() * size;
-        var canvasHeight = varSizeH * size + this.diagram.getHeight() * size;
+        var canvasWidth = w * size + this.diagram.getWidth() * size + size;
+        var canvasHeight = h * size + this.diagram.getHeight() * size + size;
 
-        var width = canvasWidth + size * 2;
-        var height = canvasHeight + size * 2;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
 
-        canvas.setWidth( width );
-        canvas.setHeight( height );
-        canvas.calcOffset();
+        ctx = canvas.getContext("2d");
+        ctx.sRect = function(x,y,w,h){
+            x = parseInt(x) + 0.50;
+            y = parseInt(y) + 0.50;
+            this.strokeRect(x,y,w,h);
+        };
+        ctx.fRect = function(x,y,w,h) {
+            x = parseInt(x);
+            y = parseInt(y);
+            this.fillRect(x,y,w,h);
+        };
+        //canvas.setWidth(canvasWidth);
+        //canvas.setHeight(canvasHeight);
+        //canvas.calcOffset();
     };
 
-    var blocks = [];
-
     this.generateBlocks = function(){
-        var gridOffset = {x: 96, y: 96};
+        var h = Math.ceil(vars.length / 2);
+        var w = vars.length - h;
+
+        var gridOffset = {x: size * w, y: size * h};
+
+        //canvas.clear();
         blocks = [];
+        canvas.isDirty = true;
         for (var r = 0; r < this.diagram.getHeight(); r++) {
             var row = this.diagram.getRow(r);
 
             var firstcol = row.cols[0];
 
-            var rect, text, group, aVar;
+            var block, aVar;
 
             for (var rI = 1, offX = 1; rI < firstcol.assignedVars.length; rI+=2, offX++) {
                 aVar = firstcol.assignedVars[rI];
-                rect = new fabric.Rect({
-                    width: size,
-                    height: size,
-                    fill: 'transparent',
-                    strokeWidth:0,
-                    stroke:'black',
-                    originX: 'center',
-                    originY: 'center'
-                });
-                text = new fabric.Text(aVar, {fontSize: 18, originX: 'center', originY: 'center'});
-                group = new fabric.Group([rect, text], {
-                    left: gridOffset.x + offX * -size,
-                    top: gridOffset.y + r * size,
-                    selectable: false
-                });
-                canvas.add(group);
+                block = new KVBlock(gridOffset.x + offX * -size, gridOffset.y + r * size, size, size, aVar);
+                blocks.push(block);
+                //canvas.add(block.getBlock(true));
             }
 
             for (var c = 0; c < this.diagram.getWidth(); c++) {
@@ -226,55 +316,18 @@ var BAKV = function (expr) {
                 if (r == 0) {
                     for (var cI = 0, offY = 1; cI < col.assignedVars.length; cI+=2, offY++) {
                         aVar = col.assignedVars[cI];
-                        rect = new fabric.Rect({
-                            width: size,
-                            height: size,
-                            fill: 'transparent',
-                            strokeWidth:0,
-                            stroke:'black',
-                            originX: 'center',
-                            originY: 'center'
-                        });
-                        text = new fabric.Text(aVar, {fontSize: 18, originX: 'center', originY: 'center'});
-                        group = new fabric.Group([rect, text], {
-                            left: gridOffset.x + c * size,
-                            top: gridOffset.y + offY * -size,
-                            selectable: false
-                        });
-                        canvas.add(group);
+                        block = new KVBlock(gridOffset.x + c * size, gridOffset.y + offY * -size, size, size, aVar);
+                        blocks.push(block);
+                        //canvas.add(block.getBlock(true));
                     }
                 }
 
-                var block = new KVBlock(gridOffset.x + c * size, gridOffset.y + r * size, size, size, col);
-                /*blocks.push(block);*/
-                rect = new fabric.Rect({
-                    width: block.width,
-                    height: block.height,
-                    stroke: 'black',
-                    strokeWidth: 1,
-                    fill: 'white',
-                    originX: 'center',
-                    originY: 'center'
-                });
-                text = new fabric.Text(block.getText(), { fontSize: 30, originX: 'center', originY: 'center' });
-
-                group = new fabric.Group([rect, text], {
-                    left: block.x,
-                    top: block.y,
-                    selectable: false
-                });
-
-                canvas.add(group);
+                block = new KVBlock(gridOffset.x + c * size, gridOffset.y + r * size, size, size, col.value);
+                block.cell = col;
+                blocks.push(block);
+                //canvas.add(block.getBlock());
             }
         }
-    };
-    this.refresh = function(){
-        /*ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (var i = 0; i < blocks.length; i++) {
-            var block = blocks[i];
-            console.log(block);
-            block.draw(ctx);
-        }*/
     };
 
     this.generateKV = function(V) {
@@ -289,9 +342,12 @@ var BAKV = function (expr) {
             }
         }
         this.diagram = A;
+
+        this.resizeCanvas();
+        this.generateBlocks();
     };
 
-    this.write = function(text, x, y) {
-        ctx.fillText(text, x, y);
+    this.refresh = function(){
+        canvas.refresh();
     };
 };

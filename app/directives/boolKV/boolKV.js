@@ -27,15 +27,17 @@ app.directive('boolKv', function($parse, $timeout, $sce){
             };
             initColors();
 
-            var kv = new BAKV(new BAExpression("A∨B"));
-            kv.setCanvas('kvCanvasContainer');
+            var kv = new BAKV({target: 'kvCanvasContainer', expr: new BAExpression("A∨B")});
 
+            kv.generateKV(['A']);
+            kv.generateKV(['A', 'B']);
+            kv.generateKV(['A', 'B', 'C']);
+            kv.generateKV(['A', 'B', 'C', 'D']);
+            kv.generateKV(['A', 'B', 'C', 'D', 'E']);
             kv.generateKV(['A', 'B', 'C', 'D', 'E', 'F']);
-            kv.resizeCanvas();
-            kv.generateBlocks();
-            kv.refresh();
 
-            $scope.kv = kv;
+            kv.refresh();
+            //$scope.kv = kv;
         }
     };
 });

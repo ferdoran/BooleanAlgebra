@@ -53,4 +53,5 @@
 }
 .boolKV canvas {
     cursor:pointer;
+    position:relative;
 }
