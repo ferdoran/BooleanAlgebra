@@ -36,7 +36,6 @@ app.directive('boolKv', function($parse, $timeout, $sce){
             kv.generateKV(['A', 'B', 'C', 'D', 'E']);
             kv.generateKV(['A', 'B', 'C', 'D', 'E', 'F']);
 
-            kv.refresh();
             //$scope.kv = kv;
         }
     };
