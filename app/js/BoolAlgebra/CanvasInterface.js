@@ -4,6 +4,9 @@
 var CanvasInterface = {
     createEasel: function(id) {
         var canvas = document.getElementById(id);
+
+        var hoverOverlay = null;
+
         if (canvas.tagName != "CANVAS") {
             var c = document.createElement("CANVAS");
             var cName = id + "_canvas";
@@ -16,8 +19,6 @@ var CanvasInterface = {
         var stage = new createjs.Stage(id);
         stage.name = "stage";
         stage.enableMouseOver(20);
-
-        var blocks = [];
 
         canvas.add = function(block) {
             var label = new createjs.Text(block.value, "20px Arial", "#333");
@@ -43,11 +44,15 @@ var CanvasInterface = {
                     canvas.onBlockClick({event: evt, block: block, label: label, button: button, background: bg});
                 });
                 button.addEventListener('mouseover', function(evt) {
-                    bg.graphics.clear().beginFill(bg.overColor).drawRect(0, 0, block.width, block.height).endFill().beginStroke('black').drawRect(0, 0, block.width, block.height);
+                    if (!hoverOverlay._fill) {
+                        bg.graphics.clear().beginFill(bg.overColor).drawRect(0, 0, block.width, block.height).endFill().beginStroke('black').drawRect(0, 0, block.width, block.height);
+                    }
                     canvas.onBlockHover({event: evt, block: block, label: label, button: button, background: bg});
                 });
                 button.addEventListener('mouseout', function(evt) {
-                    bg.graphics.clear().beginFill(bg.outColor).drawRect(0, 0, block.width, block.height).endFill().beginStroke('black').drawRect(0, 0, block.width, block.height);
+                    if (!hoverOverlay._fill) {
+                        bg.graphics.clear().beginFill(bg.outColor).drawRect(0, 0, block.width, block.height).endFill().beginStroke('black').drawRect(0, 0, block.width, block.height);
+                    }
                     canvas.onBlockOut({event: evt, block: block, label: label, button: button, background: bg});
                 });
             }
@@ -57,7 +62,45 @@ var CanvasInterface = {
             stage.addChild(button);
         };
 
+        canvas.placeOverlay = function(block, color) {
+            var overlay = new createjs.Shape();
+            overlay.alpha = 0.35;
+            overlay.graphics.beginFill(color).drawRect(8, 8, 16, 16).endFill();
+            overlay.x = block.x;
+            overlay.y = block.y;
+
+            stage.addChild(overlay);
+        };
+        canvas.createHoverOverlay = function(){
+            if (hoverOverlay == null) {
+                hoverOverlay = new createjs.Shape();
+                hoverOverlay.alpha = 0.35;
+                hoverOverlay.x = 0;
+                hoverOverlay.y = 0;
+                hoverOverlay._fill = null;
+                canvas.setHoverOverlayStyle(null);
+                stage.addChild(hoverOverlay);
+            }
+        };
+        canvas.setHoverOverlayStyle = function(fill) {
+            hoverOverlay._fill = fill;
+            if (fill == null) {
+                fill = 'transparent';
+            }
+
+            canvas.createHoverOverlay();
+
+            hoverOverlay.graphics.clear().beginFill(fill).drawRect(8, 8, 16, 16).endFill();
+            canvas.refresh();
+        };
+        canvas.setHoverOverlayPosition = function(x, y) {
+            canvas.createHoverOverlay();
+            hoverOverlay.x = x;
+            hoverOverlay.y = y;
+        };
+
         canvas.clearChildren = function(){
+            hoverOverlay = null;
             stage.removeAllChildren();
         };
 
@@ -69,9 +112,10 @@ var CanvasInterface = {
             stage.canvas.height = height;
         };
 
-        canvas.clear = function(){
-        };
         canvas.refresh = function(force){
+            if (hoverOverlay != null) {
+                stage.setChildIndex( hoverOverlay, stage.getNumChildren()-1);
+            }
             stage.update();
         };
 

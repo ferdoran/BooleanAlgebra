@@ -42,28 +42,18 @@
         <h1 class="diagram-title" translate="APP.TITLE"></h1>
         <img id="thLogo" src="images/th-koeln-logo.png" alt="TH Köln Logo" />
     </header>
-
     <section id="languageBox" ng-controller="LangCtrl">
         <div class="container-fluid">
-            <span>Sprache:</span>
-            <button class="button lang-button" ng-click="changeLang('de_DE')">
-                <span class="flag-icon flag-icon-de"></span>
-            </button>
-            <button class="button lang-button" ng-click="changeLang('en_EN')">
-                <span class="flag-icon flag-icon-gb"></span>
-            </button>
-            <button class="button lang-button" ng-click="changeLang('fr_FR')" disabled>
-                <span class="flag-icon flag-icon-fr"></span>
-            </button>
-            <button class="button lang-button" ng-click="changeLang('es_ES')" disabled>
-                <span class="flag-icon flag-icon-es"></span>
-            </button>
-            <button class="button lang-button" ng-click="changeLang('ru_RU')">
-                <span class="flag-icon flag-icon-ru"></span>
-            </button>
-            <button class="button lang-button" ng-click="changeLang('tr_TR')" disabled>
-                <span class="flag-icon flag-icon-tr"></span>
-            </button>
+            <div dropmenu dropmenu-change="changeLang">
+                <ul>
+                    <li value="en_EN"><span class="flag-icon flag-icon-gb"></span> {{"LANG_DROP.ENGLISH" | translate}}</li>
+                    <li value="fr_FR" disabled><span class="flag-icon flag-icon-fr"></span> {{"LANG_DROP.FRANCE" | translate}}</li>
+                    <li value="de_DE" selected><span class="flag-icon flag-icon-de"></span> {{"LANG_DROP.GERMAN" | translate}}</li>
+                    <li value="ru_RU"><span class="flag-icon flag-icon-ru"></span> {{"LANG_DROP.RUSSIAN" | translate}}</li>
+                    <li value="es_ES" disabled><span class="flag-icon flag-icon-es"></span> {{"LANG_DROP.SPANISH" | translate}}</li>
+                    <li value="tr_TR" disabled><span class="flag-icon flag-icon-tr"></span> {{"LANG_DROP.TURKISH" | translate}}</li>
+                </ul>
+            </div>
         </div>
     </section>
 

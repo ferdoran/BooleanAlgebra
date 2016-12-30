@@ -19,5 +19,13 @@
             "TEXT": "You need a valid expression to generate a truth table!",
             "BUTTON": "Learn with truth table"
         }
+    },
+    "LANG_DROP": {
+        "GERMAN": "German",
+        "ENGLISH": "English",
+        "TURKISH": "Turkish",
+        "RUSSIAN": "Russian",
+        "SPANISH": "Spanish",
+        "FRANCE": "France"
     }
 }

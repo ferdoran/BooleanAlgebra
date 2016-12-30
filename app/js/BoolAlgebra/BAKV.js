@@ -163,27 +163,36 @@ var BAKV = function (params) {
     var canvas = null;
 
     var vars = [];
+    var selectColor = null;
 
     this.setCanvas = function(target){
         canvas = CanvasInterface.createEasel(target);
 
         canvas.onBlockClick = function(parm){
-
-            parm.label.text = 1;
+            if (selectColor != null) {
+                canvas.placeOverlay(parm.block, selectColor);
+            } else {
+                parm.block.value = parm.block.value == 0 ? 1 : 0;
+                parm.label.text = parm.block.value;
+            }
             canvas.refresh();
         };
 
         canvas.onBlockHover = function(parm) {
-            console.log(parm);
+            canvas.setHoverOverlayPosition(parm.block.x, parm.block.y);
             canvas.refresh();
         };
 
         canvas.onBlockOut = function(parm) {
-
             canvas.refresh();
         };
     };
     this.setCanvas(params.target);
+
+    this.setSelectColor = function(color) {
+        selectColor = color;
+        canvas.setHoverOverlayStyle(color);
+    };
 
     this.resizeCanvas = function(){
         var h = Math.ceil(vars.length / 2);
@@ -232,6 +241,8 @@ var BAKV = function (params) {
                 canvas.add(block.getRenderObject());
             }
         }
+        canvas.createHoverOverlay();
+
         canvas.refresh(true);
     };
 
