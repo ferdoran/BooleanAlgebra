@@ -32,6 +32,11 @@ var CanvasInterface = {
             button.x = block.x;
             button.y = block.y;
 
+            block.ui = {
+                label: label,
+                button: button
+            };
+
             if (block.cell){
                 var bg = new createjs.Shape();
                 bg.overColor = '#ddd';
@@ -55,9 +60,12 @@ var CanvasInterface = {
                     }
                     canvas.onBlockOut({event: evt, block: block, label: label, button: button, background: bg});
                 });
+
+                block.ui.bg = bg;
             }
 
             button.addChild(label);
+
 
             stage.addChild(button);
         };

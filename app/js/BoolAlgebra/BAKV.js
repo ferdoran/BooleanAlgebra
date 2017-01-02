@@ -87,6 +87,7 @@ var KVCol = function(value,Var){
     this.addVar = function(char){
         this.assignedVars.push(char);
     };
+
     this.clone = function(){
         var vars = [];
         for (var i = 0; i < this.assignedVars.length; i++) {
@@ -155,6 +156,7 @@ var KVBlock = function(x, y, width, height, value){
     };
 };
 var BAKV = function (params) {
+    var $this = this;
     this.diagram = null;
 
     this.expr = params.expr || null;
@@ -164,11 +166,19 @@ var BAKV = function (params) {
 
     var vars = [];
     var selectColor = null;
+    var blocks = [];
 
     this.setCanvas = function(target){
         canvas = CanvasInterface.createEasel(target);
 
         canvas.onBlockClick = function(parm){
+            var block = parm.block;
+            block.cell.left.block.ui.label.text = 1;
+            block.cell.top.block.ui.label.text = 1;
+            block.cell.right.block.ui.label.text = 1;
+            block.cell.bottom.block.ui.label.text = 1;
+            canvas.refresh();
+            return;
             if (selectColor != null) {
                 canvas.placeOverlay(parm.block, selectColor);
             } else {
@@ -204,15 +214,16 @@ var BAKV = function (params) {
         canvas.setSize(canvasWidth, canvasHeight);
     };
 
-    this.generateBlocks = function(){
+    var generateBlocks = function(){
         var h = Math.ceil(vars.length / 2);
         var w = vars.length - h;
 
         var gridOffset = {x: size * w, y: size * h};
 
         canvas.clearChildren();
-        for (var r = 0; r < this.diagram.getHeight(); r++) {
-            var row = this.diagram.getRow(r);
+        blocks = [];
+        for (var r = 0; r < $this.diagram.getHeight(); r++) {
+            var row = $this.diagram.getRow(r);
 
             var firstcol = row.cols[0];
 
@@ -225,7 +236,7 @@ var BAKV = function (params) {
                 canvas.add(block.getRenderObject(true));
             }
 
-            for (var c = 0; c < this.diagram.getWidth(); c++) {
+            for (var c = 0; c < $this.diagram.getWidth(); c++) {
                 var col = row.getCol(c);
 
                 if (r == 0) {
@@ -238,12 +249,42 @@ var BAKV = function (params) {
 
                 block = new KVBlock(gridOffset.x + c * size, gridOffset.y + r * size, size, size, col.value);
                 block.cell = col;
+                col.block = block;
+                blocks.push(block);
                 canvas.add(block.getRenderObject());
             }
         }
         canvas.createHoverOverlay();
 
         canvas.refresh(true);
+    };
+
+    var createNetwork = function(){
+        var w = $this.diagram.getWidth();
+        var w2 = w - 1;
+        var h = $this.diagram.getHeight();
+        var L = w * h;
+        var L2 = L - 1;
+
+        for (var n = 0; n < blocks.length; n++) {
+            var cell = blocks[n].cell;
+            cell.n = n;
+
+            var nMw = n % w;
+
+            var r = nMw == w2 ? n - w2 : n + 1;
+            cell.right = blocks[r].cell;
+
+            var l = nMw == 0 ? n + w2 : n - 1;
+            cell.left = blocks[l].cell;
+
+            var b = n <= L2 - w ? n + w : n % h;
+
+            cell.bottom = blocks[b].cell;
+
+            var t = n < w ? L - (w - n) : n - w;
+            cell.top = blocks[t].cell;
+        }
     };
 
     this.generateKV = function(V) {
@@ -260,7 +301,8 @@ var BAKV = function (params) {
         this.diagram = A;
 
         this.resizeCanvas();
-        this.generateBlocks();
+        generateBlocks();
+        createNetwork();
     };
 
     this.refresh = function(){

@@ -21,7 +21,7 @@ app.directive('dropmenu', function ($timeout, $sce) {
                 $element.prepend('<div class="preview"><span class="content">'+ $sce.trustAsHtml($firstLi.html()) +'</span><span class="glyphicon glyphicon-triangle-bottom"></span></div>');
                 $preview = $element.find('.preview');
                 $element.css({width: ($firstLi.outerWidth() + 50) + "px"});
-            }, 100);
+            }, 500);
 
             var close = function(){
                 $element.removeClass('open');
