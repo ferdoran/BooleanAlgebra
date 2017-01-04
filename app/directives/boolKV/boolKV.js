@@ -10,7 +10,7 @@ app.directive('boolKv', function($parse, $timeout, $sce){
         scope:true,
         templateUrl: "directives/boolKV/boolKV.html",
         link: function($scope, $element, $attr) {
-            var kv = new BAKV({target: 'kvCanvasContainer', expr: new BAExpression("A∨B")});
+            var kv = new BAKV({target: 'kvCanvasContainer', expr: new BAExpression($attr.boolExpr)});
 
             var initColors = function () {
                 var $colors = $element.find('.kvColor');
@@ -31,12 +31,17 @@ app.directive('boolKv', function($parse, $timeout, $sce){
             };
             initColors();
 
+            $scope.checkResult = function(){
+                kv.checkResult();
+            };
+
             /*kv.generateKV(['A']);
             kv.generateKV(['A', 'B']);
             kv.generateKV(['A', 'B', 'C']);
             kv.generateKV(['A', 'B', 'C', 'D']);
-            kv.generateKV(['A', 'B', 'C', 'D', 'E']);*/
-            kv.generateKV(['A', 'B', 'C', 'D', 'E', 'F']);
+            kv.generateKV(['A', 'B', 'C', 'D', 'E']);
+            kv.generateKV(['A', 'B', 'C', 'D', 'E', 'F']);*/
+            kv.generateKV();
 
             //$scope.kv = kv;
         }

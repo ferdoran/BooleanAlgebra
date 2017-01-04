@@ -61,6 +61,25 @@ var BANode = function(params){
     this.isLeaf = function(){
         return !this.isGroup() && (!this.child2 || this.child2 == null || !this.child1 || this.child1 == null);
     };
+    this.getLetters = function(){
+        var letters = [];
+
+        if (this.value == "") return letters;
+        if (this.isClips() && this.clipInfo.rootNode) {
+            letters.merge(this.clipInfo.rootNode.getLetters());
+        }
+        else if (this.isGroup() && !(this.child1 || this.child2)){
+            letters.merge(this.group.expression.rootNode.getLetters());
+        }
+        else if (!this.isLeaf()) {
+            letters.merge(this.child1.getLetters());
+            letters.merge(this.child2.getLetters());
+        } else {
+            letters.merge(this.value);
+        }
+
+        return letters;
+    };
     this.getResult = function(param) {
         var result = 0;
         if (this.isGroup() && !this.child2 && !this.child1) {

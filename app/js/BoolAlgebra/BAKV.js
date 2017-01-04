@@ -132,6 +132,18 @@ var KVBlock = function(x, y, width, height, value){
 
     this.fill = 'white';
 
+    this.setValue = function(val) {
+        this.value = val;
+        if (this.cell) {
+            this.cell.value = val;
+        }
+    };
+    this.getValue = function(){
+        if (this.cell) {
+            return this.cell.value;
+        }
+        return this.value;
+    };
     this.getText = function(){
         return this.value || '0';
     };
@@ -172,18 +184,12 @@ var BAKV = function (params) {
         canvas = CanvasInterface.createEasel(target);
 
         canvas.onBlockClick = function(parm){
-            var block = parm.block;
-            block.cell.left.block.ui.label.text = 1;
-            block.cell.top.block.ui.label.text = 1;
-            block.cell.right.block.ui.label.text = 1;
-            block.cell.bottom.block.ui.label.text = 1;
-            canvas.refresh();
-            return;
             if (selectColor != null) {
-                canvas.placeOverlay(parm.block, selectColor);
+
             } else {
-                parm.block.value = parm.block.value == 0 ? 1 : 0;
-                parm.label.text = parm.block.value;
+                parm.block.setValue(parm.block.getValue() == 0 ? 1 : 0);
+                parm.label.text = parm.block.getValue();
+                parm.label.color = parm.label.colors.normal;
             }
             canvas.refresh();
         };
@@ -258,7 +264,36 @@ var BAKV = function (params) {
 
         canvas.refresh(true);
     };
+    this.checkResult = function(){
+        var transformVar = function(A) {
+            var X = {};
 
+            for (var i = 0; i < A.length; i++) {
+                var a = A[i];
+                var val = 1;
+                if (a.charAt(0) == SYMBOL_NEG) {
+                    val = 0;
+                    a = a.substr(1, a.length - 1);
+                }
+                X[a] = val;
+            }
+
+            return X;
+        };
+
+        for (var i = 0; i < blocks.length; i++) {
+            var block = blocks[i];
+
+            if (!block.V) {
+                block.V = transformVar(block.cell.assignedVars);
+            }
+            block.result = $this.expr.getResult(block.V);
+
+            block.ui.label.color = block.result == block.getValue() ? block.ui.label.colors.normal : block.ui.label.colors.error;
+            console.log(block.ui.label);
+        }
+        canvas.refresh();
+    };
     var createNetwork = function(){
         var w = $this.diagram.getWidth();
         var w2 = w - 1;
@@ -288,6 +323,9 @@ var BAKV = function (params) {
     };
 
     this.generateKV = function(V) {
+        if (!V) {
+            V = this.expr.rootNode.getLetters();
+        }
         vars = V;
         var A = new KVDiagram();
 

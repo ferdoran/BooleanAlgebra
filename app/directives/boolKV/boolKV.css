@@ -2,6 +2,8 @@
 .boolKV .boolKvBody {
     position:relative;
     display:inline-block;
+    width: 100%;
+    overflow: auto;
 }
 .boolKV .kvColor {
     display:inline-block;

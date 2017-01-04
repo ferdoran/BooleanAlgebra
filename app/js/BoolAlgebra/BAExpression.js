@@ -207,7 +207,6 @@ var BAExpression = function(text) {
         return this.text.replaceAll(group.getText(), group.key);
     };
     this.getResult = function(param){
-        console.log(param);
         return this.rootNode.getResult(param);
     };
     this.useGroup = function(group) {

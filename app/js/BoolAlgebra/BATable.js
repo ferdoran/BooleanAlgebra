@@ -10,8 +10,6 @@ var BATable = function(rootNode){
 
     this.isLoading = false;
 
-    /**@TODO auf neusten Stand umbauen */
-
     var searchLetter = function(node){
         if (!node || node.value == "") return false;
         if (node.isClips()) {
@@ -34,7 +32,9 @@ var BATable = function(rootNode){
     this.build = function(node){
         this.isLoading = true;
         this.letters.clear();
-        searchLetter(node);
+        /*searchLetter(node);
+        console.log(this.letters);*/
+        this.letters = node.getLetters();
         this.isLoading = false;
     };
     this.build(rootNode);

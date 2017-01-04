@@ -22,9 +22,12 @@ app.controller('BACtrl', function($scope, $compile) {
     };
 
     $scope.createKV = function(id){
+        if (app.domains.boolMain.expression.text == "") {
+            angular.element('.boolInput[bool-domain="boolMain"]').find('.input').focus();
+            return false;
+        }
         var $body = angular.element(id);
-        console.log($body);
-        var kvHtml = $compile('<bool-kv></bool-kv>')($scope);
+        var kvHtml = $compile('<bool-kv bool-expr="' + app.domains.boolMain.expression.text + '"></bool-kv>')($scope);
         $body.html(kvHtml);
     };
 

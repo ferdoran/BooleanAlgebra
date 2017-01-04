@@ -16,12 +16,18 @@ var CanvasInterface = {
             id = cName;
         }
 
+        const labelColor = '#333';
+
         var stage = new createjs.Stage(id);
         stage.name = "stage";
         stage.enableMouseOver(20);
 
         canvas.add = function(block) {
-            var label = new createjs.Text(block.value, "20px Arial", "#333");
+            var label = new createjs.Text(block.value, "20px Arial", labelColor);
+            label.colors = {
+                normal: labelColor,
+                error: 'red'
+            };
             label.textAlign = "center";
             label.textBaseline = "middle";
             label.x = block.width / 2;
@@ -73,7 +79,7 @@ var CanvasInterface = {
         canvas.placeOverlay = function(block, color) {
             var overlay = new createjs.Shape();
             overlay.alpha = 0.35;
-            overlay.graphics.beginFill(color).drawRect(8, 8, 16, 16).endFill();
+            overlay.graphics.beginFill(color).drawRoundRect(8, 8, 16, 16).endFill();
             overlay.x = block.x;
             overlay.y = block.y;
 

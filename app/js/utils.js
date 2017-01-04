@@ -214,6 +214,20 @@ String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.split(search).join(replacement);
 };
+Array.prototype.merge = function(A) {
+    if (Array.isArray(A)) {
+        for (var i = 0; i < A.length; i++) {
+            var a = A[i];
+            if (this.indexOf(a) < 0) {
+                this.push(a);
+            }
+        }
+    } else {
+        if (this.indexOf(A) < 0) {
+            this.push(A);
+        }
+    }
+};
 Array.prototype.clear = function() {
     if (this.length == 0) return;
     this.splice(0, this.length);
