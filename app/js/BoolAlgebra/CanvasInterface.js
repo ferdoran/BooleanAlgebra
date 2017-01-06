@@ -22,6 +22,30 @@ var CanvasInterface = {
         stage.name = "stage";
         stage.enableMouseOver(20);
 
+        var colorContainer = new createjs.Container();
+        colorContainer.name = "colorContainer";
+        colorContainer.x = colorContainer.y = 0;
+
+        var blockContainer = new createjs.Container();
+        blockContainer.name = "blockContainer";
+        blockContainer.x = blockContainer.y = 0;
+
+        stage.addChild(blockContainer);
+        stage.addChild(colorContainer);
+
+        canvas.clearColorContainer = function(){
+            colorContainer.removeAllChildren();
+        };
+        canvas.addToColorContainer = function(color, x, y, width, height) {
+            var rect = new createjs.Shape();
+            rect.x = x;
+            rect.y = y;
+            rect.alpha = 0.5;
+            rect.graphics.beginFill(color).drawRoundRect(0, 0, width, height, 5).endFill();
+
+            colorContainer.addChild(rect);
+        };
+
         canvas.add = function(block) {
             var label = new createjs.Text(block.value, "20px Arial", labelColor);
             label.colors = {
@@ -73,7 +97,7 @@ var CanvasInterface = {
             button.addChild(label);
 
 
-            stage.addChild(button);
+            blockContainer.addChild(button);
         };
 
         canvas.placeOverlay = function(block, color) {
@@ -115,7 +139,7 @@ var CanvasInterface = {
 
         canvas.clearChildren = function(){
             hoverOverlay = null;
-            stage.removeAllChildren();
+            blockContainer.removeAllChildren();
         };
 
         canvas.onBlockHover = function(block){};
@@ -127,9 +151,6 @@ var CanvasInterface = {
         };
 
         canvas.refresh = function(force){
-            if (hoverOverlay != null) {
-                stage.setChildIndex( hoverOverlay, stage.getNumChildren()-1);
-            }
             stage.update();
         };
 

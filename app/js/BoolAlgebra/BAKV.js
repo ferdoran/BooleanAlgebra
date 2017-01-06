@@ -84,10 +84,29 @@ var KVDiagram = function(){
 var KVCol = function(value,Var){
     this.value = value || 0;
     this.assignedVars = Var ? (Array.isArray(Var) ? Var : [Var]) : [];
+    this.colors = [];
+
     this.addVar = function(char){
         this.assignedVars.push(char);
     };
-
+    this.addColor = function(color) {
+        if (this.colors.indexOf(color) < 0) {
+            this.colors.push(color);
+        }
+    };
+    this.removeColor = function(color){
+        var idx = this.colors.indexOf(color);
+        if (idx >= 0) {
+            this.colors.splice(idx, 1);
+        }
+    };
+    this.toggleColor = function(color){
+        if (this.colors.indexOf(color) < 0){
+            this.addColor(color);
+        } else {
+            this.removeColor(color);
+        }
+    };
     this.clone = function(){
         var vars = [];
         for (var i = 0; i < this.assignedVars.length; i++) {
@@ -129,6 +148,7 @@ var KVBlock = function(x, y, width, height, value){
     this.width = width || 0;
     this.height = height || 0;
     this.value = value || 0;
+    this.cell = null;
 
     this.fill = 'white';
 
@@ -137,6 +157,15 @@ var KVBlock = function(x, y, width, height, value){
         if (this.cell) {
             this.cell.value = val;
         }
+    };
+    this.addColor = function(color) {
+        if (this.cell) this.cell.addColor(color);
+    };
+    this.removeColor = function(color){
+        if (this.cell) this.cell.removeColor(color);
+    };
+    this.toggleColor = function(color){
+        if (this.cell) this.cell.toggleColor(color);
     };
     this.getValue = function(){
         if (this.cell) {
@@ -180,12 +209,53 @@ var BAKV = function (params) {
     var selectColor = null;
     var blocks = [];
 
+    var generateBlockColors = function(){
+        canvas.clearColorContainer();
+
+        var visited = [];
+        var colors = [];
+
+        var travelCell = function(cell, prevCell){
+            if (!cell || cell == null || visited.contains(cell) || prevCell && cell.value != prevCell.value) {
+                return;
+            }
+
+            for (var i = 0; i < cell.colors.length; i++) {
+                var c = cell.colors[i];
+                if (!(c in colors)) {
+                    colors[c] = [];
+                }
+                colors[c].push({x: cell.block.x, y: cell.block.y, width: 16, height:16});
+            }
+
+            visited.push(cell);
+            travelCell(cell.right, cell);
+            travelCell(cell.bottom, cell);
+            travelCell(cell.left, cell);
+            travelCell(cell.top, cell);
+
+        };
+
+        travelCell(blocks[0].cell);
+
+        console.log(colors);
+        var keys = Object.keys(colors);
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var color = colors[key];
+            for (var j = 0; j < color.length; j++) {
+                canvas.addToColorContainer(key, color[j].x, color[j].y, color[j].width, color[j].height);
+            }
+
+        }
+    };
     this.setCanvas = function(target){
         canvas = CanvasInterface.createEasel(target);
 
         canvas.onBlockClick = function(parm){
             if (selectColor != null) {
-
+                parm.block.toggleColor(selectColor);
+                generateBlockColors();
             } else {
                 parm.block.setValue(parm.block.getValue() == 0 ? 1 : 0);
                 parm.label.text = parm.block.getValue();

@@ -228,6 +228,14 @@ Array.prototype.merge = function(A) {
         }
     }
 };
+Array.prototype.contains = function(obj) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+};
 Array.prototype.clear = function() {
     if (this.length == 0) return;
     this.splice(0, this.length);
