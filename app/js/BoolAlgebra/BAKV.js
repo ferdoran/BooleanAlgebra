@@ -196,6 +196,35 @@ var KVBlock = function(x, y, width, height, value){
         return this;
     };
 };
+var ColorPath = function(ownerCell, color) {
+    this.color = color;
+    this.ownerCell = ownerCell;
+    this.push = function(cell) {
+        // KOORDINATEN MERKEN
+    };
+};
+var ColorPathMap = function(){
+    var visitedCells = [];
+    this.start = function(cell, color) {
+        if (!(color in visitedCells)) {
+            visitedCells[color] = [];
+        } else {
+            if (visitedCells[color].contains(cell)) {
+                return false;
+            }
+        }
+        visitedCells[color].push(cell);
+        var path = new ColorPath(cell, color);
+        next(cell.right, path);
+    };
+
+    var next = function(cell, path) {
+        if (cell.value != path.ownerCell.value || cell.colors.contains(path.color)) {
+            return false;
+        }
+
+    };
+};
 var BAKV = function (params) {
     var $this = this;
     this.diagram = null;
@@ -212,41 +241,12 @@ var BAKV = function (params) {
     var generateBlockColors = function(){
         canvas.clearColorContainer();
 
-        var visited = [];
-        var colors = [];
-
-        var travelCell = function(cell, prevCell){
-            if (!cell || cell == null || visited.contains(cell) || prevCell && cell.value != prevCell.value) {
-                return;
+        var colorMap = new ColorPathMap();
+        for (var i = 0; i < blocks.length; i++) {
+            var cell = blocks[i].cell;
+            for (var j = 0; j < cell.colors.length; j++) {
+                colorMap.start(cell, cell.colors[j]);
             }
-
-            for (var i = 0; i < cell.colors.length; i++) {
-                var c = cell.colors[i];
-                if (!(c in colors)) {
-                    colors[c] = [];
-                }
-                colors[c].push({x: cell.block.x, y: cell.block.y, width: 16, height:16});
-            }
-
-            visited.push(cell);
-            travelCell(cell.right, cell);
-            travelCell(cell.bottom, cell);
-            travelCell(cell.left, cell);
-            travelCell(cell.top, cell);
-
-        };
-
-        travelCell(blocks[0].cell);
-
-        console.log(colors);
-        var keys = Object.keys(colors);
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            var color = colors[key];
-            for (var j = 0; j < color.length; j++) {
-                canvas.addToColorContainer(key, color[j].x, color[j].y, color[j].width, color[j].height);
-            }
-
         }
     };
     this.setCanvas = function(target){
