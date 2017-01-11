@@ -27,7 +27,7 @@ Command line:
 3) Type: gulp build
 
 (Optional for testing):
-4) Type: gulp webserver-dev
+4) Type: gulp webserver-dist
 5) Visit: localhost:8080 in browser
 
 Webstorm IDE:

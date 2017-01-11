@@ -24,6 +24,10 @@ var ColorPathMap = function(canvas){
         next(cell.right, path);
     };
 
+    this.begin = function(){
+
+    };
+
     var next = function(cell, path) {
         if (cell.value != path.ownerCell.value || cell.colors.contains(path.color)) {
             return false;

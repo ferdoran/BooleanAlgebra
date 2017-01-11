@@ -103,7 +103,7 @@ var EaselInterface = {
         canvas.placeOverlay = function(block, color) {
             var overlay = new createjs.Shape();
             overlay.alpha = 0.35;
-            overlay.graphics.beginFill(color).drawRoundRect(8, 8, 16, 16).endFill();
+            overlay.graphics.beginFill(color).drawRoundRect(8, 8, 16, 16, 5).endFill();
             overlay.x = block.x;
             overlay.y = block.y;
 
