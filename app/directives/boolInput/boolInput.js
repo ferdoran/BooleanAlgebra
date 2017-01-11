@@ -10,9 +10,6 @@ app.directive('boolInput', function($parse, $sce){
         scope:true,
         templateUrl: "directives/boolInput/boolInput.html",
         link: function($scope, $element, $attr) {
-            var testExpr = "¬A∧B∨C∧A∧B";
-            testExpr = 'A⇔B∨C';
-            testExpr = '';
 
             $scope.symbol = $attr.boolSymbol;
             $scope.symbolSmall = $attr.boolSymbolSmall;
@@ -20,7 +17,7 @@ app.directive('boolInput', function($parse, $sce){
             //testExpr = '(B∧A)⇒(¬A∧B∨(B∧(J⇒K)∧C))';
             //testExpr = '¬A∧¬(B∨C)∧(B∨C)∧(A∨(B∨C∧(B∨C)))';
 
-            $scope.expression = new BAExpression(testExpr);
+            $scope.expression = new BAExpression();
 
             $scope.groups = BAGroup.groups;
 
@@ -48,9 +45,6 @@ app.directive('boolInput', function($parse, $sce){
                         var letter = letters[letters.length - 1 - i];
                         bitLine[letter] = v;
                     }
-                    console.log(bitLine);
-                    console.log(expr.getResult(bitLine));
-
                 }
             };
 

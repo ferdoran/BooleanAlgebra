@@ -46,6 +46,10 @@ var CanvasInterface = {
             colorContainer.addChild(rect);
         };
 
+        canvas.createBlock = function(){
+
+        };
+
         canvas.add = function(block) {
             var label = new createjs.Text(block.value, "20px Arial", labelColor);
             label.colors = {

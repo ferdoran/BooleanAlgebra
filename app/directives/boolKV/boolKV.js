@@ -32,18 +32,9 @@ app.directive('boolKv', function($parse, $timeout, $sce){
             initColors();
 
             $scope.checkResult = function(){
-                kv.checkResult();
             };
 
-            /*kv.generateKV(['A']);
-            kv.generateKV(['A', 'B']);
-            kv.generateKV(['A', 'B', 'C']);
-            kv.generateKV(['A', 'B', 'C', 'D']);
-            kv.generateKV(['A', 'B', 'C', 'D', 'E']);
-            kv.generateKV(['A', 'B', 'C', 'D', 'E', 'F']);*/
             kv.generateKV();
-
-            //$scope.kv = kv;
         }
     };
 });

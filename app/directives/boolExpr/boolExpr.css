@@ -115,6 +115,9 @@
     padding: 0 5px;
     border: 1px solid #ccc;
     position:relative;
+    font-size: 16px;
+    min-height: 27px;
+    padding-top: 3px;
 }
 .boolExpr .boolInputBody:not(.isValid) .input {
     color: #999;
