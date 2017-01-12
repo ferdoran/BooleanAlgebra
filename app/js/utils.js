@@ -236,6 +236,22 @@ Array.prototype.contains = function(obj) {
     }
     return false;
 };
+Array.prototype.toggleObject = function(obj){
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == obj) {
+            this.splice(i, 1);
+            return;
+        }
+    }
+    this.push(obj);
+};
+Array.prototype.remove = function(obj) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == obj) {
+            this.splice(i, 1);
+        }
+    }
+};
 Array.prototype.clear = function() {
     if (this.length == 0) return;
     this.splice(0, this.length);
@@ -251,14 +267,7 @@ String.prototype.countChar = function(char) {
     }
     return count;
 };
-
-function GET_DN_SYMBOL(number) {
-    var s = '' + number;
-    var rs = '';
-
-    for (var i = 0; i < s.length; i++) {
-        var idx = s.charAt(i);
-        rs += DNR[idx]
-    }
-    return rs;
-}
+Math.isPowerOfTwo = function(number) {
+    var n2 = number - 1;
+    return ( (number != 0) && ((number & n2) == 0));
+};

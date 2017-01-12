@@ -7,7 +7,7 @@ var KVDiagram = function(expr, canvas){
     this.cells = [];
     var width = 0;
 
-    const size = 32;
+    const size = KVDiagram.SIZE;
 
     this.getWidth = function(){
         return width;
@@ -125,8 +125,10 @@ var KVDiagram = function(expr, canvas){
         var w = V.length - h;
 
         var gridOffset = {x: size * w, y: size * h};
+        canvas.setOffset(gridOffset);
 
         canvas.clearChildren();
+
         this.cells = [];
         for (var r = 0; r < this.getHeight(); r++) {
             var row = this.getRow(r);
@@ -178,3 +180,4 @@ var KVDiagram = function(expr, canvas){
     };
     this.init(V);
 };
+KVDiagram.SIZE = 32;

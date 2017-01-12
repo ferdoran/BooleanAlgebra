@@ -1,37 +1,165 @@
 /**
  * Created by Sergej on 11.01.2017.
  */
-var ColorPath = function(ownerCell, color) {
+var ColorPathBlockGroup = function(){
+
+};
+var ColorPathBlockGroups = function(cells){
+    var groups = [];
+
+    var visited = [];
+
+    this.visit = function(cell, prevCell){
+        if (!cells.contains(cell) || visited.contains(cell)) return;
+        var value = prevCell ? prevCell.value : cell.value;
+        if (value != cell.value) return;
+
+        visited.push(cell);
+        console.log(cell);
+        this.visit(cell.right, cell);
+        /* Nach RECHTS und UNTEN gehen nur ? */
+    };
+    this.init = function(){
+        value = cells[0].value;
+        for (var i = 0; i < cells.length; i++) {
+            this.visit(cells[i]);
+        }
+    };
+    this.init();
+};
+var ColorPath = function(startCell, color) {
     this.color = color;
-    this.ownerCell = ownerCell;
-    this.push = function(cell) {
-        console.log("PUSH " + cell.n);
-        // KOORDINATEN MERKEN
+    this.start = startCell;
+    this.end = startCell;
+    this.type = null;
+
+    var cells = [];
+    var spotType = function(startBlock, endBlock){
+        console.log(startBlock);
+        console.log(endBlock);
+    };
+
+    var compare_n = function(a,b) {
+        if (a.n < b.n)
+            return -1;
+        if (a.n > b.n)
+            return 1;
+        return 0;
+    };
+
+    this.isValid = function(){
+        return Math.isPowerOfTwo(cells.length);
+    };
+
+    var calcEndIndex = function(){
+        return cells.length - 1;
+    };
+    this.toggleCell = function(cell) {
+        if (cell.value != this.start.value) return;
+        cells.toggleObject(cell);
+
+        if (cells.length == 0) {
+            this.start = this.end = null;
+        } else if (cells.length == 1) {
+            this.start = this.end = cells[0];
+        } else {
+            cells.sort(compare_n);
+            this.start = cells[0];
+            this.end = cells[calcEndIndex()];
+        }
+
+        return cells.length;
+    };
+    this.toggleCell(startCell);
+
+    var calcBlockPos = function(n, w) {
+        var pos = {x: 0, y: parseInt(n / w)};
+        pos.x = n - pos.y * w;
+        return pos;
+    };
+
+    var createBlocks = function(_cells){
+        var blocks = [];
+
+        return blocks;
+    };
+
+    this.createRects = function(w, size){
+        var blocks = new ColorPathBlockGroups(cells);
+
+
+
+        var rects = [];
+
+        /*var rects = [], startBlock, endBlock, width, height;
+
+        startBlock = calcBlockPos(this.start.n, w);
+        endBlock = calcBlockPos(this.end.n, w);
+
+        width = endBlock.x - startBlock.x + 1;
+        height = endBlock.y - startBlock.y + 1;
+
+        var halfSize = size / 2;
+        var quartSize = halfSize / 2;
+
+        rects.push({
+            x: size * startBlock.x,
+            y: size * startBlock.y,
+            width: width * size,
+            height: height * size
+        });*/
+
+
+
+        return rects;
     };
 };
-var ColorPathMap = function(canvas){
-    var visitedCells = [];
-    this.start = function(cell, color) {
-        if (!(color in visitedCells)) {
-            visitedCells[color] = [];
-        } else {
-            if (visitedCells[color].contains(cell)) {
-                return false;
+var ColorPathMap = function(){
+    this.canvas = null;
+    this.diagram = null;
+
+    var paths = [];
+    this.getPathInfoWithColor = function(color) {
+        for (var i = 0; i < paths.length; i++) {
+            var path = paths[i];
+            if (path.color == color) {
+                return {path: path, index: i};
             }
         }
-        visitedCells[color].push(cell);
-        var path = new ColorPath(cell, color);
-        next(cell.right, path);
+        return {path: null, index: -1};
     };
 
-    this.begin = function(){
-
+    this.config = function(canvas, diagram) {
+        this.canvas = canvas;
+        this.diagram = diagram;
     };
 
-    var next = function(cell, path) {
-        if (cell.value != path.ownerCell.value || cell.colors.contains(path.color)) {
-            return false;
+    this.resetCanvas = function(){
+        this.canvas.clearColorContainer();
+        for (var i = 0; i < paths.length; i++) {
+            var path = paths[i];
+            var rects = path.createRects(this.diagram.getWidth(), KVDiagram.SIZE);
+            for (var j = 0; j < rects.length; j++) {
+                var rect = rects[j];
+                this.canvas.addToColorContainer(path.color, rect.x, rect.y, rect.width, rect.height);
+            }
+
+        }
+    };
+
+    this.analyze = function(cell, color){
+        var pathInfo = this.getPathInfoWithColor(color);
+        var path = pathInfo.path || null;
+        var index = pathInfo.index || -1;
+
+        if (path == null) {
+            paths.push(path = new ColorPath(cell, color));
+        } else {
+            if (path.toggleCell(cell) == 0) {
+                paths.remove(path);
+            }
         }
 
+        this.resetCanvas();
     };
 };

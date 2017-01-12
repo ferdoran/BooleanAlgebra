@@ -1,6 +1,7 @@
 var BAKV = function (params) {
+    var $this = this;
     this.diagram = null;
-    this.colorMap = null;
+    this.colorMap = new ColorPathMap();
 
     var canvas = null;
 
@@ -11,7 +12,7 @@ var BAKV = function (params) {
 
         canvas.onBlockClick = function(parm){
             if (selectColor != null) {
-                parm.cell.toggleColor(selectColor);
+                $this.colorMap.analyze(parm.cell, selectColor);
             }
             canvas.refresh();
         };
@@ -43,7 +44,7 @@ var BAKV = function (params) {
         this.resizeCanvas();
         canvas.refresh();
 
-        this.colorMap = new ColorPathMap(canvas);
+        this.colorMap.config(canvas, this.diagram);
     };
 
     this.refresh = function(){

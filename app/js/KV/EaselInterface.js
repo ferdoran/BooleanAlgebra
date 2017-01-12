@@ -25,6 +25,7 @@ var EaselInterface = {
         var colorContainer = new createjs.Container();
         colorContainer.name = "colorContainer";
         colorContainer.x = colorContainer.y = 0;
+        var gridOffset = {x: 0, y: 0};
 
         var blockContainer = new createjs.Container();
         blockContainer.name = "blockContainer";
@@ -33,10 +34,23 @@ var EaselInterface = {
         stage.addChild(blockContainer);
         stage.addChild(colorContainer);
 
+        canvas.setOffset = function(offset){
+            gridOffset.x = offset.x;
+            gridOffset.y = offset.y;
+        };
+
         canvas.clearColorContainer = function(){
             colorContainer.removeAllChildren();
         };
         canvas.addToColorContainer = function(color, x, y, width, height) {
+            /* Optische Korrektur */
+            var cFactor = KVDiagram.SIZE / 4;
+            var cFactor2 = KVDiagram.SIZE / 2;
+            x += cFactor + gridOffset.x;
+            y += cFactor + gridOffset.y;
+            width -= cFactor2;
+            height -= cFactor2;
+
             var rect = new createjs.Shape();
             rect.x = x;
             rect.y = y;
