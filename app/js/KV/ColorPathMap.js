@@ -10,10 +10,32 @@ var ColorPathBlockGroup = function(startCell){
     };
 
     this.split = function(){
-        var splitIndex = Math.previousPowerOfTwo(this.cells.length) - 1;
+        var subSplit = function(A) {
+            var splitIndex = Math.previousPowerOfTwo(A.length);
+            var a = [], b = [];
+            for (var x = 0; x < A.length; x++) {
+                if (x < splitIndex) {
+                    a.push(A[x]);
+                } else {
+                    b.push(A[x]);
+                }
+            }
 
-        console.log("splitIndex: " + splitIndex);
-        return [this]; // TODO
+            return {a: a, b: b};
+        };
+
+        var data = {a: [], b: this.cells};
+
+        var groups = [];
+        while(data.b.length > 0) {
+            data = subSplit(data.b);
+            var group = new ColorPathBlockGroup(data.a[0]);
+            group.cells = data.a;
+            group.end = data.a[data.a.length - 1];
+            groups.push(group);
+        }
+        console.log(groups);
+        return groups;
     };
 
     this.isValid = function(){
@@ -121,12 +143,6 @@ var ColorPath = function(startCell, color) {
         var pos = {x: 0, y: parseInt(n / w)};
         pos.x = n - pos.y * w;
         return pos;
-    };
-
-    var createBlocks = function(_cells){
-        var blocks = [];
-
-        return blocks;
     };
 
     this.createRects = function(w, size){

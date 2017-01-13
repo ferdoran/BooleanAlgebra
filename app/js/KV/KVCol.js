@@ -4,7 +4,6 @@
 var KVCol = function(value, Vars){
     this.value = value || 0;
     this.assignedVars = Vars || {};
-    this.colors = [];
 
     var varLength = Vars ? Object.keys(Vars).length : 0;
     this.getVarLength = function () {
@@ -30,24 +29,6 @@ var KVCol = function(value, Vars){
     this.getVarAtIndexStr = function(index){
         var Var = this.getVarAtIndex(index);
         return (Var.value == 0 ? SYMBOL_NEG : '') + Var.key;
-    };
-    this.addColor = function(color) {
-        if (this.colors.indexOf(color) < 0) {
-            this.colors.push(color);
-        }
-    };
-    this.removeColor = function(color){
-        var idx = this.colors.indexOf(color);
-        if (idx >= 0) {
-            this.colors.splice(idx, 1);
-        }
-    };
-    this.toggleColor = function(color){
-        if (this.colors.indexOf(color) < 0){
-            this.addColor(color);
-        } else {
-            this.removeColor(color);
-        }
     };
     this.clone = function(){
         var vars = {};
