@@ -19,6 +19,7 @@ var EaselInterface = {
         const labelColor = '#333';
 
         var stage = new createjs.Stage(id);
+        /*createjs.Touch.enable(stage);*/
         stage.name = "stage";
         stage.enableMouseOver(20);
 

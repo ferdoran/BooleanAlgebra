@@ -1,31 +1,76 @@
 /**
  * Created by Sergej on 11.01.2017.
  */
-var ColorPathBlockGroup = function(){
+var ColorPathBlockGroup = function(startCell){
+    this.cells = [];
+    this.start = startCell;
+    this.end = null;
+    this.add = function(cell) {
+        this.cells.push(cell);
+    };
 
+    this.split = function(){
+        var splitIndex = Math.previousPowerOfTwo(this.cells.length) - 1;
+
+        console.log("splitIndex: " + splitIndex);
+        return [this]; // TODO
+    };
+
+    this.isValid = function(){
+        return Math.isPowerOfTwo(this.cells.length);
+    };
 };
 var ColorPathBlockGroups = function(cells){
     var groups = [];
 
     var visited = [];
 
-    this.visit = function(cell, prevCell){
-        if (!cells.contains(cell) || visited.contains(cell)) return;
-        var value = prevCell ? prevCell.value : cell.value;
-        if (value != cell.value) return;
+    this.stopAt = function(cell, startCell){
+        if (!cells.contains(cell) || visited.contains(cell)) return true;
+        if (startCell.value != cell.value) return true;
 
         visited.push(cell);
-        console.log(cell);
-        this.visit(cell.right, cell);
-        /* Nach RECHTS und UNTEN gehen nur ? */
+        return false;
+    };
+    this.startAt = function(startCell) {
+        if (!cells.contains(startCell) || visited.contains(startCell)) return null;
+
+        var nextCell = startCell;
+        var group = new ColorPathBlockGroup(startCell);
+
+        while (true) {
+            if (this.stopAt(nextCell, startCell)) {
+                group.end = nextCell.left;
+                break;
+            } else {
+                group.add(nextCell);
+                nextCell = nextCell.right;
+            }
+        }
+        return group;
     };
     this.init = function(){
         value = cells[0].value;
+        groups = [];
         for (var i = 0; i < cells.length; i++) {
-            this.visit(cells[i]);
+            var group = this.startAt(cells[i]);
+            if (group != null) {
+                if (group.isValid()) {
+                    groups.push(group);
+                } else {
+                    var subgroups = group.split();
+                    for (var j = 0; j < subgroups.length; j++) {
+                        groups.push(subgroups[j]);
+                    }
+                }
+            }
         }
     };
     this.init();
+
+    this.getGroups = function(){
+        return groups;
+    };
 };
 var ColorPath = function(startCell, color) {
     this.color = color;
@@ -85,31 +130,25 @@ var ColorPath = function(startCell, color) {
     };
 
     this.createRects = function(w, size){
-        var blocks = new ColorPathBlockGroups(cells);
-
-
-
+        var pathGroups = new ColorPathBlockGroups(cells);
+        var groups = pathGroups.getGroups();
         var rects = [];
 
-        /*var rects = [], startBlock, endBlock, width, height;
+        for (var i = 0; i < groups.length; i++) {
+            var group = groups[i];
+            var startBlock = calcBlockPos(group.start.n, w);
+            var endBlock = calcBlockPos(group.end.n, w);
 
-        startBlock = calcBlockPos(this.start.n, w);
-        endBlock = calcBlockPos(this.end.n, w);
+            var width = endBlock.x - startBlock.x + 1;
+            var height = endBlock.y - startBlock.y + 1;
 
-        width = endBlock.x - startBlock.x + 1;
-        height = endBlock.y - startBlock.y + 1;
-
-        var halfSize = size / 2;
-        var quartSize = halfSize / 2;
-
-        rects.push({
-            x: size * startBlock.x,
-            y: size * startBlock.y,
-            width: width * size,
-            height: height * size
-        });*/
-
-
+            rects.push({
+                x: size * startBlock.x,
+                y: size * startBlock.y,
+                width: width * size,
+                height: height * size
+            });
+        }
 
         return rects;
     };

@@ -23,6 +23,7 @@ var BAKV = function (params) {
         };
 
         canvas.onBlockOut = function(parm) {
+
             canvas.refresh();
         };
     };

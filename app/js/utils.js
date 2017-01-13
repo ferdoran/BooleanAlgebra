@@ -271,3 +271,14 @@ Math.isPowerOfTwo = function(number) {
     var n2 = number - 1;
     return ( (number != 0) && ((number & n2) == 0));
 };
+Math.previousPowerOfTwo = function(x) {
+    if (x == 0) {
+        return 0;
+    }
+    x |= (x >> 1);
+    x |= (x >> 2);
+    x |= (x >> 4);
+    x |= (x >> 8);
+    x |= (x >> 16);
+    return x - (x >> 1);
+};
