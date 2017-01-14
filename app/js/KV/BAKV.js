@@ -48,6 +48,10 @@ var BAKV = function (params) {
         this.colorMap.config(canvas, this.diagram);
     };
 
+    this.searchBlocks = function(){
+        this.diagram.search();
+    };
+
     this.refresh = function(){
         canvas.refresh();
     };

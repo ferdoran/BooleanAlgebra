@@ -69,6 +69,8 @@ var ColorPathBlockGroups = function(cells){
                 nextCell = nextCell.right;
             }
         }
+
+        console.log(group);
         return group;
     };
     this.init = function(){

@@ -166,6 +166,11 @@ var KVDiagram = function(expr, canvas){
         canvas.refresh(true);
     };
 
+    this.search = function () {
+        var blocks = KvReflectingSearch.Enter(this.cells[0]);
+        console.log(blocks);
+    };
+
     this.init = function(V) {
         for (var i = 0; i < V.length; i++) {
             if (i % 2 == 0) {

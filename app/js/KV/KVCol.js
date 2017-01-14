@@ -38,3 +38,11 @@ var KVCol = function(value, Vars){
         return new KVCol(this.value, vars);
     };
 };
+
+KVCol.compare = function(a,b) {
+    if (a.n < b.n)
+        return -1;
+    if (a.n > b.n)
+        return 1;
+    return 0;
+};

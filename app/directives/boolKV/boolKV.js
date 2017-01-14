@@ -35,6 +35,8 @@ app.directive('boolKv', function($parse, $timeout, $sce){
             };
 
             kv.generateKV();
+
+            kv.searchBlocks();
         }
     };
 });
