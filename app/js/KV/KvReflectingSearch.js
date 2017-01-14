@@ -15,6 +15,11 @@ var KvReflectingBlock = function(cell){
     };
     this.cells = [[cell]];
 
+    var isDoneFlag = true;
+    this.isDone = function(){
+        return isDoneFlag;
+    };
+
     var _onedimensionCache = [];
     this.getOnedimension = function () {
         if (_onedimensionCache.length > 0) return _onedimensionCache;
@@ -79,7 +84,6 @@ var KvReflectingBlock = function(cell){
 
     this.reflectRight = function () {
         var block = new KvReflectingBlock(cell);
-        var reflectAble = true;
 
         var collection = [];
         for (var r = 0; r < this.getHeight(); r++) {
@@ -88,24 +92,22 @@ var KvReflectingBlock = function(cell){
             for (var c = 0, righter = rightest; c < this.getWidth(); c++) {
                 righter = righter.right;
                 if (!this.areReflectable(rightest, righter)) {
-                    reflectAble = false;
-                    break;
+                    return null;
                 }
                 collectionRow.push(righter);
             }
             collection.push(collectionRow);
         }
 
-        if (reflectAble) {
-            block.concatHorizontal(block.cells, collection);
-        }
+        block.concatHorizontal(block.cells, collection);
+        isDoneFlag = false;
 
         return block;
     };
 
     this.reflectLeft = function(){
+        return null;
         var block = new KvReflectingBlock(cell);
-        var reflectAble = true;
 
         var collection = [];
         for (var r = 0; r < this.getHeight(); r++) {
@@ -114,24 +116,22 @@ var KvReflectingBlock = function(cell){
             for (var c = 0, lefter = leftest; c < this.getWidth(); c++) {
                 lefter = lefter.left;
                 if (!this.areReflectable(leftest, lefter)) {
-                    reflectAble = false;
-                    break;
+                    return null;
                 }
                 collectionRow.unshift(lefter);
             }
             collection.push(collectionRow);
         }
 
-        if (reflectAble) {
-            block.concatHorizontal(collection, block.cells);
-        }
+        block.concatHorizontal(collection, block.cells);
+        isDoneFlag = false;
 
         return block;
     };
 
     this.reflectDown = function(){
+        return null;
         var block = new KvReflectingBlock(cell);
-        var reflectAble = true;
 
         var collection = [];
         var deepestRow = this.cells[this.cells.length - 1];
@@ -144,22 +144,21 @@ var KvReflectingBlock = function(cell){
                 var collectionRow = collection[r];
                 var deeper = deepest.bottom;
                 if (!this.areReflectable(deepest, deeper)) {
-                    reflectAble = false;
-                    break;
+                    return null;
                 }
                 collectionRow.push(deeper);
             }
         }
 
-        if (reflectAble) {
-            block.concatVertical(block.cells, collection);
-        }
+        block.concatVertical(block.cells, collection);
+        isDoneFlag = false;
+
         return block;
     };
 
     this.reflectUp = function(){
+        return null;
         var block = new KvReflectingBlock(cell);
-        var reflectAble = true;
 
         var collection = [];
         var highestRow = this.cells[0];
@@ -172,16 +171,15 @@ var KvReflectingBlock = function(cell){
                 var collectionRow = collection[0];
                 var higher = highest.top;
                 if (!this.areReflectable(highest, higher)) {
-                    reflectAble = false;
-                    break;
+                    return null;
                 }
                 collectionRow.push(higher);
             }
         }
 
-        if (reflectAble) {
-            block.concatVertical(collection, block.cells);
-        }
+        block.concatVertical(collection, block.cells);
+        isDoneFlag = false;
+
         return block;
     };
 };
@@ -190,7 +188,8 @@ KvReflectingBlock.debug = function(block) {
         var obj = {
             width: block.getWidth(),
             height: block.getHeight(),
-            cells: block.cells
+            cells: block.cells,
+            done: block.isDone()
         };
         console.log(obj);
     }
@@ -209,22 +208,45 @@ KvReflectingSearch.Search = function (blocks) {
     var newBlocks = KvReflectingSearch.Reflect(blocks);
     newBlocks = KvReflectingSearch.Merge(newBlocks);
 
+    var doneBlocks = [], notDone = [];
+    for (var i = 0; i < newBlocks.length; i++) {
+        var block = newBlocks[i];
+        if (block.isDone()) {
+            KvReflectingBlock.debug(block);
+            doneBlocks.push(block);
+        } else {
+            KvReflectingBlock.debug(block);
+            notDone.push(block);
+        }
+    }
+    if (notDone.length > 0) {
+        var deeperBlocks = KvReflectingSearch.Search(notDone);
+        newBlocks = doneBlocks.concat(deeperBlocks);
+    } else {
+        newBlocks = doneBlocks;
+    }
+
     return newBlocks;
 };
 
 KvReflectingSearch.Reflect = function (blocks) {
+
+    console.log("====REFLECT====");
+
     var newBlocks = [];
     for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
+        KvReflectingBlock.debug(block);
         var blockRight = block.reflectRight();
         var blockDown = block.reflectDown();
         var blockLeft = block.reflectLeft();
         var blockUp = block.reflectUp();
 
-        if (blockRight) newBlocks.push(blockRight);
-        if (blockDown) newBlocks.push(blockDown);
-        if (blockLeft) newBlocks.push(blockLeft);
-        if (blockUp) newBlocks.push(blockUp);
+        if (blockRight != null) newBlocks.push(blockRight);
+        if (blockDown != null) newBlocks.push(blockDown);
+        if (blockLeft != null) newBlocks.push(blockLeft);
+        if (blockUp != null) newBlocks.push(blockUp);
+
     }
 
     return newBlocks;
