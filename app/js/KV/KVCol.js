@@ -4,6 +4,7 @@
 var KVCol = function(value, Vars){
     this.value = value || 0;
     this.assignedVars = Vars || {};
+    this.n = -1;
 
     var varLength = Vars ? Object.keys(Vars).length : 0;
     this.getVarLength = function () {
@@ -12,6 +13,9 @@ var KVCol = function(value, Vars){
     this.addVar = function(char, value){
         this.assignedVars[char] = value;
         varLength++;
+    };
+    this.equals = function(col) {
+        return this.n == col.n;
     };
     this.getVar = function(char){
         return {key: char, value: this.assignedVars[char]};
