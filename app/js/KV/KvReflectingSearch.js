@@ -33,6 +33,7 @@ var KvReflectingBlock = function(cell){
 
     this.concatHorizontal = function(A, B) {
         var C = [];
+        // FEHLER WENN A != B
         var maxHeight = Math.min(A.length, B.length);
         for (var r = 0; r < maxHeight; r++) {
             C.push(A[r].concat(B[r]));
@@ -70,7 +71,7 @@ var KvReflectingBlock = function(cell){
 
         return false;
     };
-    this.reflectRight = function (throwWall) {
+    this.reflectRight = function (throughWall) {
         var collection = [];
         for (var r = 0; r < this.getHeight(); r++) {
             var row = this.cells[r];
@@ -80,7 +81,7 @@ var KvReflectingBlock = function(cell){
             var collectionRow = [];
             for (var c = 0; c < this.getWidth(); c++) {
                 next = next.right;
-                if (next.n < last.n && !throwWall) return false;
+                if (next.n < last.n && !throughWall) return false;
                 if (next.equals(first)) return false;
                 if (!this.areReflectable(last, next)) return false;
                 collectionRow.push(next);
@@ -91,7 +92,7 @@ var KvReflectingBlock = function(cell){
         return true;
     };
 
-    this.reflectLeft = function(throwWall){
+    this.reflectLeft = function(throughWall){
         var collection = [];
         for (var r = 0; r < this.getHeight(); r++) {
             var row = this.cells[r];
@@ -101,7 +102,7 @@ var KvReflectingBlock = function(cell){
             var collectionRow = [];
             for (var c = 0; c < this.getWidth(); c++) {
                 next = next.left;
-                if (next.n > first.n && !throwWall) return false;
+                if (next.n > first.n && !throughWall) return false;
                 if (next.equals(last)) return false;
                 if (!this.areReflectable(first, next)) return false;
                 collectionRow.unshift(next);
@@ -112,7 +113,7 @@ var KvReflectingBlock = function(cell){
         return true;
     };
 
-    this.reflectDown_ = function(throwWall){
+    this.reflectDown = function(throughWall){
         var lastRow = this.cells[this.cells.length - 1];
         var firstRow = this.cells[0];
 
@@ -123,32 +124,7 @@ var KvReflectingBlock = function(cell){
             var next = last;
             for (var r = 0; r < this.getHeight(); r++) {
                 next = next.bottom;
-                if (next.n < last.n && !throwWall) return false;
-                if (next.equals(first)) return false;
-                if (!this.areReflectable(last, next)) return false;
-                if (r >= collection.length) {
-                    collection.push([]);
-                }
-                var collectionRow = collection[r];
-                collectionRow.push(next);
-            }
-        }
-        this.concatVertical(this.cells, collection);
-        return true;
-    };
-
-    this.reflectDown = function(throwWall){
-        var lastRow = this.cells[this.cells.length - 1];
-        var firstRow = this.cells[0];
-
-        var collection = [];
-        for (var c = 0; c < this.getWidth(); c++) {
-            var first = firstRow[c];
-            var last = lastRow[c];
-            var next = last;
-            for (var r = 0; r < this.getHeight(); r++) {
-                next = next.bottom;
-                if (next.n < last.n && !throwWall) return false;
+                if (next.n < last.n && !throughWall) return false;
                 if (next.equals(first)) return false;
                 if (!this.areReflectable(last, next)) return false;
                 var collectionRow;
@@ -165,7 +141,8 @@ var KvReflectingBlock = function(cell){
         return true;
     };
 
-    this.reflectUp_ = function(throwWall){
+    this.reflectUp = function(throughWall){
+        REFLECT_UP++;
         var lastRow = this.cells[this.cells.length - 1];
         var firstRow = this.cells[0];
         var collection = [];
@@ -175,46 +152,27 @@ var KvReflectingBlock = function(cell){
             var next = first;
             for (var r = 0; r < this.getHeight(); r++) {
                 next = next.top;
-                if (next.n > first.n && !throwWall) return false;
-                if (next.equals(last)) return false;
-                if (!this.areReflectable(first, next)) return false;
-                if (r >= collection.length) {
-                    collection.unshift([]);
-                }
-                var collectionRow = collection[0];
-                collectionRow.push(next);
-            }
-        }
-        this.concatVertical(collection, this.cells);
-        return true;
-    };
-
-    this.reflectUp = function(throwWall){
-        var lastRow = this.cells[this.cells.length - 1];
-        var firstRow = this.cells[0];
-        var collection = [];
-        for (var c = 0; c < this.getWidth(); c++) {
-            var first = firstRow[c];
-            var last = lastRow[c];
-            var next = first;
-            for (var r = 0; r < this.getHeight(); r++) {
-                next = next.top;
-                if (next.n > first.n && !throwWall) return false;
+                if (next.n > first.n && !throughWall) return false;
                 if (next.equals(last)) return false;
                 if (!this.areReflectable(first, next)) return false;
                 var collectionRow;
                 if (collection.length <= r) {
-                    collection.unshift(collectionRow = []);
+                    collection.push(collectionRow = []);
                 } else {
-                    collectionRow = collection[0];
+                    collectionRow = collection[r];
                 }
                 collectionRow.push(next);
             }
         }
-        this.concatVertical(collection, this.cells);
+        var newCollection = [];
+        for (var i = collection.length - 1; i >= 0; i--) {
+            newCollection.push(collection[i]);
+        }
+        this.concatVertical(newCollection, this.cells);
         return true;
     };
 };
+var REFLECT_UP = 0;
 KvReflectingBlock.debug = function(block) {
     if (block instanceof KvReflectingBlock) {
         var obj = {
