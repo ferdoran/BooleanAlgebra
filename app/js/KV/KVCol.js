@@ -5,6 +5,7 @@ var KVCol = function(value, Vars){
     this.value = value || 0;
     this.assignedVars = Vars || {};
     this.n = -1;
+    this.visited = false;
 
     var varLength = Vars ? Object.keys(Vars).length : 0;
     this.getVarLength = function () {

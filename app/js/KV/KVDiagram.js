@@ -168,7 +168,7 @@ var KVDiagram = function(expr, canvas){
 
     this.search = function () {
         var searchAlgo = new KvReflectingSearch();
-        var blocks = searchAlgo.enter(this.cells[0]);
+        var blocks = searchAlgo.search(this.cells, 1);
         console.log(blocks);
     };
 

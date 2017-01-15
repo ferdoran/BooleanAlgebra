@@ -20,33 +20,8 @@ var KvReflectingBlock = function(cell){
         return isDoneFlag;
     };
 
-    var _onedimensionCache = [];
-    this.getOnedimension = function () {
-        if (_onedimensionCache.length > 0) return _onedimensionCache;
-        for (var r = 0; r < this.getHeight(); r++) {
-            var row = this.cells[r];
-            for (var c = 0; c < this.getWidth(); c++) {
-                var _cell = row[c];
-                _onedimensionCache.push(_cell);
-            }
-        }
-        _onedimensionCache.sort(KVCol.compare);
-        return _onedimensionCache;
-    };
-
     this.equals = function(block) {
-        if (this.getWidth() != block.getWidth() || this.getHeight() != block.getHeight()) {
-            return false;
-        }
-        var a = this.getOnedimension();
-        var b = block.getOnedimension();
-        if (a.length != b.length) return false;
-        for (var i = 0; i < a.length; i++) {
-            if (a[i].n != b[i].n) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     };
 
     this.clone = function () {
@@ -70,136 +45,174 @@ var KvReflectingBlock = function(cell){
         this.cells = A.concat(B);
     };
 
-    this.getRightest = function(row) {
-        return this.cells[row][this.getWidth() - 1];
-    };
-
-    this.getLeftest = function(row) {
-        return this.cells[row][0];
-    };
-
     this.areReflectable = function(cellA, cellB) {
         return cellA.n != cellB.n && cellA.value == cellB.value;
     };
 
     this.reflect = function(){
-        var right = this.reflectRight();
-        var down = this.reflectDown();
-        var left = this.reflectLeft();
-        var up = this.reflectUp();
-
-        var newBlocks = [];
-        if (right != null) newBlocks.push(right);
-        if (down != null) newBlocks.push(down);
-        if (left != null) newBlocks.push(left);
-        if (up != null) newBlocks.push(up);
-
-        if (newBlocks.length == 0) {
-            isDoneFlag = true;
+        if (this.reflectRight(false)) {
+            return true;
+        } else if (this.reflectDown(false)) {
+            return true;
+        } else if (this.reflectLeft(false)) {
+            return true;
+        } else if (this.reflectUp(false)) {
+            return true;
+        } else if (this.reflectRight(true)) {
+            return true;
+        } else if (this.reflectDown(true)) {
+            return true;
+        } else if (this.reflectLeft(true)) {
+            return true;
+        } else if (this.reflectUp(true)) {
+            return true;
         }
 
-        return newBlocks;
+        return false;
     };
-    this.reflectRight = function () {
-        var block = this.clone();
-
+    this.reflectRight = function (throwWall) {
         var collection = [];
         for (var r = 0; r < this.getHeight(); r++) {
             var row = this.cells[r];
             var first = row[0];
             var last = row[row.length - 1];
-            var next = last.right;
-
-            if (next.equals(first)) return null;
-            var newRow = [next];
-            for (var c = 1; c < this.getWidth(); c++) {
+            var next = last;
+            var collectionRow = [];
+            for (var c = 0; c < this.getWidth(); c++) {
                 next = next.right;
-                if (!this.areReflectable(next, last)) return null;
-                newRow.push(next);
+                if (next.n < last.n && !throwWall) return false;
+                if (next.equals(first)) return false;
+                if (!this.areReflectable(last, next)) return false;
+                collectionRow.push(next);
             }
-            collection.push(newRow);
+            collection.push(collectionRow);
         }
-
-        block.concatHorizontal(this.cells, collection);
-
-        return block;
+        this.concatHorizontal(this.cells, collection);
+        return true;
     };
 
-    this.reflectLeft = function(){
-        var block = this.clone();
-
+    this.reflectLeft = function(throwWall){
         var collection = [];
         for (var r = 0; r < this.getHeight(); r++) {
             var row = this.cells[r];
             var first = row[0];
             var last = row[row.length - 1];
-            var next = first.right;
-            if (next.equals(last)) return null;
-            var newRow = [next];
-            for (var c = 1; c < this.getWidth(); c++) {
+            var next = first;
+            var collectionRow = [];
+            for (var c = 0; c < this.getWidth(); c++) {
                 next = next.left;
-                if (!this.areReflectable(next, last)) return null;
-                newRow.push(next);
+                if (next.n > first.n && !throwWall) return false;
+                if (next.equals(last)) return false;
+                if (!this.areReflectable(first, next)) return false;
+                collectionRow.unshift(next);
             }
-            collection.push(newRow);
+            collection.push(collectionRow);
         }
-
-        block.concatHorizontal(collection, this.cells);
-
-        return block;
+        this.concatHorizontal(collection, this.cells);
+        return true;
     };
 
-    this.reflectDown = function(){
-        var block = new KvReflectingBlock(cell);
+    this.reflectDown_ = function(throwWall){
+        var lastRow = this.cells[this.cells.length - 1];
+        var firstRow = this.cells[0];
 
         var collection = [];
-        var deepestRow = this.cells[this.cells.length - 1];
-        for (var c = 0; c < deepestRow.length; c++) {
-            var deepest = deepestRow[c];
+        for (var c = 0; c < this.getWidth(); c++) {
+            var first = firstRow[c];
+            var last = lastRow[c];
+            var next = last;
             for (var r = 0; r < this.getHeight(); r++) {
+                next = next.bottom;
+                if (next.n < last.n && !throwWall) return false;
+                if (next.equals(first)) return false;
+                if (!this.areReflectable(last, next)) return false;
                 if (r >= collection.length) {
                     collection.push([]);
                 }
                 var collectionRow = collection[r];
-                var deeper = deepest.bottom;
-                if (!this.areReflectable(deepest, deeper)) {
-                    return null;
+                collectionRow.push(next);
+            }
+        }
+        this.concatVertical(this.cells, collection);
+        return true;
+    };
+
+    this.reflectDown = function(throwWall){
+        var lastRow = this.cells[this.cells.length - 1];
+        var firstRow = this.cells[0];
+
+        var collection = [];
+        for (var c = 0; c < this.getWidth(); c++) {
+            var first = firstRow[c];
+            var last = lastRow[c];
+            var next = last;
+            for (var r = 0; r < this.getHeight(); r++) {
+                next = next.bottom;
+                if (next.n < last.n && !throwWall) return false;
+                if (next.equals(first)) return false;
+                if (!this.areReflectable(last, next)) return false;
+                var collectionRow;
+                if (collection.length <= r) {
+                    collection.push(collectionRow = []);
+                } else {
+                    collectionRow = collection[r];
                 }
-                collectionRow.push(deeper);
+                collectionRow.push(next);
             }
         }
 
-        block.concatVertical(this.cells, collection);
-
-        return null;
-
-        return block;
+        this.concatVertical(this.cells, collection);
+        return true;
     };
 
-    this.reflectUp = function(){
-        var block = new KvReflectingBlock(cell);
-
+    this.reflectUp_ = function(throwWall){
+        var lastRow = this.cells[this.cells.length - 1];
+        var firstRow = this.cells[0];
         var collection = [];
-        var highestRow = this.cells[0];
-        for (var c = 0; c < highestRow.length; c++) {
-            var highest = highestRow[c];
+        for (var c = 0; c < this.getWidth(); c++) {
+            var first = firstRow[c];
+            var last = lastRow[c];
+            var next = first;
             for (var r = 0; r < this.getHeight(); r++) {
+                next = next.top;
+                if (next.n > first.n && !throwWall) return false;
+                if (next.equals(last)) return false;
+                if (!this.areReflectable(first, next)) return false;
                 if (r >= collection.length) {
                     collection.unshift([]);
                 }
                 var collectionRow = collection[0];
-                var higher = highest.top;
-                if (!this.areReflectable(highest, higher)) {
-                    return null;
-                }
-                collectionRow.push(higher);
+                collectionRow.push(next);
             }
         }
+        this.concatVertical(collection, this.cells);
+        return true;
+    };
 
-        block.concatVertical(collection, this.cells);
-        return null;
-
-        return block;
+    this.reflectUp = function(throwWall){
+        var lastRow = this.cells[this.cells.length - 1];
+        var firstRow = this.cells[0];
+        var collection = [];
+        for (var c = 0; c < this.getWidth(); c++) {
+            var first = firstRow[c];
+            var last = lastRow[c];
+            var next = first;
+            for (var r = 0; r < this.getHeight(); r++) {
+                next = next.top;
+                if (next.n > first.n && !throwWall) return false;
+                if (next.equals(last)) return false;
+                if (!this.areReflectable(first, next)) return false;
+                var collectionRow;
+                if (collection.length <= r) {
+                    collection.unshift(collectionRow = []);
+                } else {
+                    collectionRow = collection[0];
+                }
+                collectionRow.push(next);
+            }
+        }
+        this.concatVertical(collection, this.cells);
+        return true;
     };
 };
 KvReflectingBlock.debug = function(block) {
@@ -215,60 +228,32 @@ KvReflectingBlock.debug = function(block) {
 };
 
 var KvReflectingSearch = function(){
-    this.list = [];
-
-    this.enter = function(cell){
-        this.list = [];
-        var block = new KvReflectingBlock(cell);
-        var blocks = [block];
-        blocks = this.search(blocks);
+    this.search = function(cells, value){
+        var blocks = [];
+        for (var i = 0; i < cells.length; i++){
+            var cell = cells[i];
+            if (cell.visited || cell.value != value) continue;
+            var block = new KvReflectingBlock(cell);
+            this.expand(block);
+            blocks.push(block);
+        }
         return blocks;
     };
 
-    this.search = function(blocks) {
-        var newBlocks = this.reflect(blocks);
-        newBlocks = this.merge(newBlocks);
-
-        return newBlocks;
-    };
-
-
-    this.reflect = function (blocks) {
-        var newBlocks = [];
-        for (var i = 0; i < blocks.length; i++) {
-            var block = blocks[i];
-            var subBlocks = block.reflect();
-            console.log("==========REFLECT==========");
-            console.log(block.cells);
-            console.log(subBlocks);
-            if (block.isDone()) {
-                newBlocks.push(block);
-            } else {
-                newBlocks = this.reflect(subBlocks);
+    this.expand = function(block) {
+        while (this.reflect(block)) {}
+        console.log(block);
+        for (var r = 0; r < block.getHeight(); r++) {
+            var row = block.cells[r];
+            for (var c = 0; c < block.getWidth(); c++) {
+                var cell = row[c];
+                cell.visited = true;
             }
         }
-
-        return newBlocks;
     };
 
-    this.merge = function (blocks) {
-        var newBlocks = this.list;
-
-        for (var i = 0; i < blocks.length; i++) {
-            var insert = true;
-            var block = blocks[i];
-            for (var j = 0; j < newBlocks.length; j++) {
-                var inserted_block = newBlocks[j];
-                if (block.equals(inserted_block)) {
-                    insert = false;
-                    break;
-                }
-            }
-            if (insert) {
-                newBlocks.push(block);
-            }
-        }
-        return newBlocks;
+    this.reflect = function(block){
+        return block.reflect();
     };
 };
 
