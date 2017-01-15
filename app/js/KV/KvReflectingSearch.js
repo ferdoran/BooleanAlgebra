@@ -242,7 +242,6 @@ var KvReflectingSearch = function(){
 
     this.expand = function(block) {
         while (this.reflect(block)) {}
-        console.log(block);
         for (var r = 0; r < block.getHeight(); r++) {
             var row = block.cells[r];
             for (var c = 0; c < block.getWidth(); c++) {
