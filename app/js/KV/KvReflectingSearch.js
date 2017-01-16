@@ -15,11 +15,6 @@ var KvReflectingBlock = function(cell){
     };
     this.cells = [[cell]];
 
-    var isDoneFlag = false;
-    this.isDone = function(){
-        return isDoneFlag;
-    };
-
     this.equals = function(block) {
         return false;
     };
@@ -31,6 +26,53 @@ var KvReflectingBlock = function(cell){
         return block;
     };
 
+    var minVars = {};
+    var calcMin = function(key, value) {
+        var minEntry = minVars[key];
+        if (minEntry == -1) return;
+        if (minEntry == 0 || minEntry == 1) {
+            if (minEntry != value) {
+                minVars[key] = -1;
+            }
+        } else {
+            minVars[key] = value;
+        }
+    };
+    this.getExpr = function(asString){
+        if (minVars.length > 0) return minVars;
+        var key, value;
+        for (var r = 0; r < this.getHeight(); r++) {
+            var row = this.cells[r];
+            for (var c = 0; c < this.getWidth(); c++) {
+                var cell = row[c];
+                var vars = cell.assignedVars;
+                for (key in vars) {
+                    calcMin(key, vars[key]);
+                }
+            }
+        }
+        var newMinVarsKeys = [];
+
+        for (key in minVars) {
+            value = minVars[key];
+            if (value < 0) continue;
+            newMinVarsKeys.push(key);
+        }
+        newMinVarsKeys.sort();
+
+        var expr = "";
+        var eConnect = cell.value == 1 ? KVDiagram.Conjunction : KVDiagram.Disjunction;
+        for (var i = 0; i < newMinVarsKeys.length; i++) {
+            key = newMinVarsKeys[i];
+            value = minVars[key];
+            value = value == 0 && cell.value == 1 ? SYMBOL_NEG + key : key;
+            expr = eConnect(expr, value);
+        }
+
+        if (asString) return expr;
+        return new BAExpression(expr);
+    };
+
     this.concatHorizontal = function(A, B) {
         var C = [];
         // FEHLER WENN A != B
@@ -40,10 +82,12 @@ var KvReflectingBlock = function(cell){
         }
         this.cells = C;
         width = this.cells[0].length;
+        minVars = {};
     };
 
     this.concatVertical = function(A, B) {
         this.cells = A.concat(B);
+        minVars = {};
     };
 
     this.areReflectable = function(cellA, cellB) {
@@ -142,7 +186,6 @@ var KvReflectingBlock = function(cell){
     };
 
     this.reflectUp = function(throughWall){
-        REFLECT_UP++;
         var lastRow = this.cells[this.cells.length - 1];
         var firstRow = this.cells[0];
         var collection = [];
@@ -172,7 +215,6 @@ var KvReflectingBlock = function(cell){
         return true;
     };
 };
-var REFLECT_UP = 0;
 KvReflectingBlock.debug = function(block) {
     if (block instanceof KvReflectingBlock) {
         var obj = {

@@ -161,15 +161,61 @@ var KVDiagram = function(expr, canvas){
                 canvas.add(block);
             }
         }
-        canvas.createHoverOverlay();
-
         canvas.refresh(true);
     };
 
-    this.search = function () {
+    this.minimize = function () {
         var searchAlgo = new KvReflectingSearch();
-        var blocks = searchAlgo.search(this.cells, 1);
-        console.log(blocks);
+
+        var info = {
+            dnf: {
+                expr: null,
+                blocks: null
+            },
+            knf: {
+                expr: null,
+                blocks: null
+            }
+        };
+        info.dnf.blocks = searchAlgo.search(this.cells, 1);
+        info.knf.blocks = searchAlgo.search(this.cells, 0);
+
+        var expr = "", i, block, minExpr;
+        var dnf = [];
+        for (i = 0; i < info.dnf.blocks.length; i++) {
+            block = info.dnf.blocks[i];
+            minExpr = block.getExpr(true);
+            dnf.push(minExpr);
+        }
+        dnf.sort();
+        for (i = 0; i < dnf.length; i++) {
+            var d = dnf[i];
+            if (dnf.length > 1 && (d.indexOf(SYMBOL_OR) > -1 || d.indexOf(SYMBOL_AND) > -1)) {
+                d = "(" + d + ")";
+            }
+            expr = KVDiagram.Disjunction(expr, d);
+        }
+        console.log("DNF: " + expr);
+        info.dnf.expr = new BAExpression(expr);
+        expr = "";
+        var knf = [];
+        for (i = 0; i < info.knf.blocks.length; i++) {
+            block = info.knf.blocks[i];
+            minExpr = block.getExpr(true);
+            knf.push(minExpr);
+        }
+        knf.sort();
+        for (i = 0; i < knf.length; i++) {
+            var k = knf[i];
+            if (knf.length > 1 && (k.indexOf(SYMBOL_OR) > -1 || k.indexOf(SYMBOL_AND) > -1)) {
+                k = "(" + k + ")";
+            }
+            expr = KVDiagram.Conjunction(expr, k);
+        }
+        console.log("KNF: " + expr);
+        info.knf.expr = new BAExpression(expr);
+
+        return info;
     };
 
     this.init = function(V) {
@@ -187,3 +233,13 @@ var KVDiagram = function(expr, canvas){
     this.init(V);
 };
 KVDiagram.SIZE = 32;
+KVDiagram.Disjunction = function(a, b){
+    if (a == undefined || a == "") return b;
+    if (b == undefined || b == "") return a;
+    return a + SYMBOL_OR + b;
+};
+KVDiagram.Conjunction = function(a, b) {
+    if (a == undefined || a == "") return b;
+    if (b == undefined || b == "") return a;
+    return a + SYMBOL_AND + b;
+};

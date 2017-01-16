@@ -18,7 +18,6 @@ var BAKV = function (params) {
         };
 
         canvas.onBlockHover = function(parm) {
-            canvas.setHoverOverlayPosition(parm.block.x, parm.block.y);
             canvas.refresh();
         };
 
@@ -31,7 +30,7 @@ var BAKV = function (params) {
 
     this.setSelectColor = function(color) {
         selectColor = color;
-        canvas.setHoverOverlayStyle(color);
+        canvas.setHoverColor(color);
     };
 
     this.resizeCanvas = function(){
@@ -48,8 +47,8 @@ var BAKV = function (params) {
         this.colorMap.config(canvas, this.diagram);
     };
 
-    this.searchBlocks = function(){
-        this.diagram.search();
+    this.minimize = function(){
+        return this.diagram.minimize();
     };
 
     this.refresh = function(){

@@ -32,12 +32,32 @@ var EaselInterface = {
         blockContainer.name = "blockContainer";
         blockContainer.x = blockContainer.y = 0;
 
+        var hoverContainer = new createjs.Container();
+        hoverContainer.name = "hoverContainer";
+        hoverContainer.x = hoverContainer.y = 0;
+
+        var hoverBlock = new createjs.Shape();
+        hoverBlock.x = hoverBlock.y = 0;
+        hoverBlock.alpha = 1;
+
+        hoverContainer.addChild(hoverBlock);
+
         stage.addChild(blockContainer);
         stage.addChild(colorContainer);
+        stage.addChild(hoverContainer);
 
         canvas.setOffset = function(offset){
             gridOffset.x = offset.x;
             gridOffset.y = offset.y;
+        };
+
+        var colorBlock = function(block, color, width, height) {
+            block.graphics.setStrokeStyle(2).beginStroke(color).drawRoundRect(8,8, width - 1, height - 1, 5).endStroke();
+        };
+
+        const HOVERSIZE = KVDiagram.SIZE / 2;
+        canvas.setHoverColor = function(color){
+            colorBlock(hoverBlock, color, HOVERSIZE, HOVERSIZE);
         };
 
         canvas.clearColorContainer = function(){
@@ -95,15 +115,13 @@ var EaselInterface = {
                     canvas.onBlockClick({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
                 });
                 button.addEventListener('mouseover', function(evt) {
-                    /*if (!hoverOverlay._fill) {
-                        bg.graphics.clear().beginFill(bg.overColor).drawRect(0, 0, block.width, block.height).endFill().beginStroke('black').drawRect(0, 0, block.width, block.height);
-                    }*/
+                    hoverBlock.alpha = 1;
+                    hoverBlock.x = block.x;
+                    hoverBlock.y = block.y;
                     canvas.onBlockHover({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
                 });
                 button.addEventListener('mouseout', function(evt) {
-                    /*if (!hoverOverlay._fill) {
-                        bg.graphics.clear().beginFill(bg.outColor).drawRect(0, 0, block.width, block.height).endFill().beginStroke('black').drawRect(0, 0, block.width, block.height);
-                    }*/
+                    hoverBlock.alpha = 0;
                     canvas.onBlockOut({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
                 });
 
@@ -113,43 +131,6 @@ var EaselInterface = {
             button.addChild(label);
 
             blockContainer.addChild(button);
-        };
-
-        canvas.placeOverlay = function(block, color) {
-            var overlay = new createjs.Shape();
-            overlay.alpha = 0.35;
-            overlay.graphics.beginFill(color).drawRoundRect(8, 8, 16, 16, 5).endFill();
-            overlay.x = block.x;
-            overlay.y = block.y;
-
-            stage.addChild(overlay);
-        };
-        canvas.createHoverOverlay = function(){
-            if (hoverOverlay == null) {
-                hoverOverlay = new createjs.Shape();
-                hoverOverlay.alpha = 0.35;
-                hoverOverlay.x = 0;
-                hoverOverlay.y = 0;
-                hoverOverlay._fill = null;
-                canvas.setHoverOverlayStyle(null);
-                stage.addChild(hoverOverlay);
-            }
-        };
-        canvas.setHoverOverlayStyle = function(fill) {
-            hoverOverlay._fill = fill;
-            if (fill == null) {
-                fill = 'transparent';
-            }
-
-            canvas.createHoverOverlay();
-
-            hoverOverlay.graphics.clear().beginFill(fill).drawRect(8, 8, 16, 16).endFill();
-            canvas.refresh();
-        };
-        canvas.setHoverOverlayPosition = function(x, y) {
-            canvas.createHoverOverlay();
-            hoverOverlay.x = x;
-            hoverOverlay.y = y;
         };
 
         canvas.clearChildren = function(){

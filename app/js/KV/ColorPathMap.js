@@ -1,6 +1,7 @@
 /**
  * Created by Sergej on 11.01.2017.
  */
+/*
 var ColorPathBlockGroup = function(startCell){
     this.cells = [];
     this.start = startCell;
@@ -218,5 +219,19 @@ var ColorPathMap = function(){
         }
 
         this.resetCanvas();
+    };
+};*/
+var ColorPathMap = function(){
+    this.diagram = null;
+    this.canvas = null;
+
+    this.config = function(canvas, diagram) {
+        this.diagram = diagram;
+        this.canvas = canvas;
+    };
+
+    this.analyze = function(cell, color) {
+        console.log(cell);
+        console.log(color);
     };
 };

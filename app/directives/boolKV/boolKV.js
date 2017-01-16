@@ -12,10 +12,15 @@ app.directive('boolKv', function($parse, $timeout, $sce){
         link: function($scope, $element, $attr) {
             var kv = new BAKV({target: 'kvCanvasContainer', expr: new BAExpression($attr.boolExpr)});
 
+            var $colors;
             var initColors = function () {
-                var $colors = $element.find('.kvColor');
+                $colors = $element.find('.kvColor');
                 $colors.each(function () {
                     var $this = angular.element(this);
+                    if ($this.hasClass('active')) {
+                        var startColor = $this.data('color');
+                        kv.setSelectColor(startColor);
+                    }
                     $this.css('background-color', $this.data('color'));
                 }).click(function(){
                     var $el = angular.element(this);
@@ -36,7 +41,8 @@ app.directive('boolKv', function($parse, $timeout, $sce){
 
             kv.generateKV();
 
-            kv.searchBlocks();
+            var minimizeInfo = kv.minimize();
+            console.log(minimizeInfo);
         }
     };
 });
