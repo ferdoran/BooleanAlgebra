@@ -271,6 +271,10 @@ Math.isPowerOfTwo = function(number) {
     var n2 = number - 1;
     return ( (number != 0) && ((number & n2) == 0));
 };
+
+Math.rnd = function(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 Math.previousPowerOfTwo = function(x) {
     if (x == 0) {
         return 0;

@@ -3,6 +3,7 @@
  */
 
 var KvReflectingBlock = function(cell){
+    var $this = this;
     var width = 1;
     this.getWidth = function(){
         return width;
@@ -17,6 +18,71 @@ var KvReflectingBlock = function(cell){
 
     this.equals = function(block) {
         return false;
+    };
+
+    this.createColorRects = function(fieldWidth, fieldHeight){
+        var createRect = function(x, y){
+            return {x: x, y: y, width: 0, height: 0, open: {right: false, up: false, down: false, left: false}, block: $this};
+        };
+        var rects = [];
+
+        var correctionValues = {x: 8, y: 8, width: -16, height: -16};
+        var correctionRect = function(rect){
+            rect.x += correctionValues.x;
+            rect.y += correctionValues.y;
+            rect.width += correctionValues.width;
+            rect.height += correctionValues.height;
+        };
+
+        var rect = null, r;
+        for (r = 0; r < this.getHeight(); r++) {
+            var row = this.cells[r];
+            for (var c = 0; c < this.getWidth(); c++) {
+                var cell = row[c];
+                var x = parseInt(cell.n % fieldWidth);
+                var y = parseInt(cell.n / fieldWidth);
+
+                if (r == 0) {
+                    if (c == 0) {
+                        rect = createRect(x * KVDiagram.SIZE, y * KVDiagram.SIZE);
+                        rects.push(rect);
+                    }
+                    rect.width += KVDiagram.SIZE;
+                }
+            }
+            rect.height += KVDiagram.SIZE;
+        }
+        var field = {
+            width: KVDiagram.SIZE * fieldWidth,
+            height: KVDiagram.SIZE * fieldHeight
+        };
+        /* Optische Korrekturen */
+        var rectsLength = rects.length;
+        var newRect;
+        for (r = 0; r < rectsLength; r++) {
+            rect = rects[r];
+            var xDistance = field.width - (rect.x + rect.width);
+            if (xDistance < 0) {
+                rect.open.right = true;
+                newRect = createRect(xDistance, rect.y);
+                newRect.width = rect.width;
+                newRect.height = rect.height;
+                correctionRect(newRect);
+                rects.push(newRect);
+            }
+            var yDistance = field.height - (rect.y + rect.height);
+            if (yDistance < 0) {
+                rect.open.down = true;
+                newRect = createRect(rect.x, yDistance);
+                newRect.width = rect.width;
+                newRect.height = rect.height;
+                correctionRect(newRect);
+                rects.push(newRect);
+            }
+            correctionRect(rect);
+        }
+
+        return rects;
     };
 
     this.clone = function () {
@@ -255,4 +321,3 @@ var KvReflectingSearch = function(){
         return block.reflect();
     };
 };
-

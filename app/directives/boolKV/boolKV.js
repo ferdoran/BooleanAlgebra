@@ -43,6 +43,8 @@ app.directive('boolKv', function($parse, $timeout, $sce){
 
             var minimizeInfo = kv.minimize();
             console.log(minimizeInfo);
+
+            kv.colorMinimized('dnf');
         }
     };
 });

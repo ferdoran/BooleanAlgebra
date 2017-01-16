@@ -218,6 +218,18 @@ var KVDiagram = function(expr, canvas){
         return info;
     };
 
+
+    this.colorBlocks = function(blocks){
+        if (!Array.isArray(blocks)) blocks = [blocks];
+        for (var i = 0; i < blocks.length; i++) {
+            var block = blocks[i];
+            block.color = ColorGenerator.generate(150, 230);
+            var rects = block.createColorRects(this.getWidth(), this.getHeight());
+            canvas.addRectsToColorContainer(rects);
+        }
+        canvas.refresh();
+    };
+
     this.init = function(V) {
         for (var i = 0; i < V.length; i++) {
             if (i % 2 == 0) {

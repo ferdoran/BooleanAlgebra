@@ -5,8 +5,6 @@ var EaselInterface = {
     create: function(id) {
         var canvas = document.getElementById(id);
 
-        var hoverOverlay = null;
-
         if (canvas.tagName != "CANVAS") {
             var c = document.createElement("CANVAS");
             var cName = id + "_canvas";
@@ -38,7 +36,7 @@ var EaselInterface = {
 
         var hoverBlock = new createjs.Shape();
         hoverBlock.x = hoverBlock.y = 0;
-        hoverBlock.alpha = 1;
+        hoverBlock.alpha = 0;
 
         hoverContainer.addChild(hoverBlock);
 
@@ -46,39 +44,55 @@ var EaselInterface = {
         stage.addChild(colorContainer);
         stage.addChild(hoverContainer);
 
+        const HALFSIZE = KVDiagram.SIZE / 2;
+
+
+        canvas.colorBlock = function(block, color, x, y, width, height) {
+            block.graphics.setStrokeStyle(2).beginStroke(color).drawRoundRect(x,y, width - 1, height - 1, 5).endStroke();
+        };
+
+        canvas.createColorBlock = function(rect) {
+            var shape = new createjs.Shape();
+            shape.x = rect.x;
+            shape.y = rect.y;
+            canvas.colorBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+            return shape;
+        };
+
+        var colored_blocks = [];
+        canvas.clearColoredBlocks = function(){
+            colored_blocks = [];
+            colorContainer.removeAllChildren();
+        };
+
         canvas.setOffset = function(offset){
             gridOffset.x = offset.x;
             gridOffset.y = offset.y;
         };
 
-        var colorBlock = function(block, color, width, height) {
-            block.graphics.setStrokeStyle(2).beginStroke(color).drawRoundRect(8,8, width - 1, height - 1, 5).endStroke();
-        };
-
-        const HOVERSIZE = KVDiagram.SIZE / 2;
         canvas.setHoverColor = function(color){
-            colorBlock(hoverBlock, color, HOVERSIZE, HOVERSIZE);
+            canvas.colorBlock(hoverBlock, color, 8, 8, HALFSIZE, HALFSIZE);
         };
 
         canvas.clearColorContainer = function(){
             colorContainer.removeAllChildren();
+            color_index = 0;
         };
-        canvas.addToColorContainer = function(color, x, y, width, height) {
-            /* Optische Korrektur */
-            var cFactor = KVDiagram.SIZE / 4;
-            var cFactor2 = KVDiagram.SIZE / 2;
-            x += cFactor + gridOffset.x;
-            y += cFactor + gridOffset.y;
-            width -= cFactor2;
-            height -= cFactor2;
 
-            var rect = new createjs.Shape();
-            rect.x = x;
-            rect.y = y;
-            rect.alpha = 0.5;
-            rect.graphics.beginFill(color).drawRoundRect(0, 0, width, height, 5).endFill();
+        var color_index = 0;
+        canvas.addRectsToColorContainer = function(rects){
+            var colorLayer = new createjs.Container();
+            colorLayer.name = "colorLayer" + (color_index++);
+            colorLayer.x = gridOffset.x;
+            colorLayer.y = gridOffset.y;
 
-            colorContainer.addChild(rect);
+            for (var r = 0; r < rects.length; r++) {
+                var rect = rects[r];
+                var shape = canvas.createColorBlock(rect);
+
+                colorLayer.addChild(shape);
+            }
+            colorContainer.addChild(colorLayer);
         };
 
         canvas.add = function(block) {
@@ -134,7 +148,6 @@ var EaselInterface = {
         };
 
         canvas.clearChildren = function(){
-            hoverOverlay = null;
             blockContainer.removeAllChildren();
         };
 
@@ -155,3 +168,5 @@ var EaselInterface = {
     }
 
 };
+
+

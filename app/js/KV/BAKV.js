@@ -47,8 +47,14 @@ var BAKV = function (params) {
         this.colorMap.config(canvas, this.diagram);
     };
 
+    var minimizeInfo = null;
     this.minimize = function(){
-        return this.diagram.minimize();
+        return minimizeInfo = this.diagram.minimize();
+    };
+
+    this.colorMinimized = function(type){
+        if (minimizeInfo == null) return;
+        this.diagram.colorBlocks(minimizeInfo[type].blocks);
     };
 
     this.refresh = function(){
