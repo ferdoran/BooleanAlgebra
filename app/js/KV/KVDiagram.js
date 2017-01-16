@@ -223,7 +223,8 @@ var KVDiagram = function(expr, canvas){
         if (!Array.isArray(blocks)) blocks = [blocks];
         for (var i = 0; i < blocks.length; i++) {
             var block = blocks[i];
-            block.color = ColorGenerator.generate(150, 230);
+            block.color = ColorGenerator.generate(60, ColorGenerator.value1);
+            console.log(block.color);
             var rects = block.createColorRects(this.getWidth(), this.getHeight());
             canvas.addRectsToColorContainer(rects);
         }

@@ -45,17 +45,58 @@ var EaselInterface = {
         stage.addChild(hoverContainer);
 
         const HALFSIZE = KVDiagram.SIZE / 2;
+        const FOURSIZE = KVDiagram.SIZE / 4;
 
-
+        const roundFactor = 5;
         canvas.colorBlock = function(block, color, x, y, width, height) {
-            block.graphics.setStrokeStyle(2).beginStroke(color).drawRoundRect(x,y, width - 1, height - 1, 5).endStroke();
+            block.graphics.setStrokeStyle(2).beginStroke(color).drawRoundRect(x,y, width - 1, height - 1, roundFactor).endStroke();
+        };
+        var openDownBlock = function(block, color, x, y, width, height){
+            var g = block.graphics.setStrokeStyle(2), s = 0;
+            g.beginStroke(color).moveTo(x, y + height - HALFSIZE).lineTo(x,y + roundFactor).quadraticCurveTo(x,y,s = x + roundFactor,y).endStroke();
+            g.beginStroke(color).moveTo(s, y).lineTo(s = x + width - roundFactor, y).endStroke();
+            g.beginStroke(color).moveTo(s, y).quadraticCurveTo(s = x+width,y,s,y + roundFactor).endStroke();
+            g.beginStroke(color).moveTo(s, y + roundFactor).lineTo(x+width, y+height - HALFSIZE).endStroke();
+        };
+        var openUpBlock = function(block, color, x, y, width, height){
+            var g = block.graphics.setStrokeStyle(2), s, h = y + height;
+            g.beginStroke(color).moveTo(x, y + HALFSIZE).lineTo(x,h - roundFactor).quadraticCurveTo(x,h,s = x + roundFactor,h).endStroke();
+            g.beginStroke(color).moveTo(s, h).lineTo(s = x + width - roundFactor, h).endStroke();
+            g.beginStroke(color).moveTo(s, h).quadraticCurveTo(s = x + width,h,s = x + width, h - roundFactor).endStroke();
+            g.beginStroke(color).moveTo(s, h).lineTo(s, y + HALFSIZE).endStroke();
+        };
+        var openLeftBlock = function(block, color, x, y, width, height){
+            var g = block.graphics.setStrokeStyle(2), s = x + width, h = y + height;
+            g.beginStroke(color).moveTo(x + HALFSIZE, y).lineTo(s - roundFactor,y).quadraticCurveTo(s,y,s,y + roundFactor).endStroke();
+            g.beginStroke(color).moveTo(s, y + roundFactor).lineTo(s, h).endStroke();
+            g.beginStroke(color).moveTo(s, h - roundFactor).quadraticCurveTo(s,h,s = s - roundFactor,h).endStroke();
+            g.beginStroke(color).moveTo(s, h).lineTo(x + HALFSIZE, h).endStroke();
+        };
+        var openRightBlock = function(block, color, x, y, width, height){
+            var g = block.graphics.setStrokeStyle(2), s = 0, h = y + height;
+            g.beginStroke(color).moveTo(x + width - HALFSIZE, y).lineTo(x + roundFactor,y).quadraticCurveTo(x,y,x,s = y + roundFactor).endStroke();
+            g.beginStroke(color).moveTo(x, s).lineTo(x, s = h - roundFactor).endStroke();
+            g.beginStroke(color).moveTo(x, s).quadraticCurveTo(x,h,x + roundFactor,h).endStroke();
+            g.beginStroke(color).moveTo(x + roundFactor, h).lineTo(x + width - HALFSIZE, h).endStroke();
         };
 
         canvas.createColorBlock = function(rect) {
             var shape = new createjs.Shape();
             shape.x = rect.x;
             shape.y = rect.y;
-            canvas.colorBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+
+            if (rect.open.up) {
+                openUpBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+            } else if (rect.open.left) {
+                openLeftBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+            } else if (rect.open.down) {
+                openDownBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+            } else if (rect.open.right) {
+                openRightBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+            } else {
+                canvas.colorBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+            }
+
             return shape;
         };
 
@@ -96,7 +137,6 @@ var EaselInterface = {
         };
 
         canvas.add = function(block) {
-
             var label = new createjs.Text(block.value, "20px Arial", labelColor);
             label.colors = {
                 normal: labelColor,

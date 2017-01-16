@@ -65,6 +65,7 @@ var KvReflectingBlock = function(cell){
             if (xDistance < 0) {
                 rect.open.right = true;
                 newRect = createRect(xDistance, rect.y);
+                newRect.open.left = true;
                 newRect.width = rect.width;
                 newRect.height = rect.height;
                 correctionRect(newRect);
@@ -74,6 +75,7 @@ var KvReflectingBlock = function(cell){
             if (yDistance < 0) {
                 rect.open.down = true;
                 newRect = createRect(rect.x, yDistance);
+                newRect.open.up = true;
                 newRect.width = rect.width;
                 newRect.height = rect.height;
                 correctionRect(newRect);
