@@ -24,6 +24,9 @@
         </div>
         <div class="boolKvBody" id="kvCanvasContainer"></div>
     </div>
+    <div class="createInfo colorExprContainer">
+        <bool-expr ng-repeat="(key, value) in kv.colorMap.layers" bool-symbol="key" bind-expression="minExpression"></bool-expr>
+    </div>
     <bool-expr bool-domain="boolMin" bool-symbol="KNF" bind-expression="minExpression"></bool-expr>
     <bool-expr bool-domain="boolMin" bool-symbol="DNF" bind-expression="minExpression"></bool-expr>
 

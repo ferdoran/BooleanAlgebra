@@ -15,9 +15,8 @@
     position:relative;
     background:transparent;
     outline:0;
-    opacity:0.5;
     overflow:hidden;
-    border: 1px solid transparent;
+    border: 2px solid transparent;
 
     -o-transition: opacity .25s linear;
     -moz-transition: opacity .25s linear;
@@ -28,7 +27,7 @@
     opacity:0.75;
 }
 .boolKV .kvColor.active {
-    opacity:1;
+    border-color: black;
 }
 .boolKV .kvColorReset {
     border-color: black;

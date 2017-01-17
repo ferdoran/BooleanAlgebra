@@ -1,229 +1,43 @@
 /**
  * Created by Sergej on 11.01.2017.
  */
-/*
-var ColorPathBlockGroup = function(startCell){
-    this.cells = [];
-    this.start = startCell;
-    this.end = null;
-    this.add = function(cell) {
-        this.cells.push(cell);
-    };
-
-    this.split = function(){
-        var subSplit = function(A) {
-            var splitIndex = Math.previousPowerOfTwo(A.length);
-            var a = [], b = [];
-            for (var x = 0; x < A.length; x++) {
-                if (x < splitIndex) {
-                    a.push(A[x]);
-                } else {
-                    b.push(A[x]);
-                }
-            }
-
-            return {a: a, b: b};
-        };
-
-        var data = {a: [], b: this.cells};
-
-        var groups = [];
-        while(data.b.length > 0) {
-            data = subSplit(data.b);
-            var group = new ColorPathBlockGroup(data.a[0]);
-            group.cells = data.a;
-            group.end = data.a[data.a.length - 1];
-            groups.push(group);
-        }
-        console.log(groups);
-        return groups;
-    };
-
-    this.isValid = function(){
-        return Math.isPowerOfTwo(this.cells.length);
-    };
-};
-var ColorPathBlockGroups = function(cells){
-    var groups = [];
-
-    var visited = [];
-
-    this.stopAt = function(cell, startCell){
-        if (!cells.contains(cell) || visited.contains(cell)) return true;
-        if (startCell.value != cell.value) return true;
-
-        visited.push(cell);
-        return false;
-    };
-    this.startAt = function(startCell) {
-        if (!cells.contains(startCell) || visited.contains(startCell)) return null;
-
-        var nextCell = startCell;
-        var group = new ColorPathBlockGroup(startCell);
-
-        while (true) {
-            if (this.stopAt(nextCell, startCell)) {
-                group.end = nextCell.left;
-                break;
-            } else {
-                group.add(nextCell);
-                nextCell = nextCell.right;
-            }
-        }
-
-        console.log(group);
-        return group;
-    };
-    this.init = function(){
-        value = cells[0].value;
-        groups = [];
-        for (var i = 0; i < cells.length; i++) {
-            var group = this.startAt(cells[i]);
-            if (group != null) {
-                if (group.isValid()) {
-                    groups.push(group);
-                } else {
-                    var subgroups = group.split();
-                    for (var j = 0; j < subgroups.length; j++) {
-                        groups.push(subgroups[j]);
-                    }
-                }
-            }
-        }
-    };
-    this.init();
-
-    this.getGroups = function(){
-        return groups;
-    };
-};
-var ColorPath = function(startCell, color) {
+var ColorPathLayer = function(color){
     this.color = color;
-    this.start = startCell;
-    this.end = startCell;
-    this.type = null;
+    this.cellField = [];
+    this.cells = [];
 
-    var cells = [];
-    var spotType = function(startBlock, endBlock){
-        console.log(startBlock);
-        console.log(endBlock);
-    };
+    this.blocks = [];
 
-    var compare_n = function(a,b) {
-        if (a.n < b.n)
-            return -1;
-        if (a.n > b.n)
-            return 1;
-        return 0;
-    };
+    var searchAlgo = new KvReflectingSearchCustom();
 
-    this.isValid = function(){
-        return Math.isPowerOfTwo(cells.length);
-    };
-
-    var calcEndIndex = function(){
-        return cells.length - 1;
-    };
-    this.toggleCell = function(cell) {
-        if (cell.value != this.start.value) return;
-        cells.toggleObject(cell);
-
-        if (cells.length == 0) {
-            this.start = this.end = null;
-        } else if (cells.length == 1) {
-            this.start = this.end = cells[0];
+    this.toggleCell = function(cell, width) {
+        var pos = {col: parseInt(cell.n % width), row: parseInt(cell.n / width)};
+        var row = this.cellField[pos.row];
+        cell.cVisited = false;
+        if (!row) {
+            row = this.cellField[pos.row] = [];
+        }
+        if (row[pos.col]) {
+            row[pos.col] = null;
         } else {
-            cells.sort(compare_n);
-            this.start = cells[0];
-            this.end = cells[calcEndIndex()];
+            row[pos.col] = cell;
         }
 
-        return cells.length;
-    };
-    this.toggleCell(startCell);
-
-    var calcBlockPos = function(n, w) {
-        var pos = {x: 0, y: parseInt(n / w)};
-        pos.x = n - pos.y * w;
-        return pos;
-    };
-
-    this.createRects = function(w, size){
-        var pathGroups = new ColorPathBlockGroups(cells);
-        var groups = pathGroups.getGroups();
-        var rects = [];
-
-        for (var i = 0; i < groups.length; i++) {
-            var group = groups[i];
-            var startBlock = calcBlockPos(group.start.n, w);
-            var endBlock = calcBlockPos(group.end.n, w);
-
-            var width = endBlock.x - startBlock.x + 1;
-            var height = endBlock.y - startBlock.y + 1;
-
-            rects.push({
-                x: size * startBlock.x,
-                y: size * startBlock.y,
-                width: width * size,
-                height: height * size
-            });
+        for (var i = 0; i < this.cells.length; i++) {
+            this.cells[i].cVisited = false;
         }
-
-        return rects;
+        this.blocks = searchAlgo.search(this.cellField, width);
+        for (i = 0; i < this.blocks.length; i++) {
+            this.blocks[i].color = this.color;
+        }
+        return this.cells.length;
     };
 };
 var ColorPathMap = function(){
-    this.canvas = null;
-    this.diagram = null;
-
-    var paths = [];
-    this.getPathInfoWithColor = function(color) {
-        for (var i = 0; i < paths.length; i++) {
-            var path = paths[i];
-            if (path.color == color) {
-                return {path: path, index: i};
-            }
-        }
-        return {path: null, index: -1};
-    };
-
-    this.config = function(canvas, diagram) {
-        this.canvas = canvas;
-        this.diagram = diagram;
-    };
-
-    this.resetCanvas = function(){
-        this.canvas.clearColorContainer();
-        for (var i = 0; i < paths.length; i++) {
-            var path = paths[i];
-            var rects = path.createRects(this.diagram.getWidth(), KVDiagram.SIZE);
-            for (var j = 0; j < rects.length; j++) {
-                var rect = rects[j];
-                this.canvas.addToColorContainer(path.color, rect.x, rect.y, rect.width, rect.height);
-            }
-
-        }
-    };
-
-    this.analyze = function(cell, color){
-        var pathInfo = this.getPathInfoWithColor(color);
-        var path = pathInfo.path || null;
-        var index = pathInfo.index || -1;
-
-        if (path == null) {
-            paths.push(path = new ColorPath(cell, color));
-        } else {
-            if (path.toggleCell(cell) == 0) {
-                paths.remove(path);
-            }
-        }
-
-        this.resetCanvas();
-    };
-};*/
-var ColorPathMap = function(){
     this.diagram = null;
     this.canvas = null;
+
+    this.layers = [];
 
     this.config = function(canvas, diagram) {
         this.diagram = diagram;
@@ -231,7 +45,21 @@ var ColorPathMap = function(){
     };
 
     this.analyze = function(cell, color) {
-        console.log(cell);
-        console.log(color);
+        var colorLayer;
+        if (color in this.layers) {
+            colorLayer = this.layers[color];
+        } else {
+            this.layers[color] = colorLayer = new ColorPathLayer(color);
+        }
+        colorLayer.toggleCell(cell, this.diagram.getWidth());
+
+        var blocks = [];
+        var keys = Object.keys(this.layers);
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            blocks = blocks.concat(blocks, this.layers[key].blocks);
+
+        }
+        return blocks;
     };
 };

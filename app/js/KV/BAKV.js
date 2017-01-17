@@ -14,7 +14,9 @@ var BAKV = function (params) {
 
         canvas.onBlockClick = function(parm){
             if (selectColor != null) {
-                $this.colorMap.analyze(parm.cell, selectColor);
+                var blocks = $this.colorMap.analyze(parm.cell, selectColor);
+                canvas.clearColorContainer();
+                $this.diagram.colorBlocks(blocks);
             }
             canvas.refresh();
         };
