@@ -7,6 +7,8 @@ var BAKV = function (params) {
 
     var selectColor = null;
 
+    this.expr = params.expr;
+
     this.setCanvas = function(target){
         canvas = EaselInterface.create(target);
 
@@ -38,13 +40,16 @@ var BAKV = function (params) {
         canvas.setSize(view.width, view.height);
     };
 
+    this.setExpr = function(e) {
+        this.expr = e;
+    };
 
     this.generateKV = function() {
-        this.diagram = new KVDiagram(params.expr, canvas);
+        this.diagram = new KVDiagram(this.expr, canvas);
         this.resizeCanvas();
-        canvas.refresh();
-
         this.colorMap.config(canvas, this.diagram);
+        canvas.clearColorContainer();
+        canvas.refresh();
     };
 
     var minimizeInfo = null;

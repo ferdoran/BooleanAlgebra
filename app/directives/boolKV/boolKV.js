@@ -3,7 +3,7 @@
  */
 var app = angular.module('boolean-algebra');
 var _kvCounter = 0;
-app.directive('boolKv', function($parse, $timeout, $sce){
+app.directive('boolKv', function($parse, $timeout, $sce, $timeout){
     return {
         restrict: 'E',
         replace:true,
@@ -12,7 +12,10 @@ app.directive('boolKv', function($parse, $timeout, $sce){
         link: function($scope, $element, $attr) {
             var cv = $element.find('#kvCanvasContainer');
             cv[0].id = 'kvCanvasContainer' + (_kvCounter++);
-            var kv = new BAKV({target: cv[0].id, expr: new BAExpression($attr.boolExpr)});
+
+            var domain = app.domains[$attr.boolDomain];
+            var expr = domain && !$attr.boolExpr ? domain.expression : new BAExpression($attr.boolExpr);
+            var kv = new BAKV({target: cv[0].id, expr: expr});
 
             var $colors;
             var initColors = function () {
@@ -39,14 +42,27 @@ app.directive('boolKv', function($parse, $timeout, $sce){
             initColors();
 
             $scope.checkResult = function(){
+                var minimizeInfo = kv.minimize();
+                if (minimizeInfo.dnf.blocks.length <= minimizeInfo.knf.blocks.length) {
+                    kv.colorMinimized('dnf');
+                } else {
+                    kv.colorMinimized('knf');
+                }
+
             };
 
+            if (domain) {
+                domain.refreshKV = function (_expr) {
+                    if (domain.toKV) $timeout.cancel(domain.toKV);
+                    domain.toKV = $timeout(function(){
+                        kv.setExpr(expr = _expr);
+                        kv.generateKV();
+                    },50);
+                };
+            }
+
+
             kv.generateKV();
-
-            var minimizeInfo = kv.minimize();
-            console.log(minimizeInfo);
-
-            kv.colorMinimized('dnf');
         }
     };
 });

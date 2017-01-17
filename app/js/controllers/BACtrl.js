@@ -22,12 +22,14 @@ app.controller('BACtrl', function($scope, $compile) {
     };
 
     $scope.createKV = function(id){
+        var $input = angular.element('.boolInput[bool-domain="boolMain"]').find('.input');
         if (app.domains.boolMain.expression.text == "") {
-            angular.element('.boolInput[bool-domain="boolMain"]').find('.input').focus();
+            $input.focus();
             return false;
         }
+        app.domains.boolMain.$input = $input;
         var $body = angular.element(id);
-        var kvHtml = $compile('<bool-kv bool-expr="' + app.domains.boolMain.expression.text + '"></bool-kv>')($scope);
+        var kvHtml = $compile('<bool-kv bool-domain="boolMain" bool-expr="' + app.domains.boolMain.expression.text + '"></bool-kv>')($scope);
         $body.html(kvHtml);
     };
 

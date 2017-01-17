@@ -183,6 +183,10 @@ var BAExpression = function(text) {
         var clipInfo = getClips(text);
 
         this.rootNode = this.buildTree(clipInfo.output);
+
+        if (this.domain && this.domain.refreshKV) {
+            this.domain.refreshKV(this);
+        }
     };
     if (text) {
         this.parse(text);
