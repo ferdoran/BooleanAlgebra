@@ -3,7 +3,8 @@
  */
 var app = angular.module('boolean-algebra');
 var _kvCounter = 0;
-app.directive('boolKv', function($parse, $timeout, $sce, $timeout){
+var TEST = null;
+app.directive('boolKv', function($parse, $timeout){
     return {
         restrict: 'E',
         replace:true,
@@ -42,13 +43,14 @@ app.directive('boolKv', function($parse, $timeout, $sce, $timeout){
             initColors();
 
             $scope.checkResult = function(){
+                return;
+                kv.canvas.clearColorContainer();
                 var minimizeInfo = kv.minimize();
                 if (minimizeInfo.dnf.blocks.length <= minimizeInfo.knf.blocks.length) {
                     kv.colorMinimized('dnf');
                 } else {
                     kv.colorMinimized('knf');
                 }
-
             };
 
             if (domain) {
@@ -61,8 +63,9 @@ app.directive('boolKv', function($parse, $timeout, $sce, $timeout){
                 };
             }
 
-
             kv.generateKV();
+
+            $scope.customLayers = kv.colorMap.layers;
         }
     };
 });

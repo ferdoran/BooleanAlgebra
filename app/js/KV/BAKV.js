@@ -3,43 +3,42 @@ var BAKV = function (params) {
     this.diagram = null;
     this.colorMap = new ColorPathMap();
 
-    var canvas = null;
+    this.canvas = null;
 
     var selectColor = null;
 
     this.expr = params.expr;
 
     this.setCanvas = function(target){
-        canvas = EaselInterface.create(target);
+        this.canvas = EaselInterface.create(target);
 
-        canvas.onBlockClick = function(parm){
+        this.canvas.onBlockClick = function(parm){
             if (selectColor != null) {
                 var blocks = $this.colorMap.analyze(parm.cell, selectColor);
-                canvas.clearColorContainer();
+                $this.canvas.clearColorContainer();
                 $this.diagram.colorBlocks(blocks);
             }
-            canvas.refresh();
+            $this.canvas.refresh();
         };
 
-        canvas.onBlockHover = function(parm) {
-            canvas.refresh();
+        this.canvas.onBlockHover = function(parm) {
+            $this.canvas.refresh();
         };
 
-        canvas.onBlockOut = function(parm) {
-
-            canvas.refresh();
+        this.canvas.onBlockOut = function(parm) {
+            $this.refresh();
         };
     };
     this.setCanvas(params.target);
 
     this.setSelectColor = function(color) {
         selectColor = color;
-        canvas.setHoverColor(color);
+        this.canvas.setHoverColor(color);
     };
 
     this.resizeCanvas = function(){
         var view = this.diagram.calcView();
-        canvas.setSize(view.width, view.height);
+        this.canvas.setSize(view.width, view.height);
     };
 
     this.setExpr = function(e) {
@@ -47,11 +46,11 @@ var BAKV = function (params) {
     };
 
     this.generateKV = function() {
-        this.diagram = new KVDiagram(this.expr, canvas);
+        this.diagram = new KVDiagram(this.expr, this.canvas);
         this.resizeCanvas();
-        this.colorMap.config(canvas, this.diagram);
-        canvas.clearColorContainer();
-        canvas.refresh();
+        this.colorMap.config(this.canvas, this.diagram);
+        this.canvas.clearColorContainer();
+        this.canvas.refresh();
     };
 
     var minimizeInfo = null;
@@ -65,6 +64,6 @@ var BAKV = function (params) {
     };
 
     this.refresh = function(){
-        canvas.refresh();
+        this.canvas.refresh();
     };
 };

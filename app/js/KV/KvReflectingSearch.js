@@ -1,16 +1,17 @@
 /**
  * Created by Sergej on 14.01.2017.
  */
-
-var KvReflectingBlock = Class.extend(function(cell){
+var KvReflectingBlock = Class.extend(function(){
     var $this = this;
     var width = 1;
 
     this.cells = [];
-    this.constructor = function(cell){
-        this.cells = [[cell]];
-    };
+    this.allowedCells = null;
 
+    this.constructor = function(cell, allowedCells){
+        this.cells = [[cell]];
+        if (allowedCells) this.allowedCells = allowedCells;
+    };
     this.getWidth = function(){
         return width;
     };
@@ -20,9 +21,6 @@ var KvReflectingBlock = Class.extend(function(cell){
     this.getHeight = function(){
         return this.cells.length;
     };
-
-    this.fieldWidth = 0;
-
 
     this.equals = function(block) {
         return false;
@@ -137,6 +135,7 @@ var KvReflectingBlock = Class.extend(function(cell){
             minVars[key] = value;
         }
     };
+
     this.getExpr = function(asString){
         if (minVars.length > 0) return minVars;
         var key, value;
@@ -193,9 +192,7 @@ var KvReflectingBlock = Class.extend(function(cell){
         return cellA.n != cellB.n && cellA.value == cellB.value;
     };
 
-    this.reflect = function(width){
-        this.fieldWidth = width;
-
+    this.reflect = function(){
         if (this.reflectRight(false)) {
             return true;
         } else if (this.reflectDown(false)) {
@@ -216,6 +213,7 @@ var KvReflectingBlock = Class.extend(function(cell){
 
         return false;
     };
+
     this.reflectRight = function (throughWall) {
         var collection = [];
         for (var r = 0; r < this.getHeight(); r++) {
@@ -229,6 +227,7 @@ var KvReflectingBlock = Class.extend(function(cell){
                 if (next.n < last.n && !throughWall) return false;
                 if (next.equals(first)) return false;
                 if (!this.areReflectable(last, next)) return false;
+                if (this.allowedCells && !this.allowedCells.contains(next)) return false;
                 collectionRow.push(next);
             }
             collection.push(collectionRow);
@@ -250,6 +249,7 @@ var KvReflectingBlock = Class.extend(function(cell){
                 if (next.n > first.n && !throughWall) return false;
                 if (next.equals(last)) return false;
                 if (!this.areReflectable(first, next)) return false;
+                if (this.allowedCells && !this.allowedCells.contains(next)) return false;
                 collectionRow.unshift(next);
             }
             collection.push(collectionRow);
@@ -272,6 +272,7 @@ var KvReflectingBlock = Class.extend(function(cell){
                 if (next.n < last.n && !throughWall) return false;
                 if (next.equals(first)) return false;
                 if (!this.areReflectable(last, next)) return false;
+                if (this.allowedCells && !this.allowedCells.contains(next)) return false;
                 var collectionRow;
                 if (collection.length <= r) {
                     collection.push(collectionRow = []);
@@ -299,6 +300,7 @@ var KvReflectingBlock = Class.extend(function(cell){
                 if (next.n > first.n && !throughWall) return false;
                 if (next.equals(last)) return false;
                 if (!this.areReflectable(first, next)) return false;
+                if (this.allowedCells && !this.allowedCells.contains(next)) return false;
                 var collectionRow;
                 if (collection.length <= r) {
                     collection.push(collectionRow = []);
@@ -317,15 +319,28 @@ var KvReflectingBlock = Class.extend(function(cell){
     };
 });
 var KvReflectingSearch = Class.extend(function(){
+    this.cellField = null;
+    this.visitedKey = 'visited';
+
+    this.constructor = function(cellField) {
+        if (cellField) this.cellField = cellField;
+    };
+
+    this.init = function(cells){
+        for (var i = 0; i < cells.length; i++) {
+            cells[i][this.visitedKey] = false;
+        }
+    };
+
     this.search = function(cells, value){
         var blocks = [];
-        for (var i = 0; i < cells.length; i++) {
-            cells[i].visited = false;
-        }
-        for (i = 0; i < cells.length; i++){
+
+        this.init(cells);
+
+        for (var i = 0; i < cells.length; i++){
             var cell = cells[i];
-            if (cell.visited || cell.value != value) continue;
-            var block = new KvReflectingBlock(cell);
+            if (cell[this.visitedKey] || cell.value != value) continue;
+            var block = new KvReflectingBlock(cell, this.cellField);
             this.expand(block);
             blocks.push(block);
         }
@@ -338,7 +353,7 @@ var KvReflectingSearch = Class.extend(function(){
             var row = block.cells[r];
             for (var c = 0; c < block.getWidth(); c++) {
                 var cell = row[c];
-                cell.visited = true;
+                cell[this.visitedKey] = true;
             }
         }
     };
@@ -348,50 +363,31 @@ var KvReflectingSearch = Class.extend(function(){
     };
 });
 
-var KvReflectingCustomBlock = KvReflectingBlock.extend(function(){
-    this.cellField = null;
-    this.constructor = function(cell, cellField) {
-        this.super(cell);
-        this.cellField = cellField;
-    };
-    this.reflectRight = function(throughWall){
-        var collection = [];
-        for (var r = 0; r < this.getHeight(); r++) {
-            var row = this.cellField[r];
-            if (!row) continue;
-            var first = 0;
-            var last = row.length - 1;
-            var next = last;
-            var collectionRow = [];
-            for (var c = 0; c < this.getWidth(); c++) {
-                next++;
-                if (next >= this.fieldWidth) {
-                    next = 0;
-                }
-                var nextCell = this.cellField[next];
-                if (!nextCell) continue;
-                if (next.n < last.n && !throughWall) return false;
-                if (next.equals(first)) return false;
-                if (!this.areReflectable(last, next)) return false;
-                collectionRow.push(next);
-            }
-            collection.push(collectionRow);
-        }
-        this.concatHorizontal(this.cells, collection);
-        return true;
-    };
-    this.reflectLeft = function(throughWall){};
-    this.reflectDown = function(throughWall){};
-    this.reflectUp = function(throughWall){
-
-    };
-});
-
 var KvReflectingSearchCustom = KvReflectingSearch.extend(function(){
+    this.visitedKey = 'cVisited';
+
+    this.cells = [];
+
+    this.init = function(cellField, width, height){
+        this.cells = [];
+        for (var r = 0; r < height; r++) {
+            var row = cellField[r];
+            if (!row) continue;
+            for (var c = 0; c < width; c++) {
+                var cell = row[c];
+                if (!cell) continue;
+                cell[this.visitedKey] = false;
+                this.cells.push(cell);
+            }
+        }
+    };
+
     this.search = function(cellField, width){
         var height = cellField.length;
         if (height < 1) return [];
         var blocks = [];
+
+        this.init(cellField, width, height);
 
         for (var r = 0; r < height; r++) {
             var row = cellField[r];
@@ -399,26 +395,12 @@ var KvReflectingSearchCustom = KvReflectingSearch.extend(function(){
             for (var c = 0; c < width; c++) {
                 var cell = row[c];
                 if (!cell) continue;
-                var block = new KvReflectingCustomBlock(cell, cellField);
+                if (cell[this.visitedKey]) continue;
+                var block = new KvReflectingBlock(cell, this.cells);
                 this.expand(block);
                 blocks.push(block);
             }
         }
         return blocks;
-    };
-
-    this.expand = function(block, width) {
-        while (this.reflect(block, width)) {}
-        for (var r = 0; r < block.getHeight(); r++) {
-            var row = block.cells[r];
-            for (var c = 0; c < block.getWidth(); c++) {
-                var cell = row[c];
-                cell.cVisited = true;
-            }
-        }
-    };
-
-    this.reflect = function(block, width) {
-        return block.reflect(width);
     };
 });

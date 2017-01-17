@@ -7,10 +7,12 @@ var ColorPathLayer = function(color){
     this.cells = [];
 
     this.blocks = [];
+    this.value = -1;
 
     var searchAlgo = new KvReflectingSearchCustom();
 
     this.toggleCell = function(cell, width) {
+        if (this.value != -1 && this.value != cell.value) return;
         var pos = {col: parseInt(cell.n % width), row: parseInt(cell.n / width)};
         var row = this.cellField[pos.row];
         cell.cVisited = false;
@@ -22,12 +24,15 @@ var ColorPathLayer = function(color){
         } else {
             row[pos.col] = cell;
         }
-
-        for (var i = 0; i < this.cells.length; i++) {
-            this.cells[i].cVisited = false;
+        this.cells.toggleObject(cell);
+        if (this.cells.length == 0) {
+            this.value = -1;
+        }
+        else if (this.cells.length == 1) {
+            this.value = this.cells[0].value;
         }
         this.blocks = searchAlgo.search(this.cellField, width);
-        for (i = 0; i < this.blocks.length; i++) {
+        for (var i = 0; i < this.blocks.length; i++) {
             this.blocks[i].color = this.color;
         }
         return this.cells.length;
@@ -39,25 +44,39 @@ var ColorPathMap = function(){
 
     this.layers = [];
 
+    this.onAddedLayer = function(layer){};
+    this.onRemoveLayer = function(layer){};
+
     this.config = function(canvas, diagram) {
         this.diagram = diagram;
         this.canvas = canvas;
     };
 
-    this.analyze = function(cell, color) {
-        var colorLayer;
-        if (color in this.layers) {
-            colorLayer = this.layers[color];
-        } else {
-            this.layers[color] = colorLayer = new ColorPathLayer(color);
+    this.getLayer = function(color) {
+        for (var i = 0; i < this.layers.length; i++) {
+            var layer = this.layers[i];
+            if (layer.color == color) return layer;
         }
-        colorLayer.toggleCell(cell, this.diagram.getWidth());
+        return null;
+    };
+
+    this.analyze = function(cell, color) {
+        var colorLayer = this.getLayer(color);
+        if (colorLayer == null) {
+            colorLayer = new ColorPathLayer(color);
+            this.layers.push(colorLayer);
+            this.onAddedLayer(colorLayer);
+        }
+        var length = colorLayer.toggleCell(cell, this.diagram.getWidth());
+
+        if (length == 0) {
+            this.onRemoveLayer(colorLayer);
+        }
 
         var blocks = [];
-        var keys = Object.keys(this.layers);
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            blocks = blocks.concat(blocks, this.layers[key].blocks);
+
+        for (var i = 0; i < this.layers.length; i++) {
+            blocks = blocks.concat(blocks, this.layers[i].blocks);
 
         }
         return blocks;
