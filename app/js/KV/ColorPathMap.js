@@ -6,6 +6,8 @@ var ColorPathLayer = function(color){
     this.cellField = [];
     this.cells = [];
 
+
+    this.expression = new BAExpression();
     this.blocks = [];
     this.value = -1;
 
@@ -44,8 +46,7 @@ var ColorPathMap = function(){
 
     this.layers = [];
 
-    this.onAddedLayer = function(layer){};
-    this.onRemoveLayer = function(layer){};
+    this.onChangedLayer = function(layer){};
 
     this.config = function(canvas, diagram) {
         this.diagram = diagram;
@@ -65,19 +66,18 @@ var ColorPathMap = function(){
         if (colorLayer == null) {
             colorLayer = new ColorPathLayer(color);
             this.layers.push(colorLayer);
-            this.onAddedLayer(colorLayer);
+            this.onChangedLayer(colorLayer);
         }
         var length = colorLayer.toggleCell(cell, this.diagram.getWidth());
-
         if (length == 0) {
-            this.onRemoveLayer(colorLayer);
+            var index = this.layers.indexOf(colorLayer);
+            this.layers.splice(index, 1);
+            this.onChangedLayer(colorLayer);
         }
 
         var blocks = [];
-
         for (var i = 0; i < this.layers.length; i++) {
             blocks = blocks.concat(blocks, this.layers[i].blocks);
-
         }
         return blocks;
     };

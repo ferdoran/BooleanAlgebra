@@ -1,0 +1,9 @@
+.boolKVBlockMin {
+    padding: 0.25em;
+}
+.boolKVBlockMin .colorExprContainer {
+    position:relative;
+}
+.boolKVBlockMin .colorExprContainer .boolKVBlockInput~.notFoundMessage {
+
+}

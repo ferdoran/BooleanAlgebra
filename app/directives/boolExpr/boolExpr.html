@@ -9,8 +9,9 @@
     </div>
     <div ng-class="{ 'boolInputBody' : true, 'isValid': expression.isValid()}">
         <div class="inputRel">
-            <label class="f">{{symbol}}<sub>{{symbolSmall}}</sub> := <span class="fa fa-exclamation"></span></label>
-            <div class="input" placeholder="Boolescher Ausdruck" contentEditable spellcheck="false" autocomplete="off" bind-expression="expression"></div>
+            <label class="f" ng-if="isColorBox == false">{{symbol}}<sub>{{symbolSmall}}</sub><span>&nbsp;:=&nbsp;</span><span class="fa fa-exclamation"></span></label>
+            <label class="colorBoxF f" ng-if="isColorBox == true"><span class="colorBox"></span> <span class="fa fa-exclamation"></span></label>
+            <div class="input" placeholder="Boolescher Ausdruck" contentEditable spellcheck="false" autocomplete="off" bind-expression="expression" layer="layer"></div>
             <button class="clearText" ng-click="clearText()"><span class="fa fa-close"></span></button>
         </div>
         <button class="removeGroupButton" ng-click="removeGroup(group)"><span class="fa fa-close"></span></button>

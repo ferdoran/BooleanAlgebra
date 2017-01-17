@@ -1,0 +1,15 @@
+<div class="boolKVBlockMin">
+    <div class="colorExprWrapper">
+        <h3 class="diagram-title">Farben</h3>
+        <div class="colorExprContainer">
+            <bool-kv-block-input class="notFoundItem" ng-repeat="layer in customLayers" bind-layer="layer">{{layer.color}}</bool-kv-block-input>
+            <div class="createInfo notFoundMessage">
+                <p>Hier erscheinen Eingabefelder für die gewählten Farbblocke.</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="diagram-title">Minimierter Term</h3>
+    <bool-expr bool-symbol="KNF" bind-expression="knf"></bool-expr>
+    <bool-expr bool-symbol="DNF" bind-expression="dnf"></bool-expr>
+</div>

@@ -24,11 +24,8 @@
         </div>
         <div class="boolKvBody" id="kvCanvasContainer"></div>
     </div>
-    <div class="createInfo colorExprContainer">
-        <div ng-repeat="layer in customLayers">{{layer.color}}</div>
-    </div>
-    <!--<bool-expr bool-domain="boolMin" bool-symbol="KNF" bind-expression="minExpression"></bool-expr>
-    <bool-expr bool-domain="boolMin" bool-symbol="DNF" bind-expression="minExpression"></bool-expr>-->
+
+    <bool-kv-block-min bind-kv="kv"></bool-kv-block-min>
 
     <div class="buttonWrapper text-center">
         <button class="btn" ng-click="checkResult()">Ergebnis prüfen</button>

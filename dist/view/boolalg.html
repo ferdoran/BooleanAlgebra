@@ -21,23 +21,18 @@
         </div>
     </div>
     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
-        <div class="box">
-            <div class="boxTitle">
-                <h2 class="diagram-title">Minimierter Term</h2>
-            </div>
-            <div class="boxBody">
-                <bool-expr bool-domain="boolMin" bool-symbol="F" bool-symbol-small="M" bind-expression="minExpression"></bool-expr>
-            </div>
-        </div>
 
         <div class="box">
             <div class="boxTitle">
                 <h2 class="diagram-title">KV-Diagramm</h2>
             </div>
-            <div class="boxBody text-center" id="kvBody">
-                <bool-kv bool-expr="A∨B∨C"></bool-kv>
+            <div class="boxBody" id="kvBody">
+                <!--<bool-kv bool-expr="(A∧B)∧((C∨¬C)∧(¬D∨D))∨¬A∧¬B"></bool-kv>-->
+                <!--<bool-kv bool-expr="A∧B∧C∧D∨A∧B∧¬C∧D∨A∧B∧C∧¬D∨A∧B∧¬C∧¬D∨¬A∧¬B"></bool-kv>-->
+                <!--<bool-kv bool-expr="A∨B∨C∨D"></bool-kv>-->
+                <!--<bool-kv bool-expr="¬A∧B∧¬C∧¬D∨A∧¬B∧¬C∧¬D∨A∧¬B∧¬C∧D∨A∧¬B∧C∧¬D∨A∧¬B∧C∧D∨A∧B∧¬C∧¬D∨A∧B∧C∧¬D∨A∧B∧C∧D"></bool-kv>-->
                 <div class="createInfo">
-                    <p>Zum Generieren eines KV-Diagramms benötigen Sie eine Wahrheitstabelle!</p>
+                    <p>Zum Generieren eines KV-Diagramms benötigen Sie einen gültigen Booleschen Ausdruck!</p>
                     <button class="btn" ng-click="createKV('#kvBody')">KV-Diagramm üben</button>
                 </div>
             </div>

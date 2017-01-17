@@ -175,3 +175,7 @@ button.removeGroupButton {
 .boolExpr .boolInputBody:not(.isValid) label {
     border-right:1px solid red;
 }
+.boolExpr .colorBox {
+    width:16px;
+    height:16px;
+}
