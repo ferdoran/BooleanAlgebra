@@ -2,7 +2,7 @@
  * Created by Sergej Görzen on 04.09.2016.
  */
 var app = angular.module('boolean-algebra');
-
+var _kvCounter = 0;
 app.directive('boolKv', function($parse, $timeout, $sce){
     return {
         restrict: 'E',
@@ -10,7 +10,9 @@ app.directive('boolKv', function($parse, $timeout, $sce){
         scope:true,
         templateUrl: "directives/boolKV/boolKV.html",
         link: function($scope, $element, $attr) {
-            var kv = new BAKV({target: 'kvCanvasContainer', expr: new BAExpression($attr.boolExpr)});
+            var cv = $element.find('#kvCanvasContainer');
+            cv[0].id = 'kvCanvasContainer' + (_kvCounter++);
+            var kv = new BAKV({target: cv[0].id, expr: new BAExpression($attr.boolExpr)});
 
             var $colors;
             var initColors = function () {

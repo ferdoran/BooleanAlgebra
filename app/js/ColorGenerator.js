@@ -24,8 +24,6 @@ var ColorGenerator = {
         if (g == "0") g = "00";
         if (b == "0") b = "00";
 
-        console.log(rgb);
-
         return '#' + r + g + b;
     }
 };

@@ -62,7 +62,32 @@ var KvReflectingBlock = function(cell){
         for (r = 0; r < rectsLength; r++) {
             rect = rects[r];
             var xDistance = field.width - (rect.x + rect.width);
-            if (xDistance < 0) {
+            var yDistance = field.height - (rect.y + rect.height);
+            if (xDistance < 0 && yDistance < 0) {
+                rect.open.right = rect.open.down = true;
+
+                var newRectUpLeft = createRect(xDistance, yDistance);
+                newRectUpLeft.open.left = newRectUpLeft.open.up = true;
+                newRectUpLeft.width = rect.width;
+                newRectUpLeft.height = rect.height;
+                correctionRect(newRectUpLeft);
+                rects.push(newRectUpLeft);
+
+                var newRectUpRight = createRect(rect.x, yDistance);
+                newRectUpRight.open.right = newRectUpRight.open.up = true;
+                newRectUpRight.width = rect.width;
+                newRectUpRight.height = rect.height;
+                correctionRect(newRectUpRight);
+                rects.push(newRectUpRight);
+
+                var newRectDownLeft = createRect(xDistance, rect.y);
+                newRectDownLeft.open.left = newRectDownLeft.open.down = true;
+                newRectDownLeft.width = rect.width;
+                newRectDownLeft.height = rect.height;
+                correctionRect(newRectDownLeft);
+                rects.push(newRectDownLeft);
+
+            } else if (xDistance < 0) {
                 rect.open.right = true;
                 newRect = createRect(xDistance, rect.y);
                 newRect.open.left = true;
@@ -70,9 +95,7 @@ var KvReflectingBlock = function(cell){
                 newRect.height = rect.height;
                 correctionRect(newRect);
                 rects.push(newRect);
-            }
-            var yDistance = field.height - (rect.y + rect.height);
-            if (yDistance < 0) {
+            } else if (yDistance < 0) {
                 rect.open.down = true;
                 newRect = createRect(rect.x, yDistance);
                 newRect.open.up = true;

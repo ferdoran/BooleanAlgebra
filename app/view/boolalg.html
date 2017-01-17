@@ -27,7 +27,9 @@
                 <h2 class="diagram-title">KV-Diagramm</h2>
             </div>
             <div class="boxBody" id="kvBody">
-                <bool-kv bool-expr="A∨B∨C∨D"></bool-kv>
+                <bool-kv bool-expr="(A∧B)∧((C∨¬C)∧(¬D∨D))∨¬A∧¬B"></bool-kv>
+                <!--<bool-kv bool-expr="A∧B∧C∧D∨A∧B∧¬C∧D∨A∧B∧C∧¬D∨A∧B∧¬C∧¬D∨¬A∧¬B"></bool-kv>-->
+                <!--<bool-kv bool-expr="A∨B∨C∨D"></bool-kv>-->
                 <!--<bool-kv bool-expr="¬A∧B∧¬C∧¬D∨A∧¬B∧¬C∧¬D∨A∧¬B∧¬C∧D∨A∧¬B∧C∧¬D∨A∧¬B∧C∧D∨A∧B∧¬C∧¬D∨A∧B∧C∧¬D∨A∧B∧C∧D"></bool-kv>-->
                 <div class="createInfo">
                     <p>Zum Generieren eines KV-Diagramms benötigen Sie eine Wahrheitstabelle!</p>

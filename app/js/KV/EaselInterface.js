@@ -5,7 +5,7 @@ var EaselInterface = {
     create: function(id) {
         var canvas = document.getElementById(id);
 
-        if (canvas.tagName != "CANVAS") {
+        if (!canvas || canvas.tagName != "CANVAS") {
             var c = document.createElement("CANVAS");
             var cName = id + "_canvas";
             c.setAttribute("id", cName);
@@ -51,19 +51,36 @@ var EaselInterface = {
         canvas.colorBlock = function(block, color, x, y, width, height) {
             block.graphics.setStrokeStyle(2).beginStroke(color).drawRoundRect(x,y, width - 1, height - 1, roundFactor).endStroke();
         };
-        var openDownBlock = function(block, color, x, y, width, height){
-            var g = block.graphics.setStrokeStyle(2), s = 0;
-            g.beginStroke(color).moveTo(x, y + height - HALFSIZE).lineTo(x,y + roundFactor).quadraticCurveTo(x,y,s = x + roundFactor,y).endStroke();
-            g.beginStroke(color).moveTo(s, y).lineTo(s = x + width - roundFactor, y).endStroke();
-            g.beginStroke(color).moveTo(s, y).quadraticCurveTo(s = x+width,y,s,y + roundFactor).endStroke();
-            g.beginStroke(color).moveTo(s, y + roundFactor).lineTo(x+width, y+height - HALFSIZE).endStroke();
+        var openDownBlock = function(block, color, x, y, width, height, exclude){
+            var g = block.graphics.setStrokeStyle(2), h = y + height, w = x + width;
+            if (exclude && exclude == 'left') {
+                g.beginStroke(color).moveTo(w / 2 - FOURSIZE, y).lineTo(w / 2, y).endStroke();
+            } else {
+                g.beginStroke(color).moveTo(x, h - HALFSIZE).lineTo(x,y + roundFactor).quadraticCurveTo(x, y, x + roundFactor, y).endStroke();
+                g.beginStroke(color).moveTo(x + roundFactor, y).lineTo(w / 2, y).endStroke();
+            }
+            if (exclude && exclude == 'right') {
+                g.beginStroke(color).moveTo(w / 2, y).lineTo(w - HALFSIZE, y).endStroke();
+            } else {
+                g.beginStroke(color).moveTo(w / 2, y).lineTo(w - roundFactor, y).quadraticCurveTo(w, y, w, y + roundFactor).endStroke();
+                g.beginStroke(color).moveTo(w, y + roundFactor).lineTo(w, h - HALFSIZE).endStroke();
+            }
         };
-        var openUpBlock = function(block, color, x, y, width, height){
-            var g = block.graphics.setStrokeStyle(2), s, h = y + height;
-            g.beginStroke(color).moveTo(x, y + HALFSIZE).lineTo(x,h - roundFactor).quadraticCurveTo(x,h,s = x + roundFactor,h).endStroke();
-            g.beginStroke(color).moveTo(s, h).lineTo(s = x + width - roundFactor, h).endStroke();
-            g.beginStroke(color).moveTo(s, h).quadraticCurveTo(s = x + width,h,s = x + width, h - roundFactor).endStroke();
-            g.beginStroke(color).moveTo(s, h).lineTo(s, y + HALFSIZE).endStroke();
+        var openUpBlock = function(block, color, x, y, width, height, exclude){
+            var g = block.graphics.setStrokeStyle(2), h = y + height, w = x + width;
+            if (exclude && exclude == 'left') {
+                g.beginStroke(color).moveTo(w / 2 - FOURSIZE, h).lineTo(w / 2, h).endStroke();
+            } else {
+                g.beginStroke(color).moveTo(x, y + HALFSIZE).lineTo(x, h - roundFactor).quadraticCurveTo(x, h, x + roundFactor, h).endStroke();
+                g.beginStroke(color).moveTo(x + roundFactor, h).lineTo(w / 2, h).endStroke();
+            }
+            if (exclude && exclude == 'right') {
+                g.beginStroke(color).moveTo(x / 2, h).lineTo(w - HALFSIZE, h).endStroke();
+            } else {
+                g.beginStroke(color).moveTo(w / 2, h).lineTo(w - roundFactor, h).quadraticCurveTo(w, h, w, h - roundFactor).endStroke();
+                g.beginStroke(color).moveTo(w, h - roundFactor).lineTo(w, y + HALFSIZE).endStroke();
+            }
+
         };
         var openLeftBlock = function(block, color, x, y, width, height){
             var g = block.graphics.setStrokeStyle(2), s = x + width, h = y + height;
@@ -86,11 +103,23 @@ var EaselInterface = {
             shape.y = rect.y;
 
             if (rect.open.up) {
-                openUpBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+                if (rect.open.left) {
+                    openUpBlock(shape, rect.block.color, 0, 0, rect.width, rect.height, 'left');
+                } else if (rect.open.right) {
+                    openUpBlock(shape, rect.block.color, 0, 0, rect.width, rect.height, 'right');
+                } else {
+                    openUpBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+                }
+            } else if (rect.open.down) {
+                if (rect.open.left) {
+                    openDownBlock(shape, rect.block.color, 0, 0, rect.width, rect.height, 'left');
+                } else if (rect.open.right) {
+                    openDownBlock(shape, rect.block.color, 0, 0, rect.width, rect.height, 'right');
+                } else {
+                    openDownBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
+                }
             } else if (rect.open.left) {
                 openLeftBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
-            } else if (rect.open.down) {
-                openDownBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
             } else if (rect.open.right) {
                 openRightBlock(shape, rect.block.color, 0, 0, rect.width, rect.height);
             } else {
