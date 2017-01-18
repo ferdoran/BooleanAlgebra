@@ -15,13 +15,18 @@ app.directive('boolKvBlockMin', function($timeout){
             $scope.knf = new BAExpression();
             $scope.dnf = new BAExpression();
 
-            $scope.customLayers = $scope.kv.colorMap.layers;
+            var colorMap = $scope.kv.colorMap;
+            $scope.customLayers = colorMap.layers;
 
-            $scope.kv.colorMap.onChangedLayer = function() {
+            colorMap.onChangedLayer = function() {
                 $timeout(function(){
                     $scope.$apply();
                 });
             };
+
+            $scope.$on('removeColorLayer', function(layer){
+                colorMap.removeLayer(layer);
+            });
         }
     };
 });

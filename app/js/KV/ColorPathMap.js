@@ -1,45 +1,6 @@
 /**
  * Created by Sergej on 11.01.2017.
  */
-var ColorPathLayer = function(color){
-    this.color = color;
-    this.cellField = [];
-    this.cells = [];
-
-
-    this.expression = new BAExpression();
-    this.blocks = [];
-    this.value = -1;
-
-    var searchAlgo = new KvReflectingSearchCustom();
-
-    this.toggleCell = function(cell, width) {
-        if (this.value != -1 && this.value != cell.value) return;
-        var pos = {col: parseInt(cell.n % width), row: parseInt(cell.n / width)};
-        var row = this.cellField[pos.row];
-        cell.cVisited = false;
-        if (!row) {
-            row = this.cellField[pos.row] = [];
-        }
-        if (row[pos.col]) {
-            row[pos.col] = null;
-        } else {
-            row[pos.col] = cell;
-        }
-        this.cells.toggleObject(cell);
-        if (this.cells.length == 0) {
-            this.value = -1;
-        }
-        else if (this.cells.length == 1) {
-            this.value = this.cells[0].value;
-        }
-        this.blocks = searchAlgo.search(this.cellField, width);
-        for (var i = 0; i < this.blocks.length; i++) {
-            this.blocks[i].color = this.color;
-        }
-        return this.cells.length;
-    };
-};
 var ColorPathMap = function(){
     this.diagram = null;
     this.canvas = null;
@@ -61,18 +22,28 @@ var ColorPathMap = function(){
         return null;
     };
 
+    this.removeLayer = function(layer){
+        var index = this.layers.indexOf(layer);
+        this.layers.splice(index, 1);
+        this.canvas.clearColorContainer();
+        var blocks = this.analyze();
+        this.diagram.colorBlocks(blocks);
+    };
+
     this.analyze = function(cell, color) {
-        var colorLayer = this.getLayer(color);
-        if (colorLayer == null) {
-            colorLayer = new ColorPathLayer(color);
-            this.layers.push(colorLayer);
-            this.onChangedLayer(colorLayer);
-        }
-        var length = colorLayer.toggleCell(cell, this.diagram.getWidth());
-        if (length == 0) {
-            var index = this.layers.indexOf(colorLayer);
-            this.layers.splice(index, 1);
-            this.onChangedLayer(colorLayer);
+        if (cell && color) {
+            var colorLayer = this.getLayer(color);
+            if (colorLayer == null) {
+                colorLayer = new ColorPathLayer(color);
+                this.layers.push(colorLayer);
+                this.onChangedLayer(colorLayer);
+            }
+            var length = colorLayer.toggleCell(cell, this.diagram.getWidth());
+            if (length == 0) {
+                var index = this.layers.indexOf(colorLayer);
+                this.layers.splice(index, 1);
+                this.onChangedLayer(colorLayer);
+            }
         }
 
         var blocks = [];

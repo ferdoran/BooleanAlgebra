@@ -165,7 +165,7 @@ var KVDiagram = function(expr, canvas){
     };
 
     this.minimize = function () {
-        var searchAlgo = new KvReflectingSearch();
+        var searchAlgo = new KVReflectingSearch();
 
         var info = {
             dnf: {

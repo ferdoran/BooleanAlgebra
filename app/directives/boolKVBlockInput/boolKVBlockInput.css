@@ -1,0 +1,32 @@
+.boolKVBlockInput {
+    position:relative;
+}
+.boolKVBlockInput .boolExpr button.removeKvTermButton {
+    position: relative;
+    top: -3px;
+    display: block;
+}
+.boolKVBlockInput .boolExpr:hover button.removeKvTermButton {
+    opacity:1;
+    visibility: visible;
+}
+.boolKVBlockInput .boolExpr .input {
+    width: calc(100% - 72px);
+}
+.boolKVBlockInput .resultInfo.fa-close {
+    color:#CF2A28;
+}
+.boolKVBlockInput .resultInfo.fa-check {
+    color:#30C12E;
+}
+.boolKVBlockInput.is-wrong .resultInfo.fa-close {
+    display:inline-block;
+}
+.boolKVBlockInput.is-right .resultInfo.fa-check {
+    display:inline-block;
+}
+.boolKVBlockInput .layerResultInfo .resultInfo {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}

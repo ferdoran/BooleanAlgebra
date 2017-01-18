@@ -18,15 +18,6 @@ var BAKV = function (params) {
                 $this.canvas.clearColorContainer();
                 $this.diagram.colorBlocks(blocks);
             }
-            $this.canvas.refresh();
-        };
-
-        this.canvas.onBlockHover = function(parm) {
-            $this.canvas.refresh();
-        };
-
-        this.canvas.onBlockOut = function(parm) {
-            $this.refresh();
         };
     };
     this.setCanvas(params.target);

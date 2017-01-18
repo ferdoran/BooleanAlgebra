@@ -119,6 +119,16 @@
     min-height: 27px;
     padding-top: 3px;
 }
+.boolExpr .boolInputBody label.colorBoxF {
+    width: 40px;
+}
+.boolExpr .boolInputBody label.colorBoxF .colorBox {
+    position:relative;
+    top:2px;
+}
+.boolExpr .boolInputBody label.colorBoxF ~ button.clearText {
+    right: 21px;
+}
 .boolExpr .boolInputBody:not(.isValid) .input {
     color: #999;
 }
@@ -133,7 +143,8 @@
     text-align:center;
     padding:1em 0;
 }
-button.removeGroupButton {
+button.removeGroupButton,
+button.removeKvTermButton {
     color: #CF2A28;
     opacity:0;
     visibility: hidden;
@@ -150,7 +161,8 @@ button.removeGroupButton {
     visibility: visible;
 }
 
-.boolExpr:not(.group) button.removeGroupButton {
+.boolExpr:not(.group) button.removeGroupButton,
+button.removeKvTermButton {
     display:none;
 }
 .boolExpr .inputRel {
@@ -178,4 +190,7 @@ button.removeGroupButton {
 .boolExpr .colorBox {
     width:16px;
     height:16px;
+}
+.boolExpr .resultInfo {
+    display:none;
 }

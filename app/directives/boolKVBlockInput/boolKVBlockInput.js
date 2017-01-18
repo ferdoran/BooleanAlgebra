@@ -3,7 +3,7 @@
  */
 var app = angular.module('boolean-algebra');
 
-app.directive('boolKvBlockInput', function($parse, $sce){
+app.directive('boolKvBlockInput', function($timeout){
     return {
         restrict: 'E',
         replace:true,
@@ -13,6 +13,9 @@ app.directive('boolKvBlockInput', function($parse, $sce){
         templateUrl: "directives/boolKVBlockInput/boolKVBlockInput.html",
         link: function($scope, $element, $attr) {
             var expression = $scope.layer.expression;
+            $scope.$on('checkLayerResults', function () {
+                $scope.layer.checkExpression();
+            });
         }
     };
 });

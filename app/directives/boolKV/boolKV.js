@@ -44,6 +44,10 @@
                 initColors();
 
                 $scope.checkResult = function(){
+                    $scope.$broadcast('checkLayerResults');
+
+
+                    return;
                     kv.canvas.clearColorContainer();
                     var minimizeInfo = kv.minimize();
                     if (minimizeInfo.dnf.blocks.length <= minimizeInfo.knf.blocks.length) {

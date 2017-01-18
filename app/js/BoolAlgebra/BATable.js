@@ -32,9 +32,9 @@ var BATable = function(rootNode){
     this.build = function(node){
         this.isLoading = true;
         this.letters.clear();
-        /*searchLetter(node);
-        console.log(this.letters);*/
-        this.letters = node.getLetters();
+        if (node){
+            this.letters = node.getLetters();
+        }
         this.isLoading = false;
     };
     this.build(rootNode);

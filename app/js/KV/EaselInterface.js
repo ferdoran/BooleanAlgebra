@@ -195,17 +195,27 @@ var EaselInterface = {
                 button.addChild(bg);
 
                 button.addEventListener('click', function(evt){
-                    canvas.onBlockClick({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
+                    if (canvas.onBlockClick) {
+                        canvas.onBlockClick({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
+                        hoverBlock.alpha = 0;
+                    }
+                    canvas.refresh();
                 });
                 button.addEventListener('mouseover', function(evt) {
                     hoverBlock.alpha = 1;
                     hoverBlock.x = block.x;
                     hoverBlock.y = block.y;
-                    canvas.onBlockHover({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
+                    if (canvas.onBlockHover) {
+                        canvas.onBlockHover({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
+                    }
+                    canvas.refresh();
                 });
                 button.addEventListener('mouseout', function(evt) {
                     hoverBlock.alpha = 0;
-                    canvas.onBlockOut({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
+                    if (canvas.onBlockOut) {
+                        canvas.onBlockOut({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
+                    }
+                    canvas.refresh();
                 });
 
                 block.ui.bg = bg;

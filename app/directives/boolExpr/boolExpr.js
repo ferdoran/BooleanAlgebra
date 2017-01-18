@@ -42,8 +42,10 @@
                     }
 
                     $timeout.cancel(to);
-
                     to = $timeout(function(){
+                        if ($scope.layer) {
+                            $scope.layer.resultState = 0;
+                        }
                         var text = $element.text();
                         expression.parse(text);
 
@@ -51,7 +53,6 @@
                         $element.html(expression.getHtml());
                         DomUtils.setCaretPosition($element.get(0), position);
 
-                        if (text.length == 0) return;
                         refreshTable();
                     },50);
                 });
@@ -163,6 +164,10 @@
                     if (domain.resizeTable) {
                         domain.resizeTable();
                     }
+                };
+
+                $scope.removeColorLayer = function(layer){
+                    $scope.$emit('removeColorLayer', layer);
                 };
             }
         };
