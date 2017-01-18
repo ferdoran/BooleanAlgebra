@@ -10,12 +10,6 @@ var BAExpression = function(text) {
 
     this.clips = [];
 
-    this.compare = new BAExprCompare(text);
-
-    this.equals = function(expression) {
-        return this.compare.equals(expression.compare);
-    };
-
     var priorSplit = [
         SYMBOL_EQUAL,
         SYMBOL_IMPL,
@@ -193,7 +187,6 @@ var BAExpression = function(text) {
         if (this.domain && this.domain.refreshKV) {
             this.domain.refreshKV(this);
         }
-        this.compare.setText(this.text);
     };
     if (text) {
         this.parse(text);

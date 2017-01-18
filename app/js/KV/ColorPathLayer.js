@@ -28,8 +28,11 @@ var ColorPathLayer = function(color){
     };
 
     this.checkExpression = function () {
-        var userExpr = this.getBlocksExpr();
-        this.resultState = this.expression.equals(userExpr) ? 1 : -1;
+        var blocksExpr  = this.getBlocksExpr(true);
+        var inputExpr = this.expression.text;
+        var compBlocks = new KVExprCompare(blocksExpr);
+        var compInput = new KVExprCompare(inputExpr);
+        this.resultState = compInput.equals(compBlocks) ? 1 : -1;
         return this.resultState;
     };
 
