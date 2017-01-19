@@ -43,9 +43,6 @@
 
                     $timeout.cancel(to);
                     to = $timeout(function(){
-                        if ($scope.layer) {
-                            $scope.layer.resultState = 0;
-                        }
                         var text = $element.text();
                         expression.parse(text);
 

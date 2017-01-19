@@ -10,6 +10,10 @@
     </div>
 
     <h3 class="diagram-title">Minimierter Term</h3>
-    <bool-expr bool-symbol="KNF" bind-expression="knf"></bool-expr>
-    <bool-expr bool-symbol="DNF" bind-expression="dnf"></bool-expr>
+    <div ng-class="{'boolDnf': true, 'resultInfoContainer': true, 'is-wrong': dnfResultState < 0, 'is-right': dnfResultState > 0}">
+        <bool-expr bool-symbol="DNF" bind-expression="dnf"></bool-expr>
+    </div>
+    <div ng-class="{'boolKnf': true, 'resultInfoContainer': true, 'is-wrong': knfResultState < 0, 'is-right': knfResultState > 0}">
+        <bool-expr bool-symbol="KNF" bind-expression="knf"></bool-expr>
+    </div>
 </div>

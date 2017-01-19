@@ -2,6 +2,7 @@
  * Created by Sergej on 18.01.2017.
  */
 var ColorPathLayer = function(color){
+    var $this = this;
     this.color = color;
     this.cellField = [];
     this.cells = [];
@@ -9,6 +10,9 @@ var ColorPathLayer = function(color){
     this.resultState = 0;
 
     this.expression = new BAExpression();
+    this.expression.onTextChanged = function () {
+        $this.resultState = 0;
+    };
     this.blocks = [];
     this.value = -1;
 

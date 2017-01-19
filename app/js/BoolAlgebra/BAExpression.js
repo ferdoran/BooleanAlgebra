@@ -96,6 +96,9 @@ var BAExpression = function(text) {
         }
         return null;
     };
+    this.onTextChanged = function(){
+
+    };
     this.buildTree = function(text) {
         if (text == null) return null;
         var splitInfo = splitByOperator(text);
@@ -187,6 +190,7 @@ var BAExpression = function(text) {
         if (this.domain && this.domain.refreshKV) {
             this.domain.refreshKV(this);
         }
+        this.onTextChanged(this.text);
     };
     if (text) {
         this.parse(text);

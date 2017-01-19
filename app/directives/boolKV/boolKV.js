@@ -45,16 +45,10 @@
 
                 $scope.checkResult = function(){
                     $scope.$broadcast('checkLayerResults');
+                };
 
+                $scope.help = function () {
 
-                    return;
-                    kv.canvas.clearColorContainer();
-                    var minimizeInfo = kv.minimize();
-                    if (minimizeInfo.dnf.blocks.length <= minimizeInfo.knf.blocks.length) {
-                        kv.colorMinimized('dnf');
-                    } else {
-                        kv.colorMinimized('knf');
-                    }
                 };
 
                 if (domain) {

@@ -7,3 +7,11 @@
 .boolKVBlockMin .colorExprContainer .boolKVBlockInput~.notFoundMessage {
 
 }
+.boolKnf .boolExpr .input,
+.boolDnf .boolExpr .input {
+    width: calc(100% - 100px);
+}
+.boolKnf .boolExpr button.clearText,
+.boolDnf .boolExpr button.clearText {
+    right: 20px;
+}

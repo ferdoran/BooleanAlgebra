@@ -14,6 +14,16 @@ app.directive('boolKvBlockMin', function($timeout){
         link: function($scope, $element, $attr) {
             $scope.knf = new BAExpression();
             $scope.dnf = new BAExpression();
+            $scope.knfResultState = 0;
+            $scope.dnfResultState = 0;
+
+            $scope.knf.onTextChanged = function () {
+                $scope.knfResultState = 0;
+            };
+
+            $scope.dnf.onTextChanged = function () {
+                $scope.dnfResultState = 0;
+            };
 
             var colorMap = $scope.kv.colorMap;
             $scope.customLayers = colorMap.layers;
@@ -23,6 +33,27 @@ app.directive('boolKvBlockMin', function($timeout){
                     $scope.$apply();
                 });
             };
+
+            var compareKnfDnf = function(info){
+                var compareKnfB = new KVExprCompare(info.knf.expr.text);
+                var compareDnfB = new KVExprCompare(info.dnf.expr.text);
+                var compareDnfA = new KVExprCompare($scope.dnf.text);
+                var compareKnfA = new KVExprCompare($scope.knf.text);
+
+                $scope.knfResultState = compareKnfA.equals(compareKnfB) ? 1 : -1;
+                $scope.dnfResultState = compareDnfA.equals(compareDnfB) ? 1 : -1;
+            };
+
+            $scope.$on('checkLayerResults', function(){
+                $scope.kv.canvas.clearColorContainer();
+                var minimizeInfo = $scope.kv.minimize();
+                compareKnfDnf(minimizeInfo);
+                /*if (minimizeInfo.dnf.blocks.length <= minimizeInfo.knf.blocks.length) {
+                    $scope.kv.colorMinimized('dnf');
+                } else {
+                    $scope.kv.colorMinimized('knf');
+                }*/
+            });
 
             $scope.$on('removeColorLayer', function(layer){
                 colorMap.removeLayer(layer);
