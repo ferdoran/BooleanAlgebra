@@ -163,8 +163,12 @@ var KVReflectingBlock = Class.extend(function(){
         for (var i = 0; i < newMinVarsKeys.length; i++) {
             key = newMinVarsKeys[i];
             value = minVars[key];
-            value = value == 0 && cell.value == 1 ? SYMBOL_NEG + key : key;
-            expr = eConnect(expr, value);
+            var keyValue = key;
+
+            if (cell.value == 0 && value == 1) keyValue = SYMBOL_NEG + key;
+            if (cell.value == 1 && value == 0) keyValue = SYMBOL_NEG + key;
+
+            expr = eConnect(expr, keyValue);
         }
 
         if (asString) return expr;

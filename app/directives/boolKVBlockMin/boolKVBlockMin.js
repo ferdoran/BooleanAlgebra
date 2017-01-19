@@ -45,10 +45,11 @@ app.directive('boolKvBlockMin', function($timeout){
             };
 
             $scope.$on('checkLayerResults', function(){
-                $scope.kv.canvas.clearColorContainer();
                 var minimizeInfo = $scope.kv.minimize();
                 compareKnfDnf(minimizeInfo);
-                /*if (minimizeInfo.dnf.blocks.length <= minimizeInfo.knf.blocks.length) {
+                /*
+                 $scope.kv.canvas.clearColorContainer();
+                if (minimizeInfo.dnf.blocks.length <= minimizeInfo.knf.blocks.length) {
                     $scope.kv.colorMinimized('dnf');
                 } else {
                     $scope.kv.colorMinimized('knf');

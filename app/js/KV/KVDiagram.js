@@ -191,6 +191,7 @@ var KVDiagram = function(expr, canvas){
         for (i = 0; i < dnf.length; i++) {
             var d = dnf[i];
             if (dnf.length > 1 && (d.indexOf(SYMBOL_OR) > -1 || d.indexOf(SYMBOL_AND) > -1)) {
+
                 d = "(" + d + ")";
             }
             expr = KVDiagram.Disjunction(expr, d);

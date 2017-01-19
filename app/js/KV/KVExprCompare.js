@@ -9,7 +9,6 @@ var KVExprCompare = function(text){
     this.equals = function(compare){
         if (!this.text || !compare || !compare.text) return false;
         var cText = compare.text;
-        console.log("COMPARE " + this.text + " WITH " + cText);
         if (cText == this.text) return true;
         if (this.text.length != cText.length) return false;
         var thisEtape = this.getEtape1(this.text);
