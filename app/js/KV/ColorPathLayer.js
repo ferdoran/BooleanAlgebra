@@ -7,6 +7,8 @@ var ColorPathLayer = function(color){
     this.cellField = [];
     this.cells = [];
 
+    this.diagram = null;
+
     this.resultState = 0;
 
     this.expression = new BAExpression();
@@ -23,9 +25,10 @@ var ColorPathLayer = function(color){
         var eConnect = this.value == 0 ? KVDiagram.Conjunction : KVDiagram.Disjunction;
         for (var i = 0; i < this.blocks.length; i++) {
             var block = this.blocks[i];
-            var e = block.getExpr(true);
-            if (this.blocks.length > 1) e = "(" + e + ")";
-            expr = eConnect(expr, e);
+            var e = block.getExpr();
+            var eStr = e.text;
+            if (this.blocks.length > 1 && IS_OPERATOR(e.rootNode.value)) eStr = "(" + eStr + ")";
+            expr = eConnect(expr, eStr);
         }
         if (asString) return expr;
         return new BAExpression(expr);

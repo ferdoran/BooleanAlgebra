@@ -177,7 +177,7 @@ var BAExpression = function(text) {
         return $this.errors.length > 0;
     };
     this.parse = function(text) {
-        text = text.replaceAll(' ','').toUpperCase();
+        text = text.trim().replaceAll(' ','').toUpperCase();
         this.text = text;
 
         if (hasErrors(text)) return;

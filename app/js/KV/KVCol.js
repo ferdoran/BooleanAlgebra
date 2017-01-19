@@ -31,6 +31,16 @@ var KVCol = function(value, Vars){
         }
         return null;
     };
+    var varsStr = "";
+    this.getVarsAsString = function(){
+        if (varsStr.length > 0) return varsStr;
+        for (var property in this.assignedVars) {
+            var value = this.assignedVars[property];
+            var Var = (value == 0 ? SYMBOL_NEG : '') + property;
+            varsStr += Var;
+        }
+        return varsStr;
+    };
     this.getVarAtIndexStr = function(index){
         var Var = this.getVarAtIndex(index);
         return (Var.value == 0 ? SYMBOL_NEG : '') + Var.key;

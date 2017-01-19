@@ -23,7 +23,12 @@ var KVReflectingBlock = Class.extend(function(){
     };
 
     this.equals = function(block) {
-        return false;
+        if (this.cells.length != block.cells.length) return false;
+        for (var i = 0; i < this.cells.length; i++) {
+            var cell = this.cells[i];
+            if (!block.cells.contains(cell)) return false;
+        }
+        return true;
     };
 
     this.createColorRects = function(fieldWidth, fieldHeight){
@@ -322,3 +327,4 @@ var KVReflectingBlock = Class.extend(function(){
         return true;
     };
 });
+

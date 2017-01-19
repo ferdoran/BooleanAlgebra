@@ -39,6 +39,7 @@ var BAKV = function (params) {
     this.generateKV = function() {
         this.diagram = new KVDiagram(this.expr, this.canvas);
         this.resizeCanvas();
+        this.colorMap.clear();
         this.colorMap.config(this.canvas, this.diagram);
         this.canvas.clearColorContainer();
         this.canvas.refresh();

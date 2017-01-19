@@ -22,6 +22,10 @@ var ColorPathMap = function(){
         return null;
     };
 
+    this.clear = function(){
+        this.layers.length = 0;
+    };
+
     this.removeLayer = function(layer){
         var index = this.layers.indexOf(layer);
         this.layers.splice(index, 1);
@@ -35,6 +39,7 @@ var ColorPathMap = function(){
             var colorLayer = this.getLayer(color);
             if (colorLayer == null) {
                 colorLayer = new ColorPathLayer(color);
+                colorLayer.diagram = this.diagram;
                 this.layers.push(colorLayer);
                 this.onChangedLayer(colorLayer);
             }

@@ -93,6 +93,28 @@ var KVDiagram = function(expr, canvas){
         return {width: width, height: height};
     };
 
+    var varMap = [];
+
+    this.getCellByVarsStr = function(varsStr){
+        return varMap[varsStr];
+    };
+
+    this.compare = new KVExprCompare(this);
+
+    this.compareExpr = function(textA, textB) {
+        if (textA instanceof BAExpression) textA = textA.text;
+        if (textB instanceof BAExpression) textB = textB.text;
+        return this.compare.equals(textA, textB);
+    };
+
+    this.getBlocksByExpr = function(expr){
+        return [allBlocks[0]];
+    };
+
+    this.matchBlockExpr = function(blocks, expr) {
+        var exprBlocks = this.getBlocksByExpr(expr);
+    };
+
     this.createNetwork = function(){
         var w = this.getWidth();
         var w2 = w - 1;
@@ -103,6 +125,8 @@ var KVDiagram = function(expr, canvas){
         for (var n = 0; n < this.cells.length; n++) {
             var cell = this.cells[n];
             cell.n = n;
+            var varMapKey = cell.getVarsAsString();
+            varMap[varMapKey] = cell;
 
             var nMw = n % w;
 
@@ -120,6 +144,8 @@ var KVDiagram = function(expr, canvas){
             cell.top = this.cells[t];
         }
     };
+
+
     this.generateBlocks = function(canvas){
         var h = Math.ceil(V.length / 2);
         var w = V.length - h;
@@ -164,6 +190,7 @@ var KVDiagram = function(expr, canvas){
         canvas.refresh(true);
     };
 
+    var allBlocks = [];
     this.minimize = function () {
         var searchAlgo = new KVReflectingSearch();
 
@@ -179,6 +206,8 @@ var KVDiagram = function(expr, canvas){
         };
         info.dnf.blocks = searchAlgo.search(this.cells, 1);
         info.knf.blocks = searchAlgo.search(this.cells, 0);
+        allBlocks = info.dnf.blocks.concat(info.knf.blocks);
+        console.log(allBlocks);
 
         var expr = "", i, block, minExpr;
         var dnf = [];
