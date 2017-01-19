@@ -15,3 +15,6 @@
 .boolDnf .boolExpr button.clearText {
     right: 20px;
 }
+.boolKVBlockMin .colorExprContainer .boolKVBlockInput:not(:first-child) {
+    border-top: 1px solid #ccc;
+}
