@@ -6,27 +6,35 @@ var KVExprCompare = function(text){
     this.setText = function(text) {
         if (text instanceof BAExpression) {
             this.expression = text;
+            this.text = this.expression.text;
         } else {
             this.expression = new BAExpression(text);
+            this.text = text;
         }
-        this.text = text;
     };
     this.setText(text);
     this.equals = function(compare){
         if (!this.text || !compare || !compare.text) return false;
-        var cText = compare.text;
-        console.log("COMPARE " + this.text + " WITH " + cText);
-        if (cText == this.text) return true;
-
+        console.log("COMPARE " + this.text + " WITH " + compare.text);
+        if (compare.text == this.text) return true;
 
         var compTable = compare.expression.generateTable();
         compTable.updateView();
         var thisTable = this.expression.generateTable();
         thisTable.updateView();
-        console.log(compTable);
-        console.log(thisTable);
 
-        return;
+        if (compTable.bits.length != thisTable.bits.length) return false;
+        var bits = compTable.bits.length > thisTable.bits.length ? compTable.bits : thisTable.bits;
+        for (var i = 0; i < bits.length; i++) {
+            var bitLine = bits[i];
+            var resultA = compare.expression.getResult(bitLine.param);
+            var resultB = compare.expression.getResult(bitLine.param);
+
+            if (resultA != resultB) return false;
+        }
+
+
+        return true;
         if (this.text.length != cText.length) return false;
         var thisEtape = this.getEtape1(this.text);
         var cEtape = this.getEtape1(cText);
