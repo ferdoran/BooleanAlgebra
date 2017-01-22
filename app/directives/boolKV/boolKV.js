@@ -17,6 +17,7 @@
                 var domain = app.domains[$attr.boolDomain];
                 var expr = domain && !$attr.boolExpr ? domain.expression : new BAExpression($attr.boolExpr);
 
+                CanvasInterface.isTouch = angular.element('html').hasClass('touch');
 
                 var kv = new BAKV({target: cv[0].id, expression: expr});
 

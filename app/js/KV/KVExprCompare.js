@@ -1,22 +1,19 @@
 /**
  * Created by Sergej on 18.01.2017.
  */
-var KVExprCompare = function(text){
-    this.expression = null;
-    this.setText = function(text) {
-        if (text instanceof BAExpression) {
-            this.expression = text;
-            this.text = this.expression.text;
-        } else {
-            this.expression = new BAExpression(text);
-            this.text = text;
-        }
+var KVExprCompare = function(expression){
+    this.expression = expression;
+    this.setExpression = function(expr) {
+        this.expression = expr;
     };
-    this.setText(text);
+    this.getText = function () {
+        return this.expression.text;
+    };
+
     this.equals = function(compare){
-        if (!this.text || !compare || !compare.text) return false;
-        console.log("COMPARE " + this.text + " WITH " + compare.text);
-        if (compare.text == this.text) return true;
+        if (!compare) return false;
+        console.log("COMPARE " + this.getText() + " WITH " + compare.getText());
+        if (compare.getText() == this.getText()) return true;
 
         var compTable = compare.expression.generateTable();
         compTable.updateView();
@@ -27,12 +24,14 @@ var KVExprCompare = function(text){
         var bits = compTable.bits.length > thisTable.bits.length ? compTable.bits : thisTable.bits;
         for (var i = 0; i < bits.length; i++) {
             var bitLine = bits[i];
-            var resultA = compare.expression.getResult(bitLine.param);
+            var resultA = this.expression.getResult(bitLine.param);
             var resultB = compare.expression.getResult(bitLine.param);
+
+            console.log(bitLine.param);
+            console.log("REsult a " + resultA + " ResultB " + resultB);
 
             if (resultA != resultB) return false;
         }
-
 
         return true;
         if (this.text.length != cText.length) return false;

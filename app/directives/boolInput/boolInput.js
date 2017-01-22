@@ -4,7 +4,7 @@
 (function () {
     var app = angular.module('boolean-algebra');
 
-    app.directive('boolInput', function($parse, $sce){
+    app.directive('boolInput', function($routeParams){
         return {
             restrict: 'E',
             replace:true,
@@ -19,7 +19,6 @@
                 //testExpr = '¬A∧¬(B∨C)∧(B∨C)∧(A∨(B∨C∧(B∨C)))';
 
                 var EXPR = $attr.boolExpr || '';
-
                 $scope.expression = new BAExpression(EXPR);
 
                 $scope.groups = BAGroup.groups;

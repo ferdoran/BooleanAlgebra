@@ -36,10 +36,10 @@
                 };
 
                 var compareKnfDnf = function(info){
-                    var compareKnfB = new KVExprCompare(info.knf.expr.text);
-                    var compareDnfB = new KVExprCompare(info.dnf.expr.text);
-                    var compareDnfA = new KVExprCompare($scope.dnf.text);
-                    var compareKnfA = new KVExprCompare($scope.knf.text);
+                    var compareKnfB = new KVExprCompare(info.knf.expr);
+                    var compareDnfB = new KVExprCompare(info.dnf.expr);
+                    var compareDnfA = new KVExprCompare($scope.dnf);
+                    var compareKnfA = new KVExprCompare($scope.knf);
 
                     $scope.knfResultState = compareKnfA.equals(compareKnfB) ? 1 : -1;
                     $scope.dnfResultState = compareDnfA.equals(compareDnfB) ? 1 : -1;

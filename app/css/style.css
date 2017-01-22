@@ -135,3 +135,17 @@ button[disabled]:after {
 .button-group:hover {
     color: #000;
     text-decoration: none; }
+
+button {
+    border: 1px solid whitesmoke;
+    display:inline-block;
+    color:#333333;
+    background:transparent;
+    margin: 0;
+    margin-right:5px;
+    font-weight:bold;
+    outline:0;
+}
+button:hover {
+    border-color: #e0e0e0;
+}

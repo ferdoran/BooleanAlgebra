@@ -39,20 +39,9 @@
     text-transform: none;
 }
 .boolExpr button {
-    border: 1px solid whitesmoke;
-    display:inline-block;
     width:32px;
     height:32px;
     float:left;
-    color:#333333;
-    background:transparent;
-    margin: 0;
-    margin-right:5px;
-    font-weight:bold;
-    outline:0;
-}
-.boolExpr button:hover {
-    border-color: #e0e0e0;
 }
 .boolExpr button.groupButton {
     float:right;

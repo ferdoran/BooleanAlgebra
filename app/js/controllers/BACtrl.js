@@ -32,6 +32,18 @@
             $body.html(kvHtml);
         };
 
+        $scope.createCircuit = function (id) {
+            var $input = angular.element('.boolInput[bool-domain="boolMain"]').find('.input');
+            if (app.domains.boolMain.expression.text == "") {
+                $input.focus();
+                return false;
+            }
+            app.domains.boolMain.$input = $input;
+            var $body = angular.element(id);
+            var circuitHtml = $compile('<bool-circuit bool-domain="boolMain" bool-expr="' + app.domains.boolMain.expression.text + '"></bool-circuit>')($scope);
+            $body.html(circuitHtml);
+        };
+
         $scope.closeFooter = function(){
             angular.element('footer').hide();
         };
