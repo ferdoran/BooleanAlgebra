@@ -1,8 +1,8 @@
 /**
  * Created by Sergej on 11.01.2017.
  */
-var KVDiagram = function(expr, canvas){
-    var V = expr.rootNode.getLetters();
+var KVDiagram = function(expression, canvas){
+    var V = expression.rootNode.getLetters();
     this.field = [];
     this.cells = [];
     var width = 0;
@@ -34,7 +34,7 @@ var KVDiagram = function(expr, canvas){
             var mirror = [];
             var row = A[r];
             for (var c = row.getLength() - 1; c >= 0; c--) {
-                var col = row.getCol(c);
+                var col = row.getCell(c);
                 mirror.push(col.clone());
             }
             row.appendCols(mirror);
@@ -45,8 +45,8 @@ var KVDiagram = function(expr, canvas){
     this.reflectHorizontal = function (Var) {
         if (this.field.length < 1) {
             var newRow = new KVRow();
-            newRow.addCol(new KVCol(0));
-            newRow.addCol(new KVCol(0));
+            newRow.addCell(new KVCell(0));
+            newRow.addCell(new KVCell(0));
             this.field.push(newRow);
         } else {
             this.field = reflectH(this.field);
@@ -57,8 +57,8 @@ var KVDiagram = function(expr, canvas){
         for (var i = 0; i < this.field.length; i++) {
             var row = this.field[i];
             for (var j = 0; j < half; j++) {
-                var colA = row.getCol(j);
-                var colB = row.getCol(half + j);
+                var colA = row.getCell(j);
+                var colB = row.getCell(half + j);
                 colA.addVar(Var, 1);
                 colB.addVar(Var, 0);
             }
@@ -77,8 +77,8 @@ var KVDiagram = function(expr, canvas){
             var rowA = this.field[i];
             var rowB = this.field[half + i];
             for (var j = 0; j < rowA.getLength(); j++) {
-                rowA.getCol(j).addVar(Var, 1);
-                rowB.getCol(j).addVar(Var, 0);
+                rowA.getCell(j).addVar(Var, 1);
+                rowB.getCell(j).addVar(Var, 0);
             }
         }
     };
@@ -93,28 +93,6 @@ var KVDiagram = function(expr, canvas){
         return {width: width, height: height};
     };
 
-    var varMap = [];
-
-    this.getCellByVarsStr = function(varsStr){
-        return varMap[varsStr];
-    };
-
-    this.compare = new KVExprCompare(this);
-
-    this.compareExpr = function(textA, textB) {
-        if (textA instanceof BAExpression) textA = textA.text;
-        if (textB instanceof BAExpression) textB = textB.text;
-        return this.compare.equals(textA, textB);
-    };
-
-    this.getBlocksByExpr = function(expr){
-        return [allBlocks[0]];
-    };
-
-    this.matchBlockExpr = function(blocks, expr) {
-        var exprBlocks = this.getBlocksByExpr(expr);
-    };
-
     this.createNetwork = function(){
         var w = this.getWidth();
         var w2 = w - 1;
@@ -125,8 +103,6 @@ var KVDiagram = function(expr, canvas){
         for (var n = 0; n < this.cells.length; n++) {
             var cell = this.cells[n];
             cell.n = n;
-            var varMapKey = cell.getVarsAsString();
-            varMap[varMapKey] = cell;
 
             var nMw = n % w;
 
@@ -159,7 +135,7 @@ var KVDiagram = function(expr, canvas){
         for (var r = 0; r < this.getHeight(); r++) {
             var row = this.getRow(r);
 
-            var firstcol = row.cols[0];
+            var firstcol = row.getCell(0);
 
             var block, aVar;
 
@@ -171,7 +147,7 @@ var KVDiagram = function(expr, canvas){
             }
 
             for (var c = 0; c < this.getWidth(); c++) {
-                var col = row.getCol(c);
+                var col = row.getCell(c);
 
                 if (r == 0) {
                     for (var cI = 0, offY = 1; cI < col.getVarLength(); cI+=2, offY++) {
@@ -180,7 +156,7 @@ var KVDiagram = function(expr, canvas){
                         canvas.add(block);
                     }
                 }
-                col.value = expr.getResult(col.assignedVars);
+                col.value = expression.getResult(col.assignedVars);
                 block = new KVBlock(gridOffset.x + c * size, gridOffset.y + r * size, size, size, col);
 
                 this.cells.push(col);

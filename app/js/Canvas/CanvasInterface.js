@@ -1,7 +1,24 @@
 /**
  * Created by Sergej on 30.12.2016.
  */
+
+var CanvasInterface = Class.extend(function () {
+    this.create = function () {
+
+    };
+});
+
+CanvasInterface.use = function (framework) {
+    var interfaces = {"EaselJS": EaselInterface};
+    return new interfaces[framework];
+};
+/*
 var CanvasInterface = {
+    this.create = function(framework){
+
+    };
+
+
     createEasel: function(id) {
         var canvas = document.getElementById(id);
 
@@ -332,4 +349,4 @@ var CanvasInterface = {
 
         return canvas;
     }
-};
+};*/

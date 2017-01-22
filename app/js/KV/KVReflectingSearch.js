@@ -57,7 +57,7 @@ var KVReflectingSearchCustom = KVReflectingSearch.extend(function(){
             var row = cellField[r];
             if (!row) continue;
             for (var c = 0; c < width; c++) {
-                var cell = row[c];
+                var cell = row.getCell(c);
                 if (!cell) continue;
                 cell[this.visitedKey] = false;
                 this.cells.push(cell);
@@ -71,12 +71,11 @@ var KVReflectingSearchCustom = KVReflectingSearch.extend(function(){
         var blocks = [];
 
         this.init(cellField, width, height);
-
         for (var r = 0; r < height; r++) {
             var row = cellField[r];
             if (!row) continue;
             for (var c = 0; c < width; c++) {
-                var cell = row[c];
+                var cell = row.getCell(c);
                 if (!cell) continue;
                 if (cell[this.visitedKey]) continue;
                 var block = new KVReflectingBlock(cell, this.cells);

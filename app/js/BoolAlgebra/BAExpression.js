@@ -72,6 +72,14 @@ var BAExpression = function(text) {
 
         return {input: text, output: output};
     };
+    var tableBuffer = null;
+    this.generateTable = function(){
+        if (tableIsDirty) {
+            tableBuffer = new BATable(this.rootNode);
+            tableIsDirty = false;
+        }
+        return tableBuffer;
+    };
     var splitByOperator = function(text){
         for (var i = 0; i < priorSplit.length; i++) {
             var pS = priorSplit[i];
@@ -97,7 +105,6 @@ var BAExpression = function(text) {
         return null;
     };
     this.onTextChanged = function(){
-
     };
     this.buildTree = function(text) {
         if (text == null) return null;
@@ -176,6 +183,7 @@ var BAExpression = function(text) {
         matchError(text);
         return $this.errors.length > 0;
     };
+    var tableIsDirty = true;
     this.parse = function(text) {
         text = text.trim().replaceAll(' ','').toUpperCase();
         this.text = text;
@@ -186,7 +194,7 @@ var BAExpression = function(text) {
         var clipInfo = getClips(text);
 
         this.rootNode = this.buildTree(clipInfo.output);
-
+        tableIsDirty = true;
         if (this.domain && this.domain.refreshKV) {
             this.domain.refreshKV(this);
         }

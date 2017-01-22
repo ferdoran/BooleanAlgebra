@@ -2,7 +2,13 @@
  * Created by Sergej on 18.01.2017.
  */
 var KVExprCompare = function(text){
+    this.expression = null;
     this.setText = function(text) {
+        if (text instanceof BAExpression) {
+            this.expression = text;
+        } else {
+            this.expression = new BAExpression(text);
+        }
         this.text = text;
     };
     this.setText(text);
@@ -11,6 +17,14 @@ var KVExprCompare = function(text){
         var cText = compare.text;
         console.log("COMPARE " + this.text + " WITH " + cText);
         if (cText == this.text) return true;
+
+
+        var compTable = compare.expression.generateTable();
+        var thisTable = this.expression.generateTable();
+        console.log(compTable);
+        console.log(thisTable);
+
+        return;
         if (this.text.length != cText.length) return false;
         var thisEtape = this.getEtape1(this.text);
         var cEtape = this.getEtape1(cText);

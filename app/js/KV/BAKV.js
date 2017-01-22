@@ -7,10 +7,11 @@ var BAKV = function (params) {
 
     var selectColor = null;
 
-    this.expr = params.expr;
+    this.expression = params.expression;
 
     this.setCanvas = function(target){
-        this.canvas = EaselInterface.create(target);
+        var canvasInterface = CanvasInterface.use("EaselJS");
+        this.canvas = canvasInterface.create(target);
 
         this.canvas.onBlockClick = function(parm){
             if (selectColor != null) {
@@ -27,17 +28,17 @@ var BAKV = function (params) {
         this.canvas.setHoverColor(color);
     };
 
+    this.setExpression = function (expr) {
+      this.expression = expr;
+    };
+
     this.resizeCanvas = function(){
         var view = this.diagram.calcView();
         this.canvas.setSize(view.width, view.height);
     };
 
-    this.setExpr = function(e) {
-        this.expr = e;
-    };
-
     this.generateKV = function() {
-        this.diagram = new KVDiagram(this.expr, this.canvas);
+        this.diagram = new KVDiagram(this.expression, this.canvas);
         this.resizeCanvas();
         this.colorMap.clear();
         this.colorMap.config(this.canvas, this.diagram);

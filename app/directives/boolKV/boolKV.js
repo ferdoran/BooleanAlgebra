@@ -17,7 +17,8 @@
                 var domain = app.domains[$attr.boolDomain];
                 var expr = domain && !$attr.boolExpr ? domain.expression : new BAExpression($attr.boolExpr);
 
-                var kv = new BAKV({target: cv[0].id, expr: expr});
+
+                var kv = new BAKV({target: cv[0].id, expression: expr});
 
                 var $colors;
                 var initColors = function () {
@@ -55,7 +56,7 @@
                     domain.refreshKV = function (_expr) {
                         if (domain.toKV) $timeout.cancel(domain.toKV);
                         domain.toKV = $timeout(function(){
-                            kv.setExpr(expr = _expr);
+                            kv.setExpression(expr = _expr);
                             kv.generateKV();
                         },50);
                     };

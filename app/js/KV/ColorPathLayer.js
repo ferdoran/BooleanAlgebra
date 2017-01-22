@@ -20,7 +20,9 @@ var ColorPathLayer = function(color){
 
     var searchAlgo = new KVReflectingSearchCustom();
 
+    var exprBuffer = null;
     this.getBlocksExpr = function(asString){
+        if (!isDirty) return asString ? exprBuffer.text : exprBuffer;
         var expr = "";
         var eConnect = this.value == 0 ? KVDiagram.Conjunction : KVDiagram.Disjunction;
         for (var i = 0; i < this.blocks.length; i++) {
@@ -31,12 +33,15 @@ var ColorPathLayer = function(color){
             expr = eConnect(expr, eStr);
         }
         if (asString) return expr;
-        return new BAExpression(expr);
+        isDirty = false;
+        return exprBuffer = new BAExpression(expr);
     };
 
+    var isDirty = true;
     this.checkExpression = function () {
-        var blocksExpr  = this.getBlocksExpr(true);
-        var inputExpr = this.expression.text;
+        var blocksExpr  = this.getBlocksExpr();
+        var inputExpr = this.expression;
+
         var compBlocks = new KVExprCompare(blocksExpr);
         var compInput = new KVExprCompare(inputExpr);
         this.resultState = compInput.equals(compBlocks) ? 1 : -1;
@@ -49,13 +54,14 @@ var ColorPathLayer = function(color){
         var row = this.cellField[pos.row];
         cell.cVisited = false;
         if (!row) {
-            row = this.cellField[pos.row] = [];
+            row = this.cellField[pos.row] = new KVRow();
         }
-        if (row[pos.col]) {
-            row[pos.col] = null;
+        if (row.getCell(pos.col)) {
+            row.removeCell(pos.col);
         } else {
-            row[pos.col] = cell;
+            row.setCell(pos.col, cell);
         }
+        isDirty = true;
         this.cells.toggleObject(cell);
         if (this.cells.length == 0) {
             this.value = -1;

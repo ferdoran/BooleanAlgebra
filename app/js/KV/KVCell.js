@@ -1,7 +1,7 @@
 /**
  * Created by Sergej on 11.01.2017.
  */
-var KVCol = function(value, Vars){
+var KVCell = function(value, Vars){
     this.value = value || 0;
     this.assignedVars = Vars || {};
     this.n = -1;
@@ -17,9 +17,6 @@ var KVCol = function(value, Vars){
     };
     this.equals = function(col) {
         return this.n == col.n;
-    };
-    this.getVar = function(char){
-        return {key: char, value: this.assignedVars[char]};
     };
     this.getVarAtIndex = function(index){
         var i = 0;
@@ -50,11 +47,11 @@ var KVCol = function(value, Vars){
         for (var property in this.assignedVars) {
             vars[property] = this.assignedVars[property];
         }
-        return new KVCol(this.value, vars);
+        return new KVCell(this.value, vars);
     };
 };
 
-KVCol.compare = function(a,b) {
+KVCell.compare = function(a,b) {
     if (a.n < b.n)
         return -1;
     if (a.n > b.n)

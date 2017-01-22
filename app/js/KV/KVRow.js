@@ -2,28 +2,36 @@
  * Created by Sergej on 11.01.2017.
  */
 var KVRow = function(){
-    this.cols = [];
+    this.cells = [];
 
-    this.addCol = function(col){
-        this.cols.push(col);
+    this.addCell = function(col){
+        this.cells.push(col);
     };
 
     this.appendCols = function(A) {
-        this.cols = this.cols.concat(A);
+        this.cells = this.cells.concat(A);
     };
 
-    this.getCol = function(index) {
-        return this.cols[index];
+    this.setCell = function(index, cell) {
+        this.cells[index] = cell;
+    };
+
+    this.removeCell = function(index){
+        this.cells[index] = null;
+    };
+
+    this.getCell = function(index) {
+        return this.cells[index];
     };
 
     this.getLength = function(){
-        return this.cols.length;
+        return this.cells.length;
     };
 
     this.clone = function(){
         var row = new KVRow();
-        for (var i = 0; i < this.cols.length; i++) {
-            row.addCol(this.cols[i].clone());
+        for (var i = 0; i < this.cells.length; i++) {
+            row.addCell(this.cells[i].clone());
         }
         return row;
     };
