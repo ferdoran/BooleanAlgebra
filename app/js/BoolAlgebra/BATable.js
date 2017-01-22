@@ -35,11 +35,14 @@ var BATable = function(rootNode){
         if (node){
             this.letters = node.getLetters();
         }
+        tableIsDirty = true;
         this.isLoading = false;
     };
     this.build(rootNode);
 
+    var tableIsDirty = true;
     this.updateView = function(){
+        if (!tableIsDirty) return;
         this.isLoading = true;
         this.bits.clear();
 
@@ -69,6 +72,7 @@ var BATable = function(rootNode){
 
             this.bits.push(bitLine);
         }
+        tableIsDirty = false;
         this.isLoading = false;
     };
 };

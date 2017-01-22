@@ -20,7 +20,9 @@ var KVExprCompare = function(text){
 
 
         var compTable = compare.expression.generateTable();
+        compTable.updateView();
         var thisTable = this.expression.generateTable();
+        thisTable.updateView();
         console.log(compTable);
         console.log(thisTable);
 
