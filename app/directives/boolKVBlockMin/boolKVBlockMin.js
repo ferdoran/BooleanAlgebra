@@ -48,13 +48,12 @@
                 $scope.$on('checkLayerResults', function(){
                     var minimizeInfo = $scope.kv.minimize();
                     compareKnfDnf(minimizeInfo);
-                    /*
+
                      $scope.kv.canvas.clearColorContainer();
-                     if (minimizeInfo.dnf.blocks.length <= minimizeInfo.knf.blocks.length) {
+
+                    /*
                      $scope.kv.colorMinimized('dnf');
-                     } else {
-                     $scope.kv.colorMinimized('knf');
-                     }*/
+                     $scope.kv.colorMinimized('knf');*/
                 });
 
                 $scope.$on('removeColorLayer', function(layer){

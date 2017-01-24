@@ -9,16 +9,18 @@ var ColorPathLayer = function(color){
 
     this.diagram = null;
 
+    /* Is right or wrong State */
     this.resultState = 0;
 
     this.expression = new BAExpression();
     this.expression.onTextChanged = function () {
+        /* Reset state if text was changed */
         $this.resultState = 0;
     };
     this.blocks = [];
     this.value = -1;
 
-    var searchAlgo = new KVReflectingSearchCustom();
+    var searchAlgo = new KVReflectingSearch(this.cells);
 
     var exprBuffer = null;
     this.getBlocksExpr = function(asString){
@@ -52,7 +54,6 @@ var ColorPathLayer = function(color){
         if (this.value != -1 && this.value != cell.value) return;
         var pos = {col: parseInt(cell.n % width), row: parseInt(cell.n / width)};
         var row = this.cellField[pos.row];
-        cell.cVisited = false;
         if (!row) {
             row = this.cellField[pos.row] = new KVRow();
         }
@@ -69,7 +70,7 @@ var ColorPathLayer = function(color){
         else if (this.cells.length == 1) {
             this.value = this.cells[0].value;
         }
-        this.blocks = searchAlgo.search(this.cellField, width);
+        this.blocks = searchAlgo.search(this.cells, this.value);
         for (var i = 0; i < this.blocks.length; i++) {
             this.blocks[i].color = this.color;
         }

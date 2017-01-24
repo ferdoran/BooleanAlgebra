@@ -3,7 +3,9 @@
  */
 var KVCell = function(value, Vars){
     this.value = value || 0;
+    /* Vars that are assigned to this cell. For example: AB-C */
     this.assignedVars = Vars || {};
+    /* Number of cell */
     this.n = -1;
     this.visited = false;
 
@@ -27,16 +29,6 @@ var KVCell = function(value, Vars){
             i++;
         }
         return null;
-    };
-    var varsStr = "";
-    this.getVarsAsString = function(){
-        if (varsStr.length > 0) return varsStr;
-        for (var property in this.assignedVars) {
-            var value = this.assignedVars[property];
-            var Var = (value == 0 ? SYMBOL_NEG : '') + property;
-            varsStr += Var;
-        }
-        return varsStr;
     };
     this.getVarAtIndexStr = function(index){
         var Var = this.getVarAtIndex(index);

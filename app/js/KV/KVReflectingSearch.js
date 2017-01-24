@@ -3,15 +3,19 @@
  */
 var KVReflectingSearch = Class.extend(function(){
     this.cellField = null;
-    this.visitedKey = 'visited';
 
     this.constructor = function(cellField) {
         if (cellField) this.cellField = cellField;
+        console.log(cellField);
     };
 
     this.init = function(cells){
+        /* Reset visited flag */
         for (var i = 0; i < cells.length; i++) {
-            cells[i][this.visitedKey] = false;
+            var cell = cells[i];
+            if (cell) {
+                cell.visited = false;
+            }
         }
     };
 
@@ -20,9 +24,10 @@ var KVReflectingSearch = Class.extend(function(){
 
         this.init(cells);
 
+        /* Travel all cells, which are not visited and have same value */
         for (var i = 0; i < cells.length; i++){
             var cell = cells[i];
-            if (cell[this.visitedKey] || cell.value != value) continue;
+            if (cell.visited || cell.value != value) continue;
             var block = new KVReflectingBlock(cell, this.cellField);
             this.expand(block);
             blocks.push(block);
@@ -31,12 +36,14 @@ var KVReflectingSearch = Class.extend(function(){
     };
 
     this.expand = function(block) {
+        /* Expand every cell until it is expandable */
         while (this.reflect(block)) {}
         for (var r = 0; r < block.getHeight(); r++) {
             var row = block.cells[r];
             for (var c = 0; c < block.getWidth(); c++) {
                 var cell = row[c];
-                cell[this.visitedKey] = true;
+                /* Visit every cell inside this block */
+                cell.visited = true;
             }
         }
     };
@@ -47,7 +54,6 @@ var KVReflectingSearch = Class.extend(function(){
 });
 
 var KVReflectingSearchCustom = KVReflectingSearch.extend(function(){
-    this.visitedKey = 'cVisited';
 
     this.cells = [];
 
@@ -59,7 +65,7 @@ var KVReflectingSearchCustom = KVReflectingSearch.extend(function(){
             for (var c = 0; c < width; c++) {
                 var cell = row.getCell(c);
                 if (!cell) continue;
-                cell[this.visitedKey] = false;
+                cell.visited = false;
                 this.cells.push(cell);
             }
         }
@@ -77,7 +83,7 @@ var KVReflectingSearchCustom = KVReflectingSearch.extend(function(){
             for (var c = 0; c < width; c++) {
                 var cell = row.getCell(c);
                 if (!cell) continue;
-                if (cell[this.visitedKey]) continue;
+                if (cell.visited) continue;
                 var block = new KVReflectingBlock(cell, this.cells);
                 this.expand(block);
                 blocks.push(block);
