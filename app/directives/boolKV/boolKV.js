@@ -49,6 +49,10 @@
                     $scope.$broadcast('checkLayerResults');
                 };
 
+                $scope.showResult = function () {
+                    $scope.$broadcast("showResult");
+                };
+
                 $scope.help = function () {
 
                 };

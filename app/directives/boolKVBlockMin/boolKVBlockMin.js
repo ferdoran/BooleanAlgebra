@@ -51,9 +51,10 @@
 
                      $scope.kv.canvas.clearColorContainer();
 
-                    /*
-                     $scope.kv.colorMinimized('dnf');
-                     $scope.kv.colorMinimized('knf');*/
+                     console.log($scope.kv);
+
+                     //$scope.kv.colorMinimized('dnf');
+                     //$scope.kv.colorMinimized('knf');
                 });
 
                 $scope.$on('removeColorLayer', function(layer){

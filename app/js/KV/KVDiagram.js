@@ -112,13 +112,16 @@ var KVDiagram = function(expression, canvas){
             var l = nMw == 0 ? n + w2 : n - 1;
             cell.left = this.cells[l];
 
-            var b = n <= L2 - w ? n + w : n % h;
+            var b = n <= L2 - w ? n + w : n - L + w;
 
             cell.bottom = this.cells[b];
 
             var t = n < w ? L - (w - n) : n - w;
             cell.top = this.cells[t];
+
+            /*console.log("n: " + n + ", r: " + r + ", l: " + l + ", b: " + b + ", t: " + t);*/
         }
+        console.log(this.cells);
     };
 
 

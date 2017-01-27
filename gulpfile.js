@@ -65,8 +65,12 @@ gulp.task('images', function(){
         .pipe(gulp.dest('dist/images'));
 });
 
-gulp.task('font-awesome', function(){
-    gulp.src('app/bower_components/font-awesome/fonts/**/*')
+gulp.task('fonts', function(){
+    gulp.src('app/bower_components/bootstrap/fonts/**/*.+(otf|eot|svg|ttf|woff|woff2)')
+        .pipe(gulp.dest('dist/fonts'));
+    gulp.src('app/bower_components/font-awesome/fonts/**/*.+(otf|eot|svg|ttf|woff|woff2)')
+        .pipe(gulp.dest('dist/fonts'));
+    gulp.src('app/fonts/**/*.+(otf|eot|svg|ttf|woff|woff2)')
         .pipe(gulp.dest('dist/fonts'));
 });
 
@@ -81,7 +85,7 @@ gulp.task('bower-files', function(){
 });
 
 gulp.task('flags', function(){
-    gulp.src('app/bower_components/flag-icon-css/flags/**/*')
+    gulp.src('app/bower_components/flag-icon-css/flags/**/+(de|gb|ru|es|tr|fr)*.svg')
         .pipe(gulp.dest('dist/flags'));
 });
 
@@ -89,7 +93,7 @@ gulp.task('translations', function(){
     gulp.src('app/translations/*.json')
         .pipe(gulp.dest('dist/translations'));
 });
-gulp.task('build', ['clean', 'directives', 'font-awesome', 'images', 'translations', 'flags', 'views', 'useref'], function(){
+gulp.task('build', ['clean', 'directives', 'fonts', 'images', 'translations', 'flags', 'views', 'useref'], function(){
     console.log("Building files");
 });
 

@@ -1,14 +1,18 @@
 /**
  * Created by Sergej on 14.01.2017.
  */
-var KVReflectingSearch = Class.extend(function(){
+var KVSearchAlgorithm = Class.extend(function () {
+    this.constructor = function(){};
+    this.search = function(){};
+    this.init = function(){};
+    this.expand = function(){};
+});
+var KVReflectingSearch = KVSearchAlgorithm.extend(function(){
     this.cellField = null;
 
     this.constructor = function(cellField) {
         if (cellField) this.cellField = cellField;
-        console.log(cellField);
     };
-
     this.init = function(cells){
         /* Reset visited flag */
         for (var i = 0; i < cells.length; i++) {
@@ -18,7 +22,6 @@ var KVReflectingSearch = Class.extend(function(){
             }
         }
     };
-
     this.search = function(cells, value){
         var blocks = [];
 
@@ -34,7 +37,6 @@ var KVReflectingSearch = Class.extend(function(){
         }
         return blocks;
     };
-
     this.expand = function(block) {
         /* Expand every cell until it is expandable */
         while (this.reflect(block)) {}
@@ -47,48 +49,7 @@ var KVReflectingSearch = Class.extend(function(){
             }
         }
     };
-
     this.reflect = function(block){
         return block.reflect();
-    };
-});
-
-var KVReflectingSearchCustom = KVReflectingSearch.extend(function(){
-
-    this.cells = [];
-
-    this.init = function(cellField, width, height){
-        this.cells = [];
-        for (var r = 0; r < height; r++) {
-            var row = cellField[r];
-            if (!row) continue;
-            for (var c = 0; c < width; c++) {
-                var cell = row.getCell(c);
-                if (!cell) continue;
-                cell.visited = false;
-                this.cells.push(cell);
-            }
-        }
-    };
-
-    this.search = function(cellField, width){
-        var height = cellField.length;
-        if (height < 1) return [];
-        var blocks = [];
-
-        this.init(cellField, width, height);
-        for (var r = 0; r < height; r++) {
-            var row = cellField[r];
-            if (!row) continue;
-            for (var c = 0; c < width; c++) {
-                var cell = row.getCell(c);
-                if (!cell) continue;
-                if (cell.visited) continue;
-                var block = new KVReflectingBlock(cell, this.cells);
-                this.expand(block);
-                blocks.push(block);
-            }
-        }
-        return blocks;
     };
 });

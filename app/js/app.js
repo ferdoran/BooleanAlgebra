@@ -6,8 +6,9 @@ angular.module('boolean-algebra', [
     'pascalprecht.translate',
     'ngSanitize'
 ]).config(function ($routeProvider, $locationProvider) {
+    var href = angular.element('head base').attr('href');
     $routeProvider.when('/', {
-        templateUrl: '/view/boolalg.html',
+        templateUrl: href + 'view/boolalg.html',
         controller: 'BACtrl'
     });
     $routeProvider.otherwise({
@@ -25,3 +26,4 @@ angular.module('boolean-algebra', [
 
     $translateProvider.preferredLanguage('de_DE');
 }]);
+
