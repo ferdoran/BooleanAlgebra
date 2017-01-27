@@ -12,7 +12,6 @@ var KVExprCompare = function(expression){
 
     this.equals = function(compare){
         if (!compare) return false;
-        console.log("COMPARE " + this.getText() + " WITH " + compare.getText());
         if (compare.getText() == this.getText()) return true;
 
         var compTable = compare.expression.generateTable();
@@ -27,86 +26,9 @@ var KVExprCompare = function(expression){
             var resultA = this.expression.getResult(bitLine.param);
             var resultB = compare.expression.getResult(bitLine.param);
 
-            console.log(bitLine.param);
-            console.log("REsult a " + resultA + " ResultB " + resultB);
-
             if (resultA != resultB) return false;
         }
 
         return true;
-        if (this.text.length != cText.length) return false;
-        var thisEtape = this.getEtape1(this.text);
-        var cEtape = this.getEtape1(cText);
-        if (thisEtape.length != cEtape.length) return false;
-
-        var splitSymbol = '';
-        var tE = thisEtape[0];
-        var cE = cEtape[0];
-
-        if (tE.indexOf(SYMBOL_OR) > -1 && cE.indexOf(SYMBOL_OR) > -1) {
-            splitSymbol = SYMBOL_OR;
-        } else if (tE.indexOf(SYMBOL_AND) > -1 && cE.indexOf(SYMBOL_AND) > -1) {
-            splitSymbol = SYMBOL_AND;
-        } else {
-            return false;
-        }
-
-        thisEtape = this.getEtape2(thisEtape, splitSymbol);
-        cEtape = this.getEtape2(cEtape, splitSymbol);
-
-        var merge = this.getEtape3(thisEtape, cEtape);
-        return merge.length == thisEtape.length;
-    };
-
-    this.getEtape3 = function(a, b) {
-        var matches = [];
-
-        var merge = function(row) {
-            if (matches.indexOf(row) > -1) return;
-            matches.push(row);
-        };
-
-        for (var x = 0; x < a.length; x++) {
-            var rowA = a[x];
-            merge(rowA);
-        }
-        for (var y = 0; y < b.length; y++) {
-            var rowB = b[y];
-            merge(rowB);
-        }
-        return matches;
-    };
-
-    this.getEtape2 = function (etape, splitSymbol) {
-        var rtn = [];
-        for (var i = 0; i < etape.length; i++) {
-            var split = etape[i].split(splitSymbol);
-            split.sort();
-            var splitStr = '';
-            for (var j = 0; j < split.length; j++) {
-                splitStr += split[j];
-            }
-            rtn.push(splitStr);
-        }
-        return rtn;
-    };
-
-    this.getEtape1 = function(text){
-        var re = BAExpression.regex.clips;
-        var count = 0;
-        var rtn = [];
-        while ( (match = re.exec(text)) !== null) {
-            if (count++ >= 99999) {
-                return false;
-            }
-
-            var m = match[0];
-            rtn.push(m.substring(1, m.length - 1));
-        }
-        if (rtn.length == 0) {
-            rtn.push(text);
-        }
-
-        return rtn;
     };
 };
