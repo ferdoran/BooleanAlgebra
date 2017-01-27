@@ -53,14 +53,11 @@
                     $scope.$broadcast("showResult");
                 };
 
-                $scope.help = function () {
-
-                };
-
                 if (domain) {
                     domain.refreshKV = function (_expr) {
                         if (domain.toKV) $timeout.cancel(domain.toKV);
                         domain.toKV = $timeout(function(){
+                            $scope.$broadcast('reset');
                             kv.setExpression(expr = _expr);
                             kv.generateKV();
                         },50);

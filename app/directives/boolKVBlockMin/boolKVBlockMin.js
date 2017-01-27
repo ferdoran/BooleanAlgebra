@@ -18,12 +18,23 @@
                 $scope.knfResultState = 0;
                 $scope.dnfResultState = 0;
 
+                $scope.dnfResolution = "";
+                $scope.knfResolution = "";
+                $scope.showResolution = false;
+
+                $scope.$on("showResult", function () {
+                   $scope.dnfResolution = "test";
+                   $scope.knfResolution = "test2";
+                });
+
                 $scope.knf.onTextChanged = function () {
                     $scope.knfResultState = 0;
+                    $scope.knfResolution = "";
                 };
 
                 $scope.dnf.onTextChanged = function () {
                     $scope.dnfResultState = 0;
+                    $scope.dnfResolution = "";
                 };
 
                 var colorMap = $scope.kv.colorMap;

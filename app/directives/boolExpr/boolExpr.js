@@ -119,6 +119,10 @@
                     $input.change();
                 };
 
+                $scope.$on('reset', function () {
+                    $scope.clearText();
+                });
+
                 $scope.clearText = function(){
                     $scope.expression.parse("");
                     $scope.expression.updateInput();
