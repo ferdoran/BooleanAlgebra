@@ -273,6 +273,7 @@ var EaselInterface = CanvasInterface.extend(function () {
 
         canvas.clearChildren = function(){
             blockContainer.removeAllChildren();
+            IBlocks = [];
         };
 
         canvas.onBlockHover = function(block){};

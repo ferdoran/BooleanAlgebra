@@ -70,6 +70,7 @@
                             $scope.$broadcast('reset');
                             kv.setExpression(expr = _expr);
                             kv.generateKV();
+                            $scope.showSolution = false;
                         },50);
                     };
                 }
