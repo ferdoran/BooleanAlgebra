@@ -65,3 +65,10 @@
     cursor:pointer;
     position:relative;
 }
+.boolKV .boolKvSolution {
+    position:relative;
+    display:none;
+}
+.boolKV .boolKvSolution.showSolution {
+    display:block;
+}

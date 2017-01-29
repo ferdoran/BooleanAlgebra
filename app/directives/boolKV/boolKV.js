@@ -4,6 +4,7 @@
 (function(){
     var app = angular.module('boolean-algebra');
     var _kvCounter = 0;
+    var _kvResCounter = 0;
     app.directive('boolKv', function($parse, $timeout){
         return {
             restrict: 'E',
@@ -14,12 +15,17 @@
                 var cv = $element.find('#kvCanvasContainer');
                 cv[0].id = 'kvCanvasContainer' + (_kvCounter++);
 
+                var cvSol = $element.find('#kvCanvasSolution');
+                cvSol[0].id = 'kvCanvasSolution' + (_kvResCounter++);
+
                 var domain = app.domains[$attr.boolDomain];
                 var expr = domain && !$attr.boolExpr ? domain.expression : new BAExpression($attr.boolExpr);
 
                 CanvasInterface.isTouch = angular.element('html').hasClass('touch');
 
-                var kv = new BAKV({target: cv[0].id, expression: expr});
+                var kv = new BAKV({target: cv[0].id, solutionTarget: cvSol[0].id, expression: expr});
+
+                $scope.showSolution = false;
 
                 var $colors;
                 var initColors = function () {
@@ -51,6 +57,9 @@
 
                 $scope.showResult = function () {
                     $scope.$broadcast("showResult");
+
+                    kv.showSolution();
+                    $scope.showSolution = true;
                 };
 
                 if (domain) {

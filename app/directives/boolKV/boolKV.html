@@ -23,7 +23,10 @@
             <button class="kvColor" data-color="#B20071"></button>
         </div>
         <div class="boolKvBody" id="kvCanvasContainer"></div>
-        <div class="boolKvBody" id="kvCanvasSolution"></div>
+        <div ng-class="{boolKvSolution: true, showSolution: showSolution}">
+            <label>Lösung:</label>
+            <div class="boolKvBody" id="kvCanvasSolution"></div>
+        </div>
     </div>
 
     <bool-kv-block-min bind-kv="kv"></bool-kv-block-min>

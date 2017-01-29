@@ -133,6 +133,8 @@ var EaselInterface = CanvasInterface.extend(function () {
             return shape;
         };
 
+
+
         var colored_blocks = [];
         canvas.clearColoredBlocks = function(){
             colored_blocks = [];
@@ -142,6 +144,9 @@ var EaselInterface = CanvasInterface.extend(function () {
         canvas.setOffset = function(offset){
             gridOffset.x = offset.x;
             gridOffset.y = offset.y;
+        };
+        canvas.getOffset = function () {
+            return gridOffset;
         };
 
         canvas.setHoverColor = function(color){
@@ -169,7 +174,13 @@ var EaselInterface = CanvasInterface.extend(function () {
             colorContainer.addChild(colorLayer);
         };
 
-        canvas.add = function(block) {
+        var IBlocks = [];
+        canvas.getIBlocks = function () {
+            return IBlocks;
+        };
+
+        canvas.add = function(block, readonly) {
+            IBlocks.push(block);
             var label = new createjs.Text(block.value, "20px Arial", labelColor);
             label.colors = {
                 normal: labelColor,
@@ -198,30 +209,32 @@ var EaselInterface = CanvasInterface.extend(function () {
                 bg.graphics.beginFill(bg.outColor).beginStroke('black').drawRect(0, 0, block.width, block.height);
                 button.addChild(bg);
 
-                button.addEventListener('click', function(evt){
-                    if (canvas.onBlockClick) {
-                        canvas.onBlockClick({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
+                if (!readonly) {
+                    button.addEventListener('click', function(evt){
+                        if (canvas.onBlockClick) {
+                            canvas.onBlockClick({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
 
-                    }
-                    hoverBlock.alpha = 0;
-                    canvas.refresh();
-                });
-                button.addEventListener('mouseover', function(evt) {
-                    hoverBlock.alpha = getHoverFullAlpha()
-                    hoverBlock.x = block.x;
-                    hoverBlock.y = block.y;
-                    if (canvas.onBlockHover) {
-                        canvas.onBlockHover({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
-                    }
-                    canvas.refresh();
-                });
-                button.addEventListener('mouseout', function(evt) {
-                    hoverBlock.alpha = 0;
-                    if (canvas.onBlockOut) {
-                        canvas.onBlockOut({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
-                    }
-                    canvas.refresh();
-                });
+                        }
+                        hoverBlock.alpha = 0;
+                        canvas.refresh();
+                    });
+                    button.addEventListener('mouseover', function(evt) {
+                        hoverBlock.alpha = getHoverFullAlpha();
+                        hoverBlock.x = block.x;
+                        hoverBlock.y = block.y;
+                        if (canvas.onBlockHover) {
+                            canvas.onBlockHover({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
+                        }
+                        canvas.refresh();
+                    });
+                    button.addEventListener('mouseout', function(evt) {
+                        hoverBlock.alpha = 0;
+                        if (canvas.onBlockOut) {
+                            canvas.onBlockOut({event: evt, block: block, label: label, button: button, background: bg, cell: block.cell});
+                        }
+                        canvas.refresh();
+                    });
+                }
 
                 block.ui.bg = bg;
             }
@@ -229,6 +242,33 @@ var EaselInterface = CanvasInterface.extend(function () {
             button.addChild(label);
 
             blockContainer.addChild(button);
+        };
+
+        canvas.getBlockContainer = function () {
+            return blockContainer;
+        };
+        canvas.getColorContainer = function(){
+            return colorContainer;
+        };
+        canvas.getStage = function () {
+            return stage;
+        };
+
+        canvas.copyIntoCanvas = function(cv) {
+            cv.clearChildren();
+            cv.clearColorContainer();
+
+            cv.setOffset(canvas.getOffset());
+
+            var iBlocks = canvas.getIBlocks();
+
+            for (var i = 0; i < iBlocks.length; i++) {
+                var iBlock = iBlocks[i];
+                cv.add(iBlock, true);
+            }
+
+            cv.setSize(stage.canvas.width, stage.canvas.height);
+
         };
 
         canvas.clearChildren = function(){

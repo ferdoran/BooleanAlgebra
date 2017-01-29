@@ -4,14 +4,16 @@ var BAKV = function (params) {
     this.colorMap = new ColorPathMap();
 
     this.canvas = null;
+    this.resolutionCanvas = null;
 
     var selectColor = null;
 
     this.expression = params.expression;
 
-    this.setCanvas = function(target){
+    this.setCanvas = function(target, solutionTarget){
         var canvasInterface = CanvasInterface.use("EaselJS");
         this.canvas = canvasInterface.create(target);
+        this.solutionCanvas = canvasInterface.create(solutionTarget);
 
         this.canvas.onBlockClick = function(parm){
             if (selectColor != null) {
@@ -21,7 +23,7 @@ var BAKV = function (params) {
             }
         };
     };
-    this.setCanvas(params.target);
+    this.setCanvas(params.target, params.solutionTarget);
 
     this.setSelectColor = function(color) {
         selectColor = color;
@@ -49,6 +51,12 @@ var BAKV = function (params) {
     var minimizeInfo = null;
     this.minimize = function(){
         return minimizeInfo = this.diagram.minimize();
+    };
+
+    this.showSolution = function () {
+        this.canvas.copyIntoCanvas(this.solutionCanvas);
+
+        this.solutionCanvas.refresh();
     };
 
     this.colorMinimized = function(type){
