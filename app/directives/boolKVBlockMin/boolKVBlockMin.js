@@ -67,13 +67,10 @@
                     $scope.dnfResolution = $scope.knfResolution = true;
                 };
 
-                $scope.$on('checkLayerResults', function(){
+                $scope.$on('checkResults', function(){
                     minimizeInfo = $scope.kv.minimize();
                     compareKnfDnf(minimizeInfo);
-
-                     /*$scope.kv.canvas.clearColorContainer();*/
-                     //$scope.kv.colorMinimized('dnf');
-                     //$scope.kv.colorMinimized('knf');
+                    $scope.dnfResolution = $scope.knfResolution = false;
                 });
 
                 $scope.$on('removeColorLayer', function(layer){

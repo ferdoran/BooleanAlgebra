@@ -22,13 +22,38 @@ var KVReflectingBlock = Class.extend(function(){
         return this.cells.length;
     };
 
-    this.equals = function(block) {
-        if (this.cells.length != block.cells.length) return false;
-        for (var i = 0; i < this.cells.length; i++) {
-            var cell = this.cells[i];
-            if (!block.cells.contains(cell)) return false;
+    this.cellList = [];
+    this.createCellList = function () {
+        if (this.cellList.length > 0) return this.cellList.clone();
+        for (var y = 0; y < this.getHeight(); y++) {
+            for (var x = 0; x < this.getWidth(); x++) {
+                var cell = this.cells[y][x];
+                this.cellList.push(cell);
+            }
         }
-        return true;
+        return this.cellList.clone();
+    };
+
+    this.equals = function(block) {
+        if (this.getWidth() != block.getWidth() || this.getHeight() != block.getHeight()) {
+            return false;
+        }
+        var listA = this.createCellList();
+        var listB = block.createCellList();
+        if (listA.length != listB.length) return false;
+
+        for (var i = 0; i < listB.length; i++) {
+            var objB = listB[i];
+            for (var j = 0; j < listA.length; j++) {
+                var objA = listA[j];
+                if (objA.equals(objB)) {
+                    listA.splice(j, 1);
+                    break;
+                }
+            }
+        }
+
+        return listA.length == 0;
     };
 
     this.createColorRects = function(fieldWidth, fieldHeight){

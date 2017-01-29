@@ -48,6 +48,9 @@ Array.prototype.clear = function() {
     if (this.length == 0) return;
     this.splice(0, this.length);
 };
+Array.prototype.clone = function() {
+    return this.slice(0);
+};
 String.prototype.countChar = function(char) {
     if (this.length == 0) return 0;
     var count = 0;

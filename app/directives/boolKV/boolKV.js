@@ -52,7 +52,8 @@
                 initColors();
 
                 $scope.checkResult = function(){
-                    $scope.$broadcast('checkLayerResults');
+                    $scope.showSolution = false;
+                    $scope.$broadcast('checkResults');
                 };
 
                 $scope.showResult = function () {

@@ -4,7 +4,7 @@ var BAKV = function (params) {
     this.colorMap = new ColorPathMap();
 
     this.canvas = null;
-    this.resolutionCanvas = null;
+    this.solutionCanvas = null;
 
     var selectColor = null;
 
@@ -55,6 +55,52 @@ var BAKV = function (params) {
 
     this.showSolution = function () {
         this.canvas.copyIntoCanvas(this.solutionCanvas);
+
+        var blocks = [], i, j, blockA, blockB, isInList;
+        for (i = 0; i < this.colorMap.layers.length; i++) {
+            blocks = blocks.concat(this.colorMap.layers[i].blocks);
+        }
+
+
+        for (i = 0; i < minimizeInfo.dnf.blocks.length; i++) {
+            blockA = minimizeInfo.dnf.blocks[i];
+
+            isInList = false;
+            for (j = 0; j < blocks.length; j++) {
+                blockB = blocks[j];
+                if (blockA.equals(blockB)) {
+                    isInList = true;
+                    break;
+                }
+            }
+            if (!isInList) {
+                blocks.push(blockA);
+            }
+        }
+
+        for (i = 0; i < minimizeInfo.knf.blocks.length; i++) {
+            blockA = minimizeInfo.knf.blocks[i];
+
+            isInList = false;
+            for (j = 0; j < blocks.length; j++) {
+                blockB = blocks[j];
+                if (blockA.equals(blockB)) {
+                    isInList = true;
+                    break;
+                }
+            }
+            if (!isInList) {
+                blocks.push(blockA);
+            }
+        }
+
+
+        for (i = 0; i < blocks.length; i++) {
+            var block = blocks[i];
+            if (!block.color) block.color = ColorGenerator.generate(60, ColorGenerator.value1);
+            var rects = block.createColorRects(this.diagram.getWidth(), this.diagram.getHeight());
+            this.solutionCanvas.addRectsToColorContainer(rects);
+        }
 
         this.solutionCanvas.refresh();
     };
