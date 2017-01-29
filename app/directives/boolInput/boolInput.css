@@ -6,6 +6,8 @@
     width:100%;
 }
 .boolInput .group .inputRel {
+    width:-moz-calc(100% - 32px);
+    width:-webkit-calc(100% - 32px);
     width:calc(100% - 32px);
 }
 .group .input {

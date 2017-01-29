@@ -9,6 +9,8 @@
 }
 .boolKnf .boolExpr .input,
 .boolDnf .boolExpr .input {
+    width: -moz-calc(100% - 100px);
+    width: -webkit-calc(100% - 100px);
     width: calc(100% - 100px);
 }
 .boolKnf .boolExpr button.clearText,
@@ -41,4 +43,23 @@
     width:-webkit-calc(100% - 75px);
     width:-moz-calc(100% - 75px);
     width:calc(100% - 75px);
+}
+
+.result-input .op {
+    color:#969696;
+}
+.result-input .expr {
+    color:#2699ff;
+}
+.result-input .neg {
+    color:#333;
+}
+.result-input .error {
+    color:red;
+}
+.result-input.expr.group {
+    color:#015BB5;
+}
+.result-input .clips {
+    color: #969696;
 }

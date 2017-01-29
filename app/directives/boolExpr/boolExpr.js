@@ -95,7 +95,7 @@
                 if ($scope.isColorBox) {
                     $timeout(function(){
                         var color = $attr.boolSymbol;
-                        var $colorBox = $element.find('.colorBox');//
+                        var $colorBox = $element.find('.colorBox');
                         $colorBox.css("background-color", color);
                     });
                 }

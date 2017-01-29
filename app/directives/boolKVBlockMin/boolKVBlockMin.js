@@ -18,23 +18,22 @@
                 $scope.knfResultState = 0;
                 $scope.dnfResultState = 0;
 
-                $scope.dnfResolution = "";
-                $scope.knfResolution = "";
+                $scope.dnfResolution = false;
+                $scope.knfResolution = false;
                 $scope.showResolution = false;
 
                 $scope.$on("showResult", function () {
-                   $scope.dnfResolution = "test";
-                   $scope.knfResolution = "test2";
+                   showResolution();
                 });
 
                 $scope.knf.onTextChanged = function () {
                     $scope.knfResultState = 0;
-                    $scope.knfResolution = "";
+                    $scope.knfResolution = false;
                 };
 
                 $scope.dnf.onTextChanged = function () {
                     $scope.dnfResultState = 0;
-                    $scope.dnfResolution = "";
+                    $scope.dnfResolution = false;
                 };
 
                 var colorMap = $scope.kv.colorMap;
@@ -46,6 +45,11 @@
                     });
                 };
 
+                var minimizeInfo;
+
+                var $dnfInput = $element.find('.dnfInput');
+                var $knfInput = $element.find('.knfInput');
+
                 var compareKnfDnf = function(info){
                     var compareKnfB = new KVExprCompare(info.knf.expr);
                     var compareDnfB = new KVExprCompare(info.dnf.expr);
@@ -56,14 +60,18 @@
                     $scope.dnfResultState = compareDnfA.equals(compareDnfB) ? 1 : -1;
                 };
 
+                var showResolution = function(){
+                    minimizeInfo = $scope.kv.minimize();
+                    $dnfInput.html(minimizeInfo.dnf.expr.getHtml());
+                    $knfInput.html(minimizeInfo.knf.expr.getHtml());
+                    $scope.dnfResolution = $scope.knfResolution = true;
+                };
+
                 $scope.$on('checkLayerResults', function(){
-                    var minimizeInfo = $scope.kv.minimize();
+                    minimizeInfo = $scope.kv.minimize();
                     compareKnfDnf(minimizeInfo);
 
-                     $scope.kv.canvas.clearColorContainer();
-
-                     console.log($scope.kv);
-
+                     /*$scope.kv.canvas.clearColorContainer();*/
                      //$scope.kv.colorMinimized('dnf');
                      //$scope.kv.colorMinimized('knf');
                 });

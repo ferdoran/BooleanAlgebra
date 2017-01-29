@@ -11,6 +11,9 @@
     background-color:white;
     white-space:nowrap;
     overflow:hidden;
+    width:80%;
+    width:-moz-calc(100% - 70px);
+    width:-webkit-calc(100% - 70px);
     width:calc(100% - 70px);
     vertical-align: middle;
     border: 1px solid #ccc;

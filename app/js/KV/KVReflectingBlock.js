@@ -11,7 +11,6 @@ var KVReflectingBlock = Class.extend(function(){
     this.constructor = function(cell, allowedCells){
         this.cells = [[cell]];
         if (allowedCells) this.allowedCells = allowedCells;
-        console.log(allowedCells);
     };
     this.getWidth = function(){
         return width;

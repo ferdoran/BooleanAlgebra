@@ -1,81 +1,78 @@
 body {
     font-size: 18px;
-    /*margin-bottom: 3em;*/
     margin-bottom:1em;
 }
 
 #thLogo {
-  width: 80px;
-  position:absolute;
-  top:5px;
-  right:5px;
+    width: 80px;
+    position:absolute;
+    top:5px;
+    right:5px;
 }
 
 header {
-  display: inline-block;
-  width: 100%; }
-
+    display: inline-block;
+    width: 100%;
+}
 input {
-  border: 1px solid #ccc; }
-
+    border: 1px solid #ccc;
+}
 .box {
-  position:relative;
-  background-color:#F5F5F5;
-  border: 1px solid #ccc;
-  display:inline-block;
-  float:left;
-  margin-top:0.5em;
-  margin-bottom:0.5em;
-  width:100%;
+    position:relative;
+    background-color:#F5F5F5;
+    border: 1px solid #ccc;
+    display:inline-block;
+    float:left;
+    margin-top:0.5em;
+    margin-bottom:0.5em;
+    width:100%;
 }
 .box .boxTitle {
-  background-color:#CEDDE9;
+    background-color:#CEDDE9;
 }
-.box .boxBody {}
-
 .diagram-title {
-  height: 30px;
-  padding-top: 8px;
-  background-color: #cedde9;
-  margin: 0px 0px 0px 0px;
-  font-size: 14px;
-  color: #505050;
-  font-weight: bold;
-  text-align: center;
-  vertical-align: middle;
+    height: 30px;
+    padding-top: 8px;
+    background-color: #cedde9;
+    margin: 0px 0px 0px 0px;
+    font-size: 14px;
+    color: #505050;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
 }
 
 h1.diagram-title {
-  height:auto;
-  text-align:left;
-  font-size:28px;
-  padding: 0.5em 0.2em;
+    height:auto;
+    text-align:left;
+    font-size:28px;
+    padding: 0.5em 0.2em;
 }
 .createInfo {
-  font-size:12px;
-  text-align:center;
-  margin:1em;
+    font-size:12px;
+    text-align:center;
+    margin:1em;
 }
 .createInfo p {
-  margin: 1em;
-  padding: 1em;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+    margin: 1em;
+    padding: 1em;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
 .box button.btn {
-  display:inline-block;
-  color: #333;
-  border:1px solid transparent;
-  font-weight:bold;
-  background:transparent;
-  padding: 1em 0.6em;
+    display:inline-block;
+    color: #333;
+    border:1px solid transparent;
+    font-weight:bold;
+    background:transparent;
+    padding: 1em 0.6em;
 }
 .box button.btn:hover {
-  border-color: #e0e0e0;
+    border-color: #e0e0e0;
 }
 .box button.btn:active,
 .box button.btn:focus {
-  border-color:#0267FF;
+    border-color:#0267FF;
 }
 footer {
     font-size: 0.8em;
@@ -103,11 +100,9 @@ footer {
     background: white;
     outline:0;
 }
-
 .lang-button.active {
     border-color: #cedde9;
 }
-
 button[disabled] {
     position:relative;
 }
@@ -127,14 +122,17 @@ button[disabled]:after {
     padding: 0 5px;
     float: left;
     border-right: 1px solid #e0e0e0;
-    height: 40px; }
+    height: 40px;
+}
 
 .button-group a {
-    color: #000; }
+    color: #000;
+}
 
 .button-group:hover {
     color: #000;
-    text-decoration: none; }
+    text-decoration: none;
+}
 
 button {
     border: 1px solid whitesmoke;

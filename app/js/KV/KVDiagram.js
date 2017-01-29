@@ -121,7 +121,6 @@ var KVDiagram = function(expression, canvas){
 
             /*console.log("n: " + n + ", r: " + r + ", l: " + l + ", b: " + b + ", t: " + t);*/
         }
-        console.log(this.cells);
     };
 
 
@@ -186,7 +185,6 @@ var KVDiagram = function(expression, canvas){
         info.dnf.blocks = searchAlgo.search(this.cells, 1);
         info.knf.blocks = searchAlgo.search(this.cells, 0);
         allBlocks = info.dnf.blocks.concat(info.knf.blocks);
-        console.log(allBlocks);
 
         var expr = "", i, block, minExpr;
         var dnf = [];
@@ -204,7 +202,6 @@ var KVDiagram = function(expression, canvas){
             }
             expr = KVDiagram.Disjunction(expr, d);
         }
-        console.log("DNF: " + expr);
         info.dnf.expr = new BAExpression(expr);
         expr = "";
         var knf = [];
@@ -221,7 +218,6 @@ var KVDiagram = function(expression, canvas){
             }
             expr = KVDiagram.Conjunction(expr, k);
         }
-        console.log("KNF: " + expr);
         info.knf.expr = new BAExpression(expr);
 
         return info;

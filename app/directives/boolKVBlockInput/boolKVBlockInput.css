@@ -11,6 +11,8 @@
     visibility: visible;
 }
 .boolKVBlockInput .boolExpr .input {
+    width: -moz-calc(100% - 72px);
+    width: -webkit-calc(100% - 72px);
     width: calc(100% - 72px);
 }
 .resultInfoContainer .resultInfo.fa-close {

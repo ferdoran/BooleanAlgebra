@@ -14,6 +14,20 @@
             templateUrl: "directives/boolKVBlockInput/boolKVBlockInput.html",
             link: function($scope, $element, $attr) {
                 var expression = $scope.layer.expression;
+
+                $scope.showResolution = false;
+
+                expression.onTextChanged = function () {
+                  $scope.showResolution = false;
+                };
+
+                $scope.$on("showResult", function () {
+                    var $resInput = $element.find('.result-input .input');
+                    var resExpr = $scope.layer.getBlocksExpr();
+                    $resInput.html(resExpr.getHtml());
+                    $scope.showResolution = true;
+                });
+
                 $scope.$on('checkLayerResults', function () {
                     $scope.layer.checkExpression();
                 });
