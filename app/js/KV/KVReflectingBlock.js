@@ -57,10 +57,11 @@ var KVReflectingBlock = Class.extend(function(){
     };
 
     this.createColorRects = function(fieldWidth, fieldHeight){
-        var createRect = function(x, y){
+        var createKVReflectingBlockRect = function(x, y, width, height){
+            return new KVReflectingBlockRect(x, y, width, height, $this);
             return {x: x, y: y, width: 0, height: 0, open: {right: false, up: false, down: false, left: false}, block: $this};
         };
-        var rects = [];
+
 
         var correctionValues = {x: 8, y: 8, width: -16, height: -16};
         var correctionRect = function(rect){
@@ -70,78 +71,67 @@ var KVReflectingBlock = Class.extend(function(){
             rect.height += correctionValues.height;
         };
 
-        var rect = null, r;
-        for (r = 0; r < this.getHeight(); r++) {
-            var row = this.cells[r];
-            for (var c = 0; c < this.getWidth(); c++) {
-                var cell = row[c];
-                var x = parseInt(cell.n % fieldWidth);
-                var y = parseInt(cell.n / fieldWidth);
-
-                if (r == 0) {
-                    if (c == 0) {
-                        rect = createRect(x * KVDiagram.SIZE, y * KVDiagram.SIZE);
-                        rects.push(rect);
-                    }
-                    rect.width += KVDiagram.SIZE;
-                }
-            }
-            rect.height += KVDiagram.SIZE;
-        }
-        var field = {
-            width: KVDiagram.SIZE * fieldWidth,
-            height: KVDiagram.SIZE * fieldHeight
-        };
-        /* Optische Korrekturen */
-        var rectsLength = rects.length;
-        var newRect;
-        for (r = 0; r < rectsLength; r++) {
-            rect = rects[r];
-            var xDistance = field.width - (rect.x + rect.width);
-            var yDistance = field.height - (rect.y + rect.height);
+        var openRects = function (rects, fieldWidth, fieldHeight) {
+            var rect = rects[0];
+            var xDistance = fieldWidth - (rect.x + rect.width);
+            var yDistance = fieldHeight - (rect.y + rect.height);
             if (xDistance < 0 && yDistance < 0) {
-                rect.open.right = rect.open.down = true;
-
-                var newRectUpLeft = createRect(xDistance, yDistance);
-                newRectUpLeft.open.left = newRectUpLeft.open.up = true;
-                newRectUpLeft.width = rect.width;
-                newRectUpLeft.height = rect.height;
-                correctionRect(newRectUpLeft);
-                rects.push(newRectUpLeft);
-
-                var newRectUpRight = createRect(rect.x, yDistance);
-                newRectUpRight.open.right = newRectUpRight.open.up = true;
-                newRectUpRight.width = rect.width;
-                newRectUpRight.height = rect.height;
-                correctionRect(newRectUpRight);
-                rects.push(newRectUpRight);
-
-                var newRectDownLeft = createRect(xDistance, rect.y);
-                newRectDownLeft.open.left = newRectDownLeft.open.down = true;
-                newRectDownLeft.width = rect.width;
-                newRectDownLeft.height = rect.height;
-                correctionRect(newRectDownLeft);
-                rects.push(newRectDownLeft);
-
+                openRectAll(rect, rects, xDistance, yDistance);
             } else if (xDistance < 0) {
-                rect.open.right = true;
-                newRect = createRect(xDistance, rect.y);
-                newRect.open.left = true;
-                newRect.width = rect.width;
-                newRect.height = rect.height;
-                correctionRect(newRect);
-                rects.push(newRect);
+                openRectRightLeft(rect, rects, xDistance);
             } else if (yDistance < 0) {
-                rect.open.down = true;
-                newRect = createRect(rect.x, yDistance);
-                newRect.open.up = true;
-                newRect.width = rect.width;
-                newRect.height = rect.height;
-                correctionRect(newRect);
-                rects.push(newRect);
+                openRectUpDown(rect, rects, yDistance);
             }
             correctionRect(rect);
-        }
+        };
+
+        var openRectAll = function (rect, rects, xDistance, yDistance) {
+            rect.open.right = rect.open.down = true;
+
+            var newRectUpLeft = createKVReflectingBlockRect(xDistance, yDistance, rect.width, rect.height);
+            newRectUpLeft.open.left = newRectUpLeft.open.up = true;
+            correctionRect(newRectUpLeft);
+            rects.push(newRectUpLeft);
+
+            var newRectUpRight = createKVReflectingBlockRect(rect.x, yDistance, rect.width, rect.height);
+            newRectUpRight.open.right = newRectUpRight.open.up = true;
+            correctionRect(newRectUpRight);
+            rects.push(newRectUpRight);
+
+            var newRectDownLeft = createKVReflectingBlockRect(xDistance, rect.y, rect.width, rect.height);
+            newRectDownLeft.open.left = newRectDownLeft.open.down = true;
+            correctionRect(newRectDownLeft);
+            rects.push(newRectDownLeft);
+        };
+
+        var openRectRightLeft = function (rect, rects, xDistance) {
+            rect.open.right = true;
+            var newRect = createKVReflectingBlockRect(xDistance, rect.y, rect.width, rect.height);
+            newRect.open.left = true;
+            correctionRect(newRect);
+            rects.push(newRect);
+        };
+
+        var openRectUpDown = function (rect, rects, yDistance) {
+            rect.open.down = true;
+            var newRect = createKVReflectingBlockRect(rect.x, yDistance, rect.width, rect.height);
+            newRect.open.up = true;
+            correctionRect(newRect);
+            rects.push(newRect);
+        };
+
+        var rects = [];
+
+        var cell = $this.cells[0][0];
+        var x = parseInt(cell.n % fieldWidth);
+        var y = parseInt(cell.n / fieldWidth);
+
+        var rect = createKVReflectingBlockRect(x * KVDiagram.SIZE, y * KVDiagram.SIZE);
+        rects.push(rect);
+        rect.width = $this.getWidth() * KVDiagram.SIZE;
+        rect.height = $this.getHeight() * KVDiagram.SIZE;
+
+        openRects(rects, fieldWidth * KVDiagram.SIZE, fieldHeight * KVDiagram.SIZE);
 
         return rects;
     };
