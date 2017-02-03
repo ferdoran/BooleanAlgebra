@@ -32,3 +32,47 @@ var KVExprCompare = function(expression){
         return true;
     };
 };
+KVExprCompare.getClips = function (text) {
+    var re = BAExpression.regex.clips;
+
+    var count = 0;
+    var result = [];
+    while ( (match = re.exec(text)) !== null) {
+        if (count++ >= 99999) {
+            return false;
+        }
+
+        var m = match[0];
+        result.push(m);
+    }
+    return result;
+};
+KVExprCompare.isKNF = function (text) {
+    var clips = KVExprCompare.getClips(text);
+
+    if (clips.length == 0) {
+        return true;
+    }
+
+    for (var i = 0; i < clips.length; i++) {
+        var clip = clips[i];
+        if (clip.indexOf(SYMBOL_AND) > -1) return false;
+        text = text.replace(clip, "K");
+    }
+
+    return (text.indexOf(SYMBOL_OR) <= -1);
+};
+KVExprCompare.isDNF = function (text) {
+    var clips = KVExprCompare.getClips(text);
+
+    if (clips.length == 0) {
+        return true;
+    }
+
+    for (var i = 0; i < clips.length; i++) {
+        var clip = clips[i];
+        if (clip.indexOf(SYMBOL_OR) > -1) return false;
+        text = text.replace(clip, "K");
+    }
+    return (text.indexOf(SYMBOL_AND) <= -1);
+};

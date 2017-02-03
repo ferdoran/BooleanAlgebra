@@ -56,8 +56,18 @@
                     var compareDnfA = new KVExprCompare($scope.dnf);
                     var compareKnfA = new KVExprCompare($scope.knf);
 
-                    $scope.knfResultState = compareKnfA.equals(compareKnfB) ? 1 : -1;
-                    $scope.dnfResultState = compareDnfA.equals(compareDnfB) ? 1 : -1;
+                    if (KVExprCompare.isDNF($scope.dnf.text)) {
+                        $scope.dnfResultState = compareDnfA.equals(compareDnfB) ? 1 : -1;
+                    } else {
+                        $scope.dnfResultState = -1;
+                    }
+
+                    if (KVExprCompare.isKNF($scope.knf.text)) {
+                        $scope.knfResultState = compareKnfA.equals(compareKnfB) ? 1 : -1;
+                    } else {
+                        $scope.knfResultState = -1;
+                    }
+
                 };
 
                 var showResolution = function(){
