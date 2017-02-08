@@ -27,5 +27,22 @@
         "RUSSIAN": "Russian",
         "SPANISH": "Spanish",
         "FRANCE": "France"
+    },
+    "KV": {
+        "TITLE": "KV Diagram",
+        "CHECK_RESULT": "Check result",
+        "SHOW_RESULT": "Show solution",
+        "SOLUTION": "Solution",
+        "INFO": {
+            "TEXT": "You need a valid boolean expression to generate a KV diagram!",
+            "BUTTON": "Practice KV diagram"
+        },
+        "BLOCKS": {
+            "TITLE": "Blocks",
+            "NO_BLOCKS": "Here you can see input fields for selected colored blocks."
+        },
+        "MIN": {
+            "TITLE": "Minimized term"
+        }
     }
 }

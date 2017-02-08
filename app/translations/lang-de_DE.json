@@ -27,5 +27,22 @@
         "RUSSIAN": "Russisch",
         "SPANISH": "Spanisch",
         "FRANCE": "Französisch"
+    },
+    "KV": {
+        "TITLE": "KV-Diagramm",
+        "CHECK_RESULT": "Ergebnis überprüfen",
+        "SHOW_RESULT": "Lösung anzeigen",
+        "SOLUTION": "Lösung",
+        "INFO": {
+            "TEXT": "Zum Generieren eines KV-Diagramms benötigen Sie einen gültigen Booleschen Ausdruck!",
+            "BUTTON": "KV-Diagramm üben"
+        },
+        "BLOCKS": {
+            "TITLE": "Blöcke",
+            "NO_BLOCKS": "Hier erscheinen Eingabefelder für die gewählten Farbblocke."
+        },
+        "MIN": {
+            "TITLE": "Minimierter Term"
+        }
     }
 }

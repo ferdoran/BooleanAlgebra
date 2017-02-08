@@ -6,6 +6,8 @@ var EaselInterface = CanvasInterface.extend(function () {
     this.create = function (id) {
         var canvas = document.getElementById(id);
 
+        /* Wenn es sich nicht um ein CANVAS-Tag handelt,
+        sondern um ein div Container, so erstellte ein Canvas Objekt innerhalb dieses Containers */
         if (!canvas || canvas.tagName != "CANVAS") {
             var c = document.createElement("CANVAS");
             var cName = id + "_canvas";
@@ -17,6 +19,7 @@ var EaselInterface = CanvasInterface.extend(function () {
 
         const labelColor = '#333';
 
+        /* Initialisierung der Schichten */
         var stage = new createjs.Stage(id);
         stage.name = "stage";
         stage.enableMouseOver(20);
@@ -42,6 +45,7 @@ var EaselInterface = CanvasInterface.extend(function () {
         hoverBlock.x = hoverBlock.y = 0;
         hoverBlock.alpha = 0;
 
+        /* Füge alle Schichten ein */
         hoverContainer.addChild(hoverBlock);
 
         stage.addChild(blockContainer);
@@ -53,9 +57,11 @@ var EaselInterface = CanvasInterface.extend(function () {
 
         const roundFactor = 5;
         canvas.colorBlock = function(block, color, x, y, width, height) {
+            /* Zeichne einen gefärbten Block */
             block.graphics.setStrokeStyle(2).beginStroke(color).drawRoundRect(x,y, width - 1, height - 1, roundFactor).endStroke();
         };
         var openDownBlock = function(block, color, x, y, width, height, exclude){
+            /* Zeichnen einen Block der nach unten geoffnet ist (optional: zusätzliche Öffnung nach rechts/links) */
             var g = block.graphics.setStrokeStyle(2), h = y + height, w = x + width;
             if (exclude && exclude == 'left') {
                 g.beginStroke(color).moveTo(w / 2 - FOURSIZE, y).lineTo(w / 2, y).endStroke();
@@ -71,6 +77,7 @@ var EaselInterface = CanvasInterface.extend(function () {
             }
         };
         var openUpBlock = function(block, color, x, y, width, height, exclude){
+            /* Zeichnen einen Block der nach oben geoffnet ist (optional: zusätzliche Öffnung nach rechts/links) */
             var g = block.graphics.setStrokeStyle(2), h = y + height, w = x + width;
             if (exclude && exclude == 'left') {
                 g.beginStroke(color).moveTo(w / 2 - FOURSIZE, h).lineTo(w / 2, h).endStroke();
@@ -87,6 +94,7 @@ var EaselInterface = CanvasInterface.extend(function () {
 
         };
         var openLeftBlock = function(block, color, x, y, width, height){
+            /* Zeichnen einen Block der nach links geoffnet ist */
             var g = block.graphics.setStrokeStyle(2), s = x + width, h = y + height;
             g.beginStroke(color).moveTo(x + HALFSIZE, y).lineTo(s - roundFactor,y).quadraticCurveTo(s,y,s,y + roundFactor).endStroke();
             g.beginStroke(color).moveTo(s, y + roundFactor).lineTo(s, h).endStroke();
@@ -94,6 +102,7 @@ var EaselInterface = CanvasInterface.extend(function () {
             g.beginStroke(color).moveTo(s, h).lineTo(x + HALFSIZE, h).endStroke();
         };
         var openRightBlock = function(block, color, x, y, width, height){
+            /* Zeichnen einen Block der nach rechts geoffnet ist */
             var g = block.graphics.setStrokeStyle(2), s = 0, h = y + height;
             g.beginStroke(color).moveTo(x + width - HALFSIZE, y).lineTo(x + roundFactor,y).quadraticCurveTo(x,y,x,s = y + roundFactor).endStroke();
             g.beginStroke(color).moveTo(x, s).lineTo(x, s = h - roundFactor).endStroke();
@@ -106,6 +115,7 @@ var EaselInterface = CanvasInterface.extend(function () {
             shape.x = rect.x;
             shape.y = rect.y;
 
+            /* Überprüfe darauf, welche Öffnungen vorhanden sind und wähle dementsprechend den richtigen Block */
             if (rect.open.up) {
                 if (rect.open.left) {
                     openUpBlock(shape, rect.block.color, 0, 0, rect.width, rect.height, 'left');
@@ -133,8 +143,7 @@ var EaselInterface = CanvasInterface.extend(function () {
             return shape;
         };
 
-
-
+        /* Entferne alle gefärbten Blöcke */
         var colored_blocks = [];
         canvas.clearColoredBlocks = function(){
             colored_blocks = [];
@@ -160,6 +169,7 @@ var EaselInterface = CanvasInterface.extend(function () {
 
         var color_index = 0;
         canvas.addRectsToColorContainer = function(rects){
+            /* Rechtecke Array zum Canvas Container hinzufügen */
             var colorLayer = new createjs.Container();
             colorLayer.name = "colorLayer" + (color_index++);
             colorLayer.x = gridOffset.x;
@@ -179,6 +189,13 @@ var EaselInterface = CanvasInterface.extend(function () {
             return IBlocks;
         };
 
+        /* Füge ein IBlock Element zum Container hinzu. Also Zellelemente oder Variablen.
+         * Das Canvas Block Element setzt sich aus drei createjs Elementen schichtweise zusammen:
+         * 1) Container als Button-Rahmen, der alle anderen beinhaltet
+         * 2) Shape als Hintergrund (weißer, transparenter
+         * 3) Label als Inhalt
+         * Der Container wird dann dem Blockcontainer hinzugefügt
+         * */
         canvas.add = function(block, readonly) {
             IBlocks.push(block);
             var label = new createjs.Text(block.value, "20px Arial", labelColor);
@@ -254,6 +271,7 @@ var EaselInterface = CanvasInterface.extend(function () {
             return stage;
         };
 
+        /* Erstelle eine Kopie dieses Canvas in ein anderes */
         canvas.copyIntoCanvas = function(cv) {
             cv.clearChildren();
             cv.clearColorContainer();

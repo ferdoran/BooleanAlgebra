@@ -24,7 +24,7 @@
 
         <div class="box">
             <div class="boxTitle">
-                <h2 class="diagram-title">KV-Diagramm</h2>
+                <h2 class="diagram-title" translate="KV.TITLE">KV-Diagramm</h2>
             </div>
             <div class="boxBody" id="kvBody">
                 <!--<bool-kv bool-expr="A∨B⇔C"></bool-kv>-->
@@ -35,8 +35,8 @@
                 <!--<bool-kv bool-expr="¬A∧B∧¬C∧¬D∨A∧¬B∧¬C∧¬D∨A∧¬B∧¬C∧D∨A∧¬B∧C∧¬D∨A∧¬B∧C∧D∨A∧B∧¬C∧¬D∨A∧B∧C∧¬D∨A∧B∧C∧D"></bool-kv>-->
                 <!--<bool-kv bool-expr="A∧(B∨¬B)∧C∨D"></bool-kv>-->
                 <div class="createInfo">
-                    <p>Zum Generieren eines KV-Diagramms benötigen Sie einen gültigen Booleschen Ausdruck!</p>
-                    <button class="btn" ng-click="createKV('#kvBody')">KV-Diagramm üben</button>
+                    <p translate="KV.INFO.TEXT">Zum Generieren eines KV-Diagramms benötigen Sie einen gültigen Booleschen Ausdruck!</p>
+                    <button translate="KV.INFO.BUTTON" class="btn" ng-click="createKV('#kvBody')">KV-Diagramm üben</button>
                 </div>
             </div>
         </div>
