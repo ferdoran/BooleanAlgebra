@@ -12,6 +12,7 @@
             scope:true,
             templateUrl: "directives/boolKV/boolKV.html",
             link: function($scope, $element, $attr) {
+                /* Initialisere Canvas für Arbeitsfläche und Lösung */
                 var cv = $element.find('#kvCanvasContainer');
                 cv[0].id = 'kvCanvasContainer' + (_kvCounter++);
 
@@ -21,12 +22,14 @@
                 var domain = app.domains[$attr.boolDomain];
                 var expr = domain && !$attr.boolExpr ? domain.expression : new BAExpression($attr.boolExpr);
 
+                /* Setze das isTouch Flag */
                 CanvasInterface.isTouch = angular.element('html').hasClass('touch');
 
                 var kv = new BAKV({target: cv[0].id, solutionTarget: cvSol[0].id, expression: expr});
 
                 $scope.showSolution = false;
 
+                /* Initialsiere die Farbauswahl */
                 var $colors;
                 var initColors = function () {
                     $colors = $element.find('.kvColor');
@@ -64,6 +67,7 @@
                 };
 
                 if (domain) {
+                    /* Aktualisere das KV */
                     domain.refreshKV = function (_expr) {
                         if (domain.toKV) $timeout.cancel(domain.toKV);
                         domain.toKV = $timeout(function(){

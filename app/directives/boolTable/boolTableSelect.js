@@ -32,6 +32,7 @@
                 locateClass();
 
                 var checkResult = function(){
+                    /* Überprüfe Eingabe */
                     if (!$scope.isDirty) return false;
                     if ($scope.value == '') {
                         $scope.isCorrect = null;

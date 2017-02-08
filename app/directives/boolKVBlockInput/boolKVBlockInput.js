@@ -22,12 +22,14 @@
                 };
 
                 $scope.$on("showResult", function () {
+                    /* Zeige Lösung an */
                     var $resInput = $element.find('.result-input .input');
                     var resExpr = $scope.layer.getBlocksExpr();
                     $resInput.html(resExpr.getHtml());
                     $scope.showSolution = true;
                 });
 
+                /* Überprüfe Lösung */
                 $scope.$on('checkResults', function () {
                     $scope.layer.checkExpression();
                     $scope.showSolution = false;

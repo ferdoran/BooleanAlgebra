@@ -53,6 +53,7 @@ var BAKV = function (params) {
         return minimizeInfo = this.diagram.minimize();
     };
 
+    /* Zeige Lösung für alle Blöcke (im Canvas */
     this.showSolution = function () {
         this.canvas.copyIntoCanvas(this.solutionCanvas);
 

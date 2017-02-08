@@ -33,6 +33,7 @@
                     /*$timeout.cancel(domain.resizeTableTO);*/
                     domain.resizeTableTO = $timeout(function(){
                         $fixedTables.each(function(){
+                            /* Baue Tabelle anhand der Datenstruktur auf */
                             var $t = angular.element(this);
 
                             var $tBody = $t.find('tbody');

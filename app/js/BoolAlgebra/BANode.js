@@ -2,6 +2,7 @@
  * Created by Sergej on 12.10.2016.
  */
 var BANode = function(params){
+    /* Datenstruktur für einen Baumknoten */
     this.value = params ? params.value : null;
     this.child1 = params ? params.child1 : null;
     this.child2 = params ? params.child2 : null;
@@ -30,6 +31,7 @@ var BANode = function(params){
         return this.child1 ? this.child1.findChild(value) : null;
     };
     this.getHtml = function(){
+        /* Baum wird in HTML Code rekursiv knotenweise aufgelöst */
         var value = this.value;
         if (this.isLeaf()) {
             value = '<span class="expr">' + value + '</span>';
@@ -80,6 +82,7 @@ var BANode = function(params){
 
         return letters;
     };
+    /* Erwartet param:= {A: 0, B: 1, C: 0} und liefert das Ergebnis für diesen Knoten */
     this.getResult = function(param) {
         var result = 0;
         if (this.isGroup() && !this.child2 && !this.child1) {

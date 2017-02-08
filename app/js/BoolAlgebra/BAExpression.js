@@ -10,6 +10,7 @@ var BAExpression = function(text) {
 
     this.clips = [];
 
+    /* Priorität zum Auflösen des Baums */
     var priorSplit = [
         SYMBOL_EQUAL,
         SYMBOL_IMPL,
@@ -32,6 +33,7 @@ var BAExpression = function(text) {
         }
         return null;
     };
+    /* Hole Klammern aus dem Ausdruck */
     var getClips = function(text) {
         var re = BAExpression.regex.clips;
 
@@ -80,6 +82,7 @@ var BAExpression = function(text) {
         }
         return tableBuffer;
     };
+    /* Teile nach Operator auf */
     var splitByOperator = function(text){
         for (var i = 0; i < priorSplit.length; i++) {
             var pS = priorSplit[i];
@@ -110,6 +113,9 @@ var BAExpression = function(text) {
         if (text == null) return null;
         var splitInfo = splitByOperator(text);
 
+        /* Baue rekursiv den Binären Baum auf.
+        Bei der Splitinfo liegen die Teilbauminformationen
+        wonach rekursiv weiter geteilt wird, bis es nicht mehr geht */
         var node = new BANode({
             value: splitInfo.value,
             child1: this.buildTree(splitInfo.a),

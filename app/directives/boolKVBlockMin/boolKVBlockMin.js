@@ -13,6 +13,7 @@
             },
             templateUrl: "directives/boolKVBlockMin/boolKVBlockMin.html",
             link: function($scope, $element, $attr) {
+                /* Initialsiere Minimierungsobjekte */
                 $scope.knf = new BAExpression();
                 $scope.dnf = new BAExpression();
                 $scope.knfResultState = 0;
@@ -26,6 +27,7 @@
                    showResolution();
                 });
 
+                /* Setze den Status zurück, wenn sich der Ausdruck ändert */
                 $scope.knf.onTextChanged = function () {
                     $scope.knfResultState = 0;
                     $scope.knfResolution = false;
@@ -51,6 +53,7 @@
                 var $knfInput = $element.find('.knfInput');
 
                 var compareKnfDnf = function(info){
+                    /* Vergleiche, ob Eingabe mit der korrekten Lösung übereinstimmt */
                     var compareKnfB = new KVExprCompare(info.knf.expr);
                     var compareDnfB = new KVExprCompare(info.dnf.expr);
                     var compareDnfA = new KVExprCompare($scope.dnf);
@@ -71,6 +74,7 @@
                 };
 
                 var showResolution = function(){
+                    /* Zeige Musterlösung an */
                     minimizeInfo = $scope.kv.minimize();
                     $dnfInput.html(minimizeInfo.dnf.expr.getHtml());
                     $knfInput.html(minimizeInfo.knf.expr.getHtml());

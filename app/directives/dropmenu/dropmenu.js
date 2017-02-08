@@ -4,6 +4,7 @@
 (function () {
     var app = angular.module('boolean-algebra');
 
+    /* Benutzerdefiniertes Selectmenu */
     app.directive('dropmenu', function ($timeout, $sce) {
         return {
             restrict: 'A',
